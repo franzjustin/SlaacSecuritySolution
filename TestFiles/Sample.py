@@ -72,7 +72,6 @@ def getInterface():
                        for x in range(24):
                             source_link_layer_address = source_link_layer_address + packetHex[x][2:].zfill(2)
 
-                           
 
                        source_link_layer_address = source_link_layer_address[:-1]
                        #print source_link_layer_address
