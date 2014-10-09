@@ -83,8 +83,8 @@ def getInterface():
                    else :
                       print " "
                    message_details =  SLAAC_Message.SLAAC_Message(ndp_message_number,source_link_layer_address, ip_source_address, ip_destination_address, source_MAC_address_final, destination_MAC_address_final)
-                   detection_module = Detection.Detection()
-                   detection_module.detect_neighbor_spoofing(message_details)
+                   #detection_module = Detection.Detection()
+                   #detection_module.detect_neighbor_spoofing(message_details)
                   
                    print "-----------Packet Details----------"
                    print "NDP Message Type %s" %message_details.get_ndp_message_number()
