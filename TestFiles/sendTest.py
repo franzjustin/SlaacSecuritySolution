@@ -27,7 +27,7 @@ ip.set_flow_label(0)
 ip.set_hop_limit(64)
 
 
-f = open('TestFiles/MyNigga.s0i0.pcap')
+f = open('Packets/MyNigga.s0i0.pcap')
 pcap = dpkt.pcap.Reader(f)
 for ts, buf in pcap:
     eth = EthDecoder().decode(buf).child().child().child()
@@ -75,3 +75,6 @@ while 1:
             print "%d bytes from %s: icmp_seq=%d " % (rip.child().get_size() - 4, dst, rip.get_echo_sequence_number())
 
         time.sleep(1)
+
+# Problem: Can already send packets on Destination but can't change the payload
+# of the packet. It uses pre made payloads

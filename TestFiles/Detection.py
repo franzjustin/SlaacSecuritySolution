@@ -80,9 +80,8 @@ class Detection:
                         return "false"
                 else:
                     print "Incorrect Vlan, Checking other VLANs ..."
+        return "false"
 
-
-        return "false" 
     def update_attempt_database(self,message_details):
         checkflag = self.check_for_database('dad_attempt')
         
