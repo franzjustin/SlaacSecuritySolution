@@ -8,7 +8,7 @@ from TestFiles import SLAAC_Message
 
 print version.BANNER
 
-f = open('../Packets/MyNigga.s0i0.pcap')
+f = open('../Packets/LastHopRouter.s0i1.pcap')
 pcap = dpkt.pcap.Reader(f)
 checker = ICMP6.ICMP6.protocol
 #print "*****************"
@@ -70,7 +70,6 @@ for ts, buf in pcap:
                print "Source MAC Address %s" %message_details.get_source_MAC_address()
                print "Destination MAC Address %s" %message_details.get_destination_MAC_address()
                print "----------------END----------------"
-               detect =
     except:
             print "Packet Discarded"
 
