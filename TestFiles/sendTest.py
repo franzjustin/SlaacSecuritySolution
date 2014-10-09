@@ -2,11 +2,11 @@ import select
 import socket
 import time
 import sys
-import dpkt
 
-from impacket import ImpactDecoder, ImpactPacket, IP6, ICMP6, version
+import dpkt
+from impacket import ImpactDecoder, IP6, ICMP6, version
 from impacket.ImpactDecoder import EthDecoder, ICMP6Decoder
-from impacket.ImpactPacket import Ethernet
+
 
 print version.BANNER
 
