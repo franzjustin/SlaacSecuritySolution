@@ -15,12 +15,10 @@ def getInterface():
     
     
     #f = open('MyNigga.s0i0.pcap')
-    f = open('MyNigga.s0i0.pcap')
+    f = open('../Packets/MyNigga.s0i0.pcap')
     pcap = dpkt.pcap.Reader(f)
     checker = ICMP6.ICMP6.protocol
-    #print "*****************"
 
-    #print checker
     i = 1
     for ts, buf in pcap:
         eth = EthDecoder().decode(buf)
@@ -40,7 +38,6 @@ def getInterface():
                    source_MAC_address_final=""
                    destination_MAC_address_final = ""
                    x = 0
-
                    for x in range(6):
                     temp_decimal = source_MAC_address[x]
                     temp_hex = hex(temp_decimal)
@@ -59,32 +56,35 @@ def getInterface():
                    #print packetHex
 
                    source_link_layer_address = ""
+                   target_address=""
                    ip_source_address = ethChild.get_source_address()
                    ip_destination_address = ethChild.get_destination_address()
                    ndp_message_number = ethChild2.get_type()
                    x=0
+                   print packetHex
                    if str(ndp_message_number) == "134": #Router Advertisement
-                    for x in range(6):
+                       for x in range(6):
                             source_link_layer_address = source_link_layer_address + packetHex[10 + x][2:]+":"
-                          
-                    source_link_layer_address = source_link_layer_address[:-1]
+                       target_address ="n/a"
                    elif str(ndp_message_number) == "135": #Neighbor Solicitation
-                       for x in range(24):
+                       for x in range(16):
                             source_link_layer_address = source_link_layer_address + packetHex[x][2:].zfill(2)
 
+                            if (x > 0):
+                                if x% 2 != 0:
+                                    source_link_layer_address = source_link_layer_address +":"
 
-                       source_link_layer_address = source_link_layer_address[:-1]
-                       #print source_link_layer_address
-                   if str(message_details.get_ip_source_address()) == "::":
+                   source_link_layer_address = source_link_layer_address[:-1]
+
+                   print source_link_layer_address
+                   if str(ip_source_address) == "::":
                       print "DAD attempt detected"
-                      #detection_module.update_attempt_database(message_details)
-                      #detection_module.check_old_attempt(1,"::")
                    else :
                       print " "
+
                    message_details =  SLAAC_Message.SLAAC_Message(ndp_message_number,source_link_layer_address, ip_source_address, ip_destination_address, source_MAC_address_final, destination_MAC_address_final)
-                   #detection_module = Detection.Detection()
+                   detection_module = Detection.Detection()
                    #detection_module.detect_neighbor_spoofing(message_details)
-                  
                    print "-----------Packet Details----------"
                    print "NDP Message Type %s" %message_details.get_ndp_message_number()
                    print "Source Link Layer Address: %s" %message_details.get_source_link_layer_address()
