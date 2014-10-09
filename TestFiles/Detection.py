@@ -16,11 +16,11 @@ class Detection:
         flag = os.path.isfile(filename)
         return flag
     def get_router_database(self):
-        checkflag = self.check_for_database("dafuq")
+        checkflag = self.check_for_database("Router_Database")
         #print checkflag
         templine = []
         temp_database = []
-        router_database = open('dafuq','r')
+        router_database = open('Router_Database','r')
         if checkflag:
             for line in router_database:
                 templine = line.split( ' ',2)
@@ -59,7 +59,7 @@ class Detection:
         return "false"
 
 
-    def detect_neighbor_spoofing(self):
+    def detect_neighbor_spoofing(self,message_details):
         x = 0
         y=0
         router_database = []
@@ -84,14 +84,14 @@ class Detection:
 
         return "false" 
     def update_attempt_database(self,message_details):
-        checkflag = self.check_for_database('dad_attempt')
+        checkflag = self.check_for_database('Dad_Attempt')
         
         vlan = 1;
         message = ""
         #add get vlan somewhere in message details later on
         if checkflag :
             print "inside"
-            f = open('dad_attempt','a')
+            f = open('Dad_Attempt','a')
             message = str(vlan) + " " + str(message_details.get_ip_destination_address()) +" "+ str(datetime.now()) + '\n'
             print message
             f.write(message)
@@ -103,8 +103,8 @@ class Detection:
     def check_old_attempt(self,vlan,ip_address):
         #must read last 5 attempts made
         ip_address = "::"
-        num_lines = sum(1 for line in open('dad_attempt'))
-        f = BackwardsReader.BackwardsReader('dad_attempt')
+        num_lines = sum(1 for line in open('Dad_Attempt'))
+        f = BackwardsReader.BackwardsReader('Dad_Attempt')
         x =0
         attempt_count = []
         count_entry = ["1","::"]
@@ -127,12 +127,12 @@ class Detection:
         print "qwqw"
         #f.close()
     def get_dad_attempt_database(self):
-        checkflag = self.check_for_database('dad_attempt')
+        checkflag = self.check_for_database('Dad_Attempt')
         
         #print checkflag
         #templine = []
         #temp_database = []
-        #router_database = open('dafuq','r')
+        #router_database = open('Router_Database','r')
         #if checkflag:
         #    for line in router_database:
         #        templine = line.split( ' ',2)

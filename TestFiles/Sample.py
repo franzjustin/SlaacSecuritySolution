@@ -33,19 +33,14 @@ def getInterface():
         #dpkt.ethernet.Ethernet()
         try:
                 if ethChild2.get_ip_protocol_number() == 58: 
-                   #print ethChild2.get_ip_protocol_number()  
                    destination_MAC_address = []
                    source_MAC_address = []
-                   #trypacket =  eth.get_packet()
-                   #print icmp6Child
                    destination_MAC_address = eth.get_ether_dhost()
                    source_MAC_address = eth.get_ether_shost()
                    source_MAC_address_final=""
                    destination_MAC_address_final = ""
                    x = 0
-                   #tryt = source_MAC_address[0]
-                   #hello = hex(tryt)
-                   
+
                    for x in range(6):
                     temp_decimal = source_MAC_address[x]
                     temp_hex = hex(temp_decimal)
@@ -61,27 +56,35 @@ def getInterface():
                    packetHex = []
                    for data in packetData:
                     packetHex.append(hex(data))  
-                   print packetHex
-                   
-                   x = 0
+                   #print packetHex
+
                    source_link_layer_address = ""
                    ip_source_address = ethChild.get_source_address()
                    ip_destination_address = ethChild.get_destination_address()
-                   
                    ndp_message_number = ethChild2.get_type()
-                   for x in range(6):
-                        source_link_layer_address = source_link_layer_address + packetHex[10 + x][2:]+":"
+                   x=0
+                   if str(ndp_message_number) == "134": #Router Advertisement
+                    for x in range(6):
+                            source_link_layer_address = source_link_layer_address + packetHex[10 + x][2:]+":"
                           
-                   source_link_layer_address = source_link_layer_address[:-1]
-                   message_details =  SLAAC_Message.SLAAC_Message(ndp_message_number ,source_link_layer_address, ip_source_address, ip_destination_address, source_MAC_address_final, destination_MAC_address_final)
-                   detection_module = Detection.Detection()
-                   
-                   if str(message_details.get_ip_source_address()) == "::" :
+                    source_link_layer_address = source_link_layer_address[:-1]
+                   elif str(ndp_message_number) == "135": #Neighbor Solicitation
+                       for x in range(24):
+                            source_link_layer_address = source_link_layer_address + packetHex[x][2:].zfill(2)
+
+                           
+
+                       source_link_layer_address = source_link_layer_address[:-1]
+                       #print source_link_layer_address
+                   if str(message_details.get_ip_source_address()) == "::":
                       print "DAD attempt detected"
                       #detection_module.update_attempt_database(message_details)
                       #detection_module.check_old_attempt(1,"::")
                    else :
                       print " "
+                   message_details =  SLAAC_Message.SLAAC_Message(ndp_message_number,source_link_layer_address, ip_source_address, ip_destination_address, source_MAC_address_final, destination_MAC_address_final)
+                   detection_module = Detection.Detection()
+                   detection_module.detect_neighbor_spoofing(message_details)
                   
                    print "-----------Packet Details----------"
                    print "NDP Message Type %s" %message_details.get_ndp_message_number()
@@ -104,7 +107,7 @@ def getInterface():
          # rogue_router_advertisement = detection_module.detect_rogue_advertisement("1",message_details.get_source_link_layer_address())
 
         #rogue_neighbor_advertisement = detection_module.detect_neighbor_spoofing()
-        #print os.path.isfile("dafuq")
+        #print os.path.isfile("Router_Database")
         #f = open('workfile', 'w')
         #f.write('This is a test\n')        attack_detect
         #detection_module.get_dad_attempt()
