@@ -15,7 +15,7 @@ def getInterface():
     
     
     #f = open('MyNigga.s0i0.pcap')
-    f = open('../Packets/MyNigga.s0i0.pcap')
+    f = open('../Packets/LastHopRouter.s0i1.pcap')
     pcap = dpkt.pcap.Reader(f)
     checker = ICMP6.ICMP6.protocol
 
@@ -61,38 +61,39 @@ def getInterface():
                    ip_destination_address = ethChild.get_destination_address()
                    ndp_message_number = ethChild2.get_type()
                    x=0
-                   print packetHex
+                   #print packetHex
                    if str(ndp_message_number) == "134": #Router Advertisement
                        for x in range(6):
-                            source_link_layer_address = source_link_layer_address + packetHex[10 + x][2:]+":"
+                            source_link_layer_address = source_link_layer_address + packetHex[50 + x][2:]+":"
                        target_address ="n/a"
+                       source_link_layer_address = source_link_layer_address[:-1]
                    elif str(ndp_message_number) == "135": #Neighbor Solicitation
                        for x in range(16):
-                            source_link_layer_address = source_link_layer_address + packetHex[x][2:].zfill(2)
+                            target_address = target_address + packetHex[x][2:].zfill(2)
 
                             if (x > 0):
                                 if x% 2 != 0:
-                                    source_link_layer_address = source_link_layer_address +":"
+                                    target_address = target_address +":"
 
-                   source_link_layer_address = source_link_layer_address[:-1]
-
-                   print source_link_layer_address
+                       target_address = target_address[:-1]
+                       source_link_layer_address="n/a"
                    if str(ip_source_address) == "::":
                       print "DAD attempt detected"
                    else :
                       print " "
 
-                   message_details =  SLAAC_Message.SLAAC_Message(ndp_message_number,source_link_layer_address, ip_source_address, ip_destination_address, source_MAC_address_final, destination_MAC_address_final)
+                   message_details =  SLAAC_Message.SLAAC_Message(ndp_message_number,source_link_layer_address, ip_source_address, ip_destination_address, source_MAC_address_final, destination_MAC_address_final,target_address)
                    detection_module = Detection.Detection()
-                   #detection_module.detect_neighbor_spoofing(message_details)
-                   print "-----------Packet Details----------"
-                   print "NDP Message Type %s" %message_details.get_ndp_message_number()
-                   print "Source Link Layer Address: %s" %message_details.get_source_link_layer_address()
-                   print "Source IPv6 Address %s " %message_details.get_ip_source_address()
-                   print "Destination IPv6 Address %s" %message_details.get_ip_destination_address()
-                   print "Source MAC Address %s" %message_details.get_source_MAC_address()
-                   print "Destination MAC Address %s" %message_details.get_destination_MAC_address()
-                   print "----------------END----------------"
+                   #detection_module.detect_rogue_advertisement(message_details)
+                   #print "-----------Packet Details----------"
+                   #print "NDP Message Type %s" %message_details.get_ndp_message_number()
+                   #print "Source Link Layer Address: %s" %message_details.get_source_link_layer_address()
+                   #print "Source IPv6 Address %s " %message_details.get_ip_source_address()
+                   #print "Destination IPv6 Address %s" %message_details.get_ip_destination_address()
+                   #print "Source MAC Address %s" %message_details.get_source_MAC_address()
+                   #print "Destination MAC Address %s" %message_details.get_destination_MAC_address()
+                   #print "Target Address %s" %message_details.get_target_address()
+                   #print "----------------END----------------"
                      
         except:
                 print "Packet Discarded"
