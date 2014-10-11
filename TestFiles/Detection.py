@@ -90,6 +90,12 @@ class Detection:
         return "false"
 
     def update_attempt_database(self,message_details):
+        #This function basically adds entry to the DAD Attempt database
+        #it uses the details from the message_details sent from the detect dos in dad func
+        #it checks if the database Dad_attempt exist and if yes , it packages the details
+        #details are in the format as follows
+        #vlan no^ip_address^timestamp
+        #where ^ is a space character :)
         checkflag = self.check_for_database('../Database/Dad_Attempt')
         
         vlan = 1;
@@ -98,7 +104,7 @@ class Detection:
         if checkflag :
             print "inside"
             f = open('../Database/Dad_Attempt','a')
-            message = str(vlan) + " " + str(message_details.get_ip_destination_address()) +" "+ str(datetime.now()) + '\n'
+            message = str(vlan) + " " + str(message_details.get_target_address()) +" "+ str(datetime.now()) + '\n'
             print message
             f.write(message)
             f.close()
@@ -106,42 +112,54 @@ class Detection:
         print "hello"
         
 
-    def check_old_attempt(self,vlan,ip_address):
-        #must read last 5 attempts made
-        ip_address = "::"
+    def check_old_attempt(self):
+        #This function checks the old DAD attempts made and deletes them
+        #The function determines if the attempt is old with the number of dad attempts on a specific address
+        #this means that an address with 6 different attempts would only have the oldest attempt deleted
+        #a maximum of 5 attempts per address would only be stored in the database
+        #the function first checks the total number of lines as well as uses a backward reader class
+        #then the function examines the lines from the DAD attempt database one by one
+        #the function stores the line from the DAD attempt database if they fit the requirements
+        #after which, the system proceeds to overwrite the dad database with the new updated list
         num_lines = sum(1 for line in open('../Database/Dad_Attempt'))
         f = BackwardsReader.BackwardsReader('../Database/Dad_Attempt')
         x =0
         y=0
+        temp_list = [] #array to be used for new list
         attempt_count = []
-        #test for making 2d array
-        count_entry = ["1","::"]
-        count_entry1 = ["1","1::1"]
-        attempt_count.append(count_entry)
-        attempt_count.append(count_entry1)
-
         attempt_entry = []
         for x in range(num_lines):
             attempt = f.readline()
+            found = "false"
             attempt_entry = attempt.split(' ',2)
-            if vlan == attempt_entry[0]:
-                if ip_address == attempt_entry[1]:
-                    #must initially  or after the count check if attempt count is old already
-                    #check if entry is new or old
-                    for y in range(len(attempt_count)):
-                        if attempt_count[y][1] == str(ip_address):
-                            attempt_count[y][0] == int(attempt_count[y][0]) + 1
-                        else:
-                            attempt_count.append(1,str(ip_address))
-                    print " "
-            print attempt_entry[0]
-            print attempt_entry[1]
-            print attempt_entry[2]
+            #print "attempt entry index0 %s"%attempt_entry[0]
+            #print "attempt entry index1 %s"%attempt_entry[1]
+            #print "attempt entry index2 %s"%attempt_entry[2]
+            if len(attempt_count) ==0:
+                #print "empty"
+                new_entry = [1,str(attempt_entry[1])]
+                attempt_count.append(new_entry)
+                temp_list.append(attempt)
+            else:
+                for y in range(len(attempt_count)):
+                    if str(attempt_count[y][1]) == str(attempt_entry[1]):
+                        #print "count incremented"
+                        attempt_count[y][0] = attempt_count[y][0] + 1
+                        #print "increment successfull"
+                        found = "true"
+                        if attempt_count[y][0] <6:
+                            temp_list.append(attempt)
 
-        print attempt_count[0][1]    
-        print "qwqw"
+                if str(found) =="false" :
+                    #print "new entry found"
+                    new_entry = [1,str(attempt_entry[1])]
+                    attempt_count.append(new_entry)
+                    temp_list.append(attempt)
 
-        #f.close()
+        f = open('../Database/Updated_DAD_attempt','w')
+        f.writelines(temp_list)
+        f.close()
+
     def get_dad_attempt_database(self):
         checkflag = self.check_for_database('Dad_Attempt')
         
@@ -161,7 +179,14 @@ class Detection:
             #print temp_database
         return "Hello"
 
-    def detect_dos_dad(self):
+    def detect_dos_dad(self, message_details):
+
+        #self.update_attempt_database(message_details)
+        #self.check_old_attempt()
+
+        f = open('../Database/Updated_DAD_attempt')
+
+        f.close()
         first = datetime.now()
         print first
         time.sleep(1)

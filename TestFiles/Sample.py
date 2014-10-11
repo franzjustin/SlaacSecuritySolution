@@ -15,7 +15,7 @@ def getInterface():
     
     
     #f = open('MyNigga.s0i0.pcap')
-    f = open('../Packets/LastHopRouter.s0i1.pcap')
+    f = open('../Packets/DOSonDAD.s0i1.pcap')
     pcap = dpkt.pcap.Reader(f)
     checker = ICMP6.ICMP6.protocol
 
@@ -77,13 +77,17 @@ def getInterface():
 
                        target_address = target_address[:-1]
                        source_link_layer_address="n/a"
+                   message_details =  SLAAC_Message.SLAAC_Message(ndp_message_number,source_link_layer_address, ip_source_address, ip_destination_address, source_MAC_address_final, destination_MAC_address_final,target_address)
+                   detection_module = Detection.Detection()
+
+
+
                    if str(ip_source_address) == "::":
                       print "DAD attempt detected"
+                      detection_module.check_old_attempt(1,"::")
                    else :
                       print " "
 
-                   message_details =  SLAAC_Message.SLAAC_Message(ndp_message_number,source_link_layer_address, ip_source_address, ip_destination_address, source_MAC_address_final, destination_MAC_address_final,target_address)
-                   detection_module = Detection.Detection()
                    #detection_module.detect_rogue_advertisement(message_details)
                    #print "-----------Packet Details----------"
                    #print "NDP Message Type %s" %message_details.get_ndp_message_number()
