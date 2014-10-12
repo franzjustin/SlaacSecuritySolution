@@ -161,6 +161,8 @@ class Detection:
         f.close()
 
     def get_dad_attempt_database(self):
+        #FORGOT WHAT I INTENDED THIS FOR
+        #MUST BE EXTRA CODE
         checkflag = self.check_for_database('Dad_Attempt')
         
         #print checkflag
@@ -180,24 +182,74 @@ class Detection:
         return "Hello"
 
     def detect_dos_dad(self, message_details):
-
+        #The detect dos in dad function detects dos in dad attacks in the network.
+        #it first updates the attempts dad attemps with the new packet
+        #Then, the system first deletes the old dad attemps made
+        #For my sake, the output of the update dos attempts is in another file so that i can compare it first with the old dad attempts
+        #then, after updating the list, the function proceeds to get the first and last attempt for an anddress
+        #it stores it in a list :)
+        #the system thens simply converts the string into datetime and extracts the difference of the first and last
+        # after extracting, the system convers the difference into seconds
+        #if the total number of seconds between the last and first attempt is greater than 5, an attack is detected.
+        # personally, i feel that the values need to be adjusted
+        # I think the total seconds allowable should be minimized to at the minimum 1 or 2 seconds
+        #DO NOT DELETE THIS LINES :)
         #self.update_attempt_database(message_details)
         #self.check_old_attempt()
+        address_list = []
+        dad_attempt_database = open('../Database/Updated_DAD_attempt')
+        #must check first and last attempt of each address
 
-        f = open('../Database/Updated_DAD_attempt')
+        for line in dad_attempt_database:
+            #print "------Start---------"
+            #print line
+            address_entry = line.split(' ', 2)
+            found = "false"
+            #print first
+            if len(address_list) == 0:
+                #print "Entering first "
+                new_entry = [str(address_entry[1]),str(address_entry[2]),str(address_entry[1]),str(address_entry[2])]
+                address_list.append(new_entry)
+            else:
+                for x in range(len(address_list)):
+                    if str(address_list[x][0]) == str(address_entry[1]):
+                        address_list[x][2] = str(address_entry[1])
+                        address_list[x][3] = str(address_entry[2])
+                        #print "match found"
+                        found = "true"
+                if found=="false":
+                    new_entry = [str(address_entry[1]),str(address_entry[2]),str(address_entry[1]),str(address_entry[2])]
+                    address_list.append(new_entry)
+                    #print "new entry"
+        dad_attempt_database.close()
 
-        f.close()
-        first = datetime.now()
-        print first
-        time.sleep(1)
-        second = datetime.now()
-        print second
-        third = second - first
-        print third
-        final = third.total_seconds()
-        print final
+        for z in range(len(address_list)):
+            print address_list[z]
 
-        
+        for q in range(len(address_list)):
+            date = str(address_list[q][1]).split()
+            new_date = date[0] + " " + date[1]
+            format = "%Y-%d-%m %H:%M:%S.%f"
+            date_minuend = datetime.strptime(new_date,format)
+            date = str(address_list[q][3]).split()
+            new_date = date[0] + " " + date[1]
+            date_subtrahend = datetime.strptime(new_date,format)
+            date_difference = date_minuend - date_subtrahend
+            total_differnce_seconds = date_difference.total_seconds()
+            #print "minuend"
+            #print date_minuend
+            #print "subtrahend"
+            #print date_subtrahend
+            #print "difference"
+            #print date_difference
+            #print "total seconds"
+            #print total_differnce_seconds
+            if total_differnce_seconds>5:
+                print "DOS on DAD Attack Detected"
+            else:
+                print "DAD attempts legitimate"
+
+
 
 
 
