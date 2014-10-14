@@ -15,7 +15,7 @@ def getInterface():
     
     
     #f = open('MyNigga.s0i0.pcap')
-    f = open('../Packets/DOSonDAD.s0i1.pcap')
+    f = open('../Packets/Neighbor Advertisement Spoofing.cap')
     pcap = dpkt.pcap.Reader(f)
     checker = ICMP6.ICMP6.protocol
 
@@ -26,7 +26,7 @@ def getInterface():
         ethChild = eth.child() #contains layer 3 information on the packet
         ethChild2 = ethChild.child()
         icmp6Child = icmp6.child()
-
+        print ethChild2.get_ip_protocol_number()
         #print ethChild2.child()
         #dpkt.ethernet.Ethernet()
         try:
@@ -77,14 +77,19 @@ def getInterface():
 
                        target_address = target_address[:-1]
                        source_link_layer_address="n/a"
+                   elif str(ndp_message_number) == "136":
+
+                       print ethChild2
+
                    message_details =  SLAAC_Message.SLAAC_Message(ndp_message_number,source_link_layer_address, ip_source_address, ip_destination_address, source_MAC_address_final, destination_MAC_address_final,target_address)
-                   detection_module = Detection.Detection()
+                   #detection_module = Detection.Detection()
+                   #detection_module.detect_dos_dad(message_details)
 
 
 
                    if str(ip_source_address) == "::":
                       print "DAD attempt detected"
-                      detection_module.check_old_attempt(1,"::")
+                      #detection_module.check_old_attempt()
                    else :
                       print " "
 

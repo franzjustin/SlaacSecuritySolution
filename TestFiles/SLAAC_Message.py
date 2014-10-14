@@ -2,7 +2,7 @@
 class SLAAC_Message:
     # Initialize when created. Self tells its from this class and the others are your created attributes
     def __init__(self, ndp_message_number, source_link_layer_address, ip_source_address, ip_destination_address,
-                 source_MAC_address_final, destination_MAC_address_final, target_address):
+                 source_MAC_address_final, destination_MAC_address_final, target_address,target_link_layer_address):
         # Self is the new object
         self.ndp_message_number = ndp_message_number
         self.source_link_layer_address = source_link_layer_address
@@ -11,8 +11,11 @@ class SLAAC_Message:
         self.destination_MAC_address = destination_MAC_address_final
         self.ip_destination_address = ip_destination_address
         self.target_address = target_address
+        self.target_link_layer_address = target_link_layer_address
 
     # Creates method called lastname
+    def get_target_link_layer_address(self):
+        return self.target_link_layer_address
     def get_target_address(self):
         return self.target_address
 
