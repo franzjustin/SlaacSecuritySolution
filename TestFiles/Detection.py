@@ -46,7 +46,7 @@ class Detection:
         y=0
         vlan = "1"
         router_database = self.get_router_database()
-        print "Checking Last Hop Router Attack"
+        #print "Checking Last Hop Router Attack"
         for x in range(len(router_database)):
             for y in range(4):
                 if(vlan == router_database[x][0]):
@@ -76,18 +76,21 @@ class Detection:
         router_database = []
         router_database = self.get_router_database()
         vlan = "1"
-        for x in range(len(router_database)):
-            for y in range(4):
-                if(vlan == router_database[x][0]):
-                    if(str(message_details.get_source_link_layer_address)!= router_database[x][1]):
-                        print "Rogue Neighbor Advertisement Detected"
-                        return "true"
+        if message_details.ndp_message_number == 135:
+            for x in range(len(router_database)):
+                for y in range(4):
+                    if(vlan == router_database[x][0]):
+                        if(str(message_details.get_source_link_layer_address)!= router_database[x][1]):
+                            print "Rogue Neighbor Advertisement Detected"
+                            return "true"
+                        else:
+                            print "Legitimate Neighbor Advertisement Detected"
+                            return "false"
                     else:
-                        print "Legitimate Neighbor Advertisement Detected"
-                        return "false"
-                else:
-                    print "Incorrect Vlan, Checking other VLANs ..."
-        return "false"
+                        print "Incorrect Vlan, Checking other VLANs ..."
+            return "false"
+        else:
+            return "Not NS"
 
     def update_attempt_database(self,message_details):
         #This function basically adds entry to the DAD Attempt database
