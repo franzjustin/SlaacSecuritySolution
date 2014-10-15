@@ -103,15 +103,22 @@ class DataRead:
                            target_address = target_address[:-1]
                            target_link_layer_address="n/a"
                            source_link_layer_address="n/a"
-                       elif str(ndp_message_number)== "136":
+                       elif str(ndp_message_number)== "136": #Neighbor Advertisement
                            if str(contains_source)=="true":
                                 for x in range(6):
                                     target_link_layer_address = target_link_layer_address + packetHex[1+offset+x][2:].zfill(2) + ":"
                            target_link_layer_address=target_link_layer_address[:-1]
                            source_link_layer_address="n/a"
-                           target_address="n/a"
-                           print target_link_layer_address
+                           #print packetHex
+                           #print target_link_layer_address
+                           for x in range(16):
+                                target_address = target_address + packetHex[x][2:].zfill(2)
 
+                                if (x > 0):
+                                    if x% 2 != 0:
+                                        target_address = target_address +":"
+                           target_address = target_address[:-1]
+                           #print target_address
 
 
 

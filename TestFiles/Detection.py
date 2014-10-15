@@ -23,8 +23,8 @@ class Detection:
         if checkflag:
             router_database = open('../Database/Router_Database','r')
             for line in router_database:
-                templine = line.split(' ',2)
-                templine[1] = templine[1][:-1]
+                templine = line.split(' ',3)
+                templine[2] = templine[2][:-1]
                 temp_database.append(templine)
             #router_database.close()
         else:
@@ -80,12 +80,17 @@ class Detection:
             for x in range(len(router_database)):
                 for y in range(4):
                     if(vlan == router_database[x][0]):
-                        if(str(message_details.get_source_link_layer_address)!= router_database[x][1]):
-                            print "Rogue Neighbor Advertisement Detected"
-                            return "true"
+                        print router_database[x][2]
+                        print message_details.get_target_address()
+                        if str(router_database[x][2]) == str(message_details.get_target_address()):
+                            if(str(message_details.get_source_link_layer_address)!= router_database[x][1]):
+                                print "Rogue Neighbor Advertisement Detected"
+                                return "true"
+                            else:
+                                print "Legitimate Neighbor Advertisement Detected"
+                                return "false"
                         else:
-                            print "Legitimate Neighbor Advertisement Detected"
-                            return "false"
+                            print "Valid Neighbor Advertisement"
                     else:
                         print "Incorrect Vlan, Checking other VLANs ..."
             return "false"
