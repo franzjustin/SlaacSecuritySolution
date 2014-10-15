@@ -39,9 +39,6 @@ def getInterface():
 
         ifs = findalldevs()
 
-
-
-
     # No interfaces available, abort.
     if 0 == len(ifs):
         print "You don't have enough permissions to open any interface on this system."

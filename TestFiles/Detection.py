@@ -47,21 +47,23 @@ class Detection:
         vlan = "1"
         router_database = self.get_router_database()
         #print "Checking Last Hop Router Attack"
-        for x in range(len(router_database)):
-            for y in range(4):
-                if(vlan == router_database[x][0]):
-                    if(str(message_details.get_source_link_layer_address()) != router_database[x][1]):
-                        print "Rogue Router Advertisement Detected"
-                        return "true"
+        if message_details.ndp_message_number == 135:
+            for x in range(len(router_database)):
+                for y in range(4):
+                    if(vlan == router_database[x][0]):
+                        if(str(message_details.get_source_link_layer_address()) != router_database[x][1]):
+                            print "Rogue Router Advertisement Detected"
+                            return "true"
+                        else:
+                            print "Legitimate Router Advertisement Detected"
+                            return "false"
                     else:
-                        print "Legitimate Router Advertisement Detected"
-                        return "false"
-                else:
-                    print "Incorrect Vlan, Checking other VLANs ..."
+                        print "Incorrect Vlan, Checking other VLANs ..."
 
 
-        return "false"
-
+            return "false"
+        else:
+            return "Not RA"
 
     def detect_neighbor_spoofing(self,message_details):
         #This method detects the if the router detects any Neighbor Spoofing Attack

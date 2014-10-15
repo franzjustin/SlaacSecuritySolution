@@ -94,8 +94,7 @@ class DataRead:
 
                        elif str(ndp_message_number) == "135": #Neighbor Solicitation
                            for x in range(16):
-                                target_address = target_address + packetHex[x][2:].zfill(2)
-
+                                target_address = target_address + packetHex[x][2:].zfill(2) 
                                 if (x > 0):
                                     if x% 2 != 0:
                                         target_address = target_address +":"
@@ -119,8 +118,6 @@ class DataRead:
                                         target_address = target_address +":"
                            target_address = target_address[:-1]
                            #print target_address
-
-
 
                        message_details =  SLAAC_Message.SLAAC_Message(ndp_message_number,source_link_layer_address, ip_source_address, ip_destination_address, source_MAC_address_final, destination_MAC_address_final,target_address,target_link_layer_address)
 
