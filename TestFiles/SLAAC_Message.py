@@ -16,6 +16,7 @@ class SLAAC_Message:
     # Creates method called lastname
     def get_target_link_layer_address(self):
         return self.target_link_layer_address
+
     def get_target_address(self):
         return self.target_address
 
