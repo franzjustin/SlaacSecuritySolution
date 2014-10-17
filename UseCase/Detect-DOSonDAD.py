@@ -10,5 +10,6 @@ detectRA = Detection()
 for item in dataRead:
     x = 1
    # print "Entry Time of Packet: "+str(datetime.now())
-   # detectRA.detect_dos_dad(message_details)
+    detectRA.detect_dos_dad(item)
    # print "End"
+    print str(item.get_source_link_layer_address()) +"  "+ str(item.get_ndp_message_number())

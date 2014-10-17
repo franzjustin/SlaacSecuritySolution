@@ -111,14 +111,11 @@ class Detection:
         #add get vlan somewhere in message details later on
         if checkflag :
             #print "Start DAD_Attempt File"
-            if message_details != "":
                 f = open('../Database/Dad_Attempt','a')
-                message = str(vlan) + " " + str(message_details.get_target_address()) +" "+ str(datetime.now()) + '\n'
+                message = str(vlan) + " " + str(message_details.target_address) +" "+ str(datetime.now()) + '\n'
                 #print message
                 f.write(message)
                 f.close()
-            else:
-                print "End"
 
 
     def check_old_attempt(self):
@@ -144,7 +141,7 @@ class Detection:
             #print "attempt entry index0 %s"%attempt_entry[0]
             #print "attempt entry index1 %s"%attempt_entry[1]
             #print "attempt entry index2 %s"%attempt_entry[2]
-            if len(attempt_count) ==0:
+            if len(attempt_count) == 0:
                 #print "empty"
                 new_entry = [1,str(attempt_entry[1])]
                 attempt_count.append(new_entry)
@@ -204,7 +201,7 @@ class Detection:
         # I think the total seconds allowable should be minimized to at the minimum 1 or 2 seconds
         #DO NOT DELETE THIS LINES :)
         #must check first and last attempt of each address
-        if message_details.ndp_message_number == 135:
+        if message_details.ndp_message_number == 135 or message_details.source_link_layer_address != 0:
             self.update_attempt_database(message_details)
             self.check_old_attempt()
             address_list = []

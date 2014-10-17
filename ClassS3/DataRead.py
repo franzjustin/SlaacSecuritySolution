@@ -159,7 +159,6 @@ class DataRead:
                     #print "Target Link Layer Address %s" % message_details.get_target_link_layer_address()
                     #print "----------------END----------------"
                     listOfMessages.append(message_details)
-                    print str(message_details.get_source_link_layer_address()) +"  "+ str(message_details.get_ndp_message_number())
             except:
                 print "Packet Discarded"
 
