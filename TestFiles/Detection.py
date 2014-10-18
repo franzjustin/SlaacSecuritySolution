@@ -18,7 +18,7 @@ class Detection:
         return flag
     def get_router_database(self):
         checkflag = self.check_for_database("../Database/Router_Database")
-        print checkflag
+        #print checkflag
         temp_database = []
         if checkflag:
             router_database = open('../Database/Router_Database','r')
@@ -30,7 +30,7 @@ class Detection:
         else:
             print "No such file detected"
             #must add else here with error message
-            print len(temp_database)
+            #print len(temp_database)
             #print temp_database
         return temp_database
 
@@ -78,23 +78,23 @@ class Detection:
         router_database = []
         router_database = self.get_router_database()
         vlan = "1"
-        if message_details.ndp_message_number == 135:
+        if message_details.ndp_message_number == 136:
             for x in range(len(router_database)):
-                for y in range(4):
-                    if(vlan == router_database[x][0]):
-                        print router_database[x][2]
-                        print message_details.get_target_address()
-                        if str(router_database[x][2]) == str(message_details.get_target_address()):
-                            if(str(message_details.get_source_link_layer_address)!= router_database[x][1]):
-                                print "Rogue Neighbor Advertisement Detected"
-                                return "true"
-                            else:
-                                print "Legitimate Neighbor Advertisement Detected"
-                                return "false"
+#                for y in range(4):
+                if(vlan == router_database[x][0]):
+                    #print router_database[x][1]
+                    #print message_details.get_target_address()
+                    if str(router_database[x][2]) != str(message_details.get_target_address()):
+                        if(str(message_details.target_link_layer_address)!= router_database[x][1]):
+                            print "Rogue Neighbor Advertisement Detected - at " + str(datetime.now())
+                            #return "true"
                         else:
-                            print "Valid Neighbor Advertisement"
+                            print "Legitimate Neighbor Advertisement Detected"
+                            #return "false"
                     else:
-                        print "Incorrect Vlan, Checking other VLANs ..."
+                        print "Valid Neighbor Advertisement"
+                else:
+                    print "Incorrect Vlan, Checking other VLANs ..."
             return "false"
         else:
             return "Not NS"

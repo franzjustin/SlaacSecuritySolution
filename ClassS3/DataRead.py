@@ -70,7 +70,7 @@ class DataRead:
                         temp_hex = hex(temp_decimal)
                         destination_MAC_address_final = destination_MAC_address_final + temp_hex[2:] + ":"
 
-                    source_MAC_address_final = source_MAC_address_final[:-1]
+                    source_MAC_address_final = source_MAC_address_final[:-1].zfill(2)
                     destination_MAC_address_final = destination_MAC_address_final[:-1]
                     target_link_layer_address = ""
 
