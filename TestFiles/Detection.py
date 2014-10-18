@@ -130,37 +130,39 @@ class Detection:
         num_lines = sum(1 for line in open('../Database/Dad_Attempt'))
         f = BackwardsReader.BackwardsReader('../Database/Dad_Attempt')
         x =0
-        y=0
+        y=1
         temp_list = [] #array to be used for new list
         attempt_count = []
         attempt_entry = []
-        for x in range(num_lines):
+        for x in range(3):
             attempt = f.readline()
-            found = "false"
             attempt_entry = attempt.split(' ',2)
-            #print "attempt entry index0 %s"%attempt_entry[0]
-            #print "attempt entry index1 %s"%attempt_entry[1]
-            #print "attempt entry index2 %s"%attempt_entry[2]
-            if len(attempt_count) == 0:
-                #print "empty"
-                new_entry = [1,str(attempt_entry[1])]
-                attempt_count.append(new_entry)
-                temp_list.append(attempt)
-            else:
-                for y in range(len(attempt_count)):
-                    if str(attempt_count[y][1]) == str(attempt_entry[1]):
-                        #print "count incremented"
-                        attempt_count[y][0] = attempt_count[y][0] + 1
-                        #print "increment successfull"
-                        found = "true"
-                        if attempt_count[y][0] <6:
-                            temp_list.append(attempt)
+            print "attempt entry index0 %s"%attempt_entry[0]
+            print "attempt entry index1 %s"%attempt_entry[1]
+            print "attempt entry index2 %s"%attempt_entry[2]
+            temp_list.append(attempt)
+        #print temp_list
 
-                if str(found) =="false" :
+            #if len(attempt_count) ==0:
+            #    #print "empty"
+            #    new_entry = [1,str(attempt_entry[1])]
+            #    attempt_count.append(new_entry)
+            #    temp_list.append(attempt)
+            #else:
+            #    for y in range(len(attempt_count)):
+            #        if str(attempt_count[y][1]) == str(attempt_entry[1]):
+            #            #print "count incremented"
+            #            attempt_count[y][0] = attempt_count[y][0] + 1
+            #            #print "increment successfull"
+            #            found = "true"
+            #            if attempt_count[y][0] <6:
+            #                temp_list.append(attempt)
+
+            #    if str(found) =="false" :
                     #print "new entry found"
-                    new_entry = [1,str(attempt_entry[1])]
-                    attempt_count.append(new_entry)
-                    temp_list.append(attempt)
+            #        new_entry = [1,str(attempt_entry[1])]
+            #        attempt_count.append(new_entry)
+            #        temp_list.append(attempt)
 
         f = open('../Database/Updated_DAD_attempt','w')
         f.writelines(temp_list)
@@ -170,7 +172,7 @@ class Detection:
         #FORGOT WHAT I INTENDED THIS FOR
         #MUST BE EXTRA CODE
         checkflag = self.check_for_database('Dad_Attempt')
-        
+
         #print checkflag
         #templine = []
         #temp_database = []
@@ -201,65 +203,100 @@ class Detection:
         # I think the total seconds allowable should be minimized to at the minimum 1 or 2 seconds
         #DO NOT DELETE THIS LINES :)
         #must check first and last attempt of each address
-        if message_details.ndp_message_number == 135 or message_details.source_link_layer_address != 0:
-            self.update_attempt_database(message_details)
-            self.check_old_attempt()
-            address_list = []
-            dad_attempt_database = open('../Database/Updated_DAD_attempt')
-            for line in dad_attempt_database:
-                #print "------Start---------"
-                #print line
-                address_entry = line.split(' ', 2)
-                found = "false"
-                #print first
-                if len(address_list) == 0:
-                    #print "Entering first "
-                    new_entry = [str(address_entry[1]),str(address_entry[2]),str(address_entry[1]),str(address_entry[2])]
-                    address_list.append(new_entry)
-                else:
-                    for x in range(len(address_list)):
-                        if str(address_list[x][0]) == str(address_entry[1]):
-                            address_list[x][2] = str(address_entry[1])
-                            address_list[x][3] = str(address_entry[2])
-                            #print "match found"
-                            found = "DOS on DAD Detected in Network"
-                            #print datetime.now()
-                    if found=="false":
-                        new_entry = [str(address_entry[1]),str(address_entry[2]),str(address_entry[1]),str(address_entry[2])]
-                        address_list.append(new_entry)
-                        #print "new entry"
-            dad_attempt_database.close()
+        if message_details.ndp_message_number == 135:
+            if str(message_details.get_ip_source_address())=="::":
+                self.update_attempt_database(message_details)
+                self.check_old_attempt()
+                address_list = []
+                dad_attempt_database = open('../Database/Updated_DAD_attempt')
+                for line in dad_attempt_database:
+                    address_entry = line.split(' ',2)
+                    address_list.append(address_entry)
+                    #print "------Start---------"
+                    #print line
+                    #address_entry = line.split(' ', 2)
+                    #found = "false"
+                    #print first
+                    #if len(address_list) == 0:
+                    #    #print "Entering first "
+                    #    new_entry = [str(address_entry[1]),str(address_entry[2]),str(address_entry[1]),str(address_entry[2])]
+                    #    address_list.append(new_entry)
+                    #else:
+                    #    for x in range(len(address_list)):
+                    #        if str(address_list[x][0]) == str(address_entry[1]):
+                    #            address_list[x][2] = str(address_entry[1])
+                    #            address_list[x][3] = str(address_entry[2])
+                    #            #print "match found"
+                    #            found = "DOS on DAD Detected in Network"
+                    #            #print datetime.now()
+                    #    if found=="false":
+                    #        new_entry = [str(address_entry[1]),str(address_entry[2]),str(address_entry[1]),str(address_entry[2])]
+                    #        address_list.append(new_entry)
+                    #        #print "new entry"
 
-            #for z in range(len(address_list)):
-            #    print address_list[z]
-            #print "*****************************************************************************"
-            for q in range(len(address_list)):
-                date = str(address_list[q][1]).split()
-                new_date = date[0] + " " + date[1]
-                format = "%Y-%m-%d %H:%M:%S.%f"
-                date_minuend = datetime.strptime(new_date,format)
-                date = str(address_list[q][3]).split()
-                new_date = date[0] + " " + date[1]
-                date_subtrahend = datetime.strptime(new_date,format)
-                date_difference = date_minuend - date_subtrahend
-                total_difference_seconds = date_difference.total_seconds()
-                #print "minuend"
-                #print date_minuend
-                #print "subtrahend"
-                #print date_subtrahend
-                #print "difference"
-                #print date_difference
-                #print "total seconds"
-                #print total_difference_seconds
-                if total_difference_seconds<5:
-                    print "DOS on DAD Attack Detected " + str(total_difference_seconds)
-                else:
-                    x = 1
-                return total_difference_seconds
+                dad_attempt_database.close()
+                #date_sum = datetime.strptime("00-00-00 00:00:00.00000","%Y-%m-%d %H:%M:%S.%f" )
+                #for z in range(len(address_list)):
+                #    print address_list[z]
+                #print "*****************************************************************************"
 
+                #time_period = datetime.strptime("00-00-00 00:00")
+                #trytry = timedelta()
+                #print trytry
 
+                date_half = str(address_list[0][2]).split()
+                #print address_list[0][2]
+                date = date_half[0].split("-",3)
+                #print date
+                time = date_half[1].split(":",3)
+                microseconds = time[2].split(".",2)
+                #print time
+                #print microseconds
+                date_addend1 = timedelta(int(date[2]),int(microseconds[0]),int(microseconds[1]),0,int(time[1]),int(time[0]),0)
+                #print date_addend1.total_seconds()
 
+                date_half = str(address_list[len(address_list)-1][2]).split()
+                #print address_list[len(address_list)-1][2]
+                date = date_half[0].split("-",3)
+                #print date
+                time = date_half[1].split(":",3)
+                microseconds = time[2].split(".",2)
+                #print time
+                #print microseconds
+                date_addend2 = timedelta(int(date[2]),int(microseconds[0]),int(microseconds[1]),0,int(time[1]),int(time[0]),0)
+                #print date_addend2.total_seconds()
 
+                difference = date_addend1 - date_addend2
+                print difference.total_seconds()
+
+                    #new_date    = date[0] + " " + date[1]
+
+                    #format = "%Y-%m-%d %H:%M:%S.%f"
+                    #date_addend = datetime.strptime(new_date,format)
+                    #qwerty = date_addend +qwerty
+                    #print date_addend
+                    #total_sec = date_addend.total_seconds()
+                    #date_sum = date_sum + date_addend
+
+                #print date_sum.total_seconds()
+                    #date = str(address_list[q][2]).split()
+                    #new_date = date[0] + " " + date[1]
+                    #date_subtrahend = datetime.strptime(new_date,format)
+                    #date_difference = date_minuend - date_subtrahend
+                    #total_difference_seconds = date_difference.total_seconds()
+                    #print "minuend"
+                    #print date_minuend
+                    #print "subtrahend"
+                    #print date_subtrahend
+                    #print "difference"
+                    #print date_difference
+                    #print "total seconds"
+                    #print total_difference_seconds
+                    #if total_difference_seconds<5:
+                    #    print "DOS on DAD Attack Detected " + str(total_difference_seconds)
+                    #else:
+                    #    x = 1
+                    #return total_difference_seconds
 
 
 
