@@ -140,9 +140,9 @@ class Detection:
         for x in range(3):
             attempt = f.readline()
             attempt_entry = attempt.split(' ',2)
-            print "attempt entry index0 %s"%attempt_entry[0]
-            print "attempt entry index1 %s"%attempt_entry[1]
-            print "attempt entry index2 %s"%attempt_entry[2]
+            #print "attempt entry index0 %s"%attempt_entry[0]
+            #print "attempt entry index1 %s"%attempt_entry[1]
+            #print "attempt entry index2 %s"%attempt_entry[2]
             temp_list.append(attempt)
         #print temp_list
 
@@ -207,7 +207,9 @@ class Detection:
         #DO NOT DELETE THIS LINES :)
         #must check first and last attempt of each address
         if message_details.ndp_message_number == 135:
+            #print '********************************************************************* - '+ message_details.get_ip_source_address()
             if str(message_details.get_ip_source_address())=="::":
+                print '*********************************************************************'
                 self.update_attempt_database(message_details)
                 self.check_old_attempt()
                 address_list = []
@@ -270,7 +272,8 @@ class Detection:
                 #print date_addend2.total_seconds()
 
                 difference = date_addend1 - date_addend2
-                print difference.total_seconds()
+                print difference
+                #print difference.total_seconds()
 
                     #new_date    = date[0] + " " + date[1]
 
