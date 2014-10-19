@@ -1,54 +1,73 @@
+import pcapy
+from pcapy import findalldevs
+from TestFiles.Detection import Detection
+from TestFiles import SLAAC_Message
+from impacket.ImpactDecoder import *
+from ClassS3 import DataRead
 
-from select import select
-import socket
-import sys
 
-import impacket
-from impacket import ImpactDecoder
+def getInterface():
+    ifs = findalldevs()
+    if 0 == len(ifs):
+        print "You don't have enough permissions to open any interface on this system."
+        sys.exit(1)
+     
+    # Only one interface available, use it.
+    elif 1 == len(ifs):
+        print 'Only one interface present, defaulting to it.'
+        return ifs[0]
+ 
+    # Ask the user to choose an interface from the list.
+    count = 0
+    for iface in ifs:
+        print '%i - %s' % (count, iface)
+        count += 1
+    idx = int(raw_input('Please select an interface: '))
+ 
+    return ifs[idx]
+     
+     
+     
+     
+    #list all the network devices
+    
+pcapy.findalldevs()
+max_bytes = 1024
+promiscuous = False
+read_timeout = 100 # in milliseconds
+pc = pcapy.open_live(getInterface(), max_bytes, promiscuous, read_timeout)
+pc.setfilter('tcp')
+     
+    # callback for received packets
+     
+def recv_pkts(hdr, data):
+    try:
+        packet = EthDecoder().decode(data)
+        print data
+        readPacket = DataRead.DataRead('../Packets/RouterAdvertismentAttack-Test2.s0i1.pcap',data)
+        detectRA = Detection()
+        packetRed = readPacket.getSlaacSinglePacket()
+        print readPacket.ndp_message_number
+        detectRA.detect_rogue_advertisement(packetRed)
+        print "RA Attack Detected"
+    except:
+        x = 1
+    #print packet.get_ether_type()
+    #print packet.get_header_size()
+    #print packet.get_ether_dhost()
+    #print packet.get_ether_dhost()
+    #print packet.get_size()
+    #print packet.get_data_as_string()
+    #print packet.get_buffer_as_string()
+    #print packet.get_bytes()
+    #print packet.child()
+    #packetChild = packet.child().child().child()
+    #packet21 = ICMP6Decoder().decode(packetChild)
+    #filename = "lol"
+    #dumper = pc.dump_open(filename)
+    #dumper.dump(hdr, data)
+    #print dumper
+      
+packet_limit = -1 # infinite
+pc.loop(packet_limit, recv_pkts) # capture packets
 
-DEFAULT_PROTOCOLS = ('icmp', 'tcp', 'udp')
-
-if len(sys.argv) == 1:
-	toListen = DEFAULT_PROTOCOLS
-	print "Using default set of protocols. A list of protocols can be supplied from the command line, eg.: %s <proto1> [proto2] ..." % sys.argv[0]
-else:
-	toListen = sys.argv[1:]
-
-# Open one socket for each specified protocol.
-# A special option is set on the socket so that IP headers are included with
-# the returned data.
-sockets = []
-for protocol in toListen:
-	try:
-		protocol_num = socket.getprotobyname(protocol)
-	except socket.error:
-		print "Ignoring unknown protocol:", protocol
-		toListen.remove(protocol)
-		continue
-	s = socket.socket(socket.AF_INET, socket.SOCK_RAW, protocol_num)
-	s.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
-	sockets.append(s)
-
-if 0 == len(toListen):
-	print "There are no protocols available."
-	sys.exit(0)
-
-print "Listening on protocols:", toListen
-
-# Instantiate an IP packets decoder.
-# As all the packets include their IP header, that decoder only is enough.
-decoder = ImpactDecoder.IPDecoder()
-
-while len(sockets) > 0:
-	# Wait for an incoming packet on any socket.
-	ready = select(sockets, [], [])[0]
-	for s in ready:
-		packet = s.recvfrom(4096)[0]
-		if 0 == len(packet):
-			# Socket remotely closed. Discard it.
-			sockets.remove(s)
-			s.close()
-		else:
-			# Packet received. Decode and display it.
-			packet = decoder.decode(packet)
-			print packet

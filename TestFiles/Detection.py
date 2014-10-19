@@ -1,5 +1,6 @@
+from decimal import Decimal
 import os.path
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 
 
@@ -46,21 +47,23 @@ class Detection:
         y=0
         vlan = "1"
         router_database = self.get_router_database()
-        #print "Checking Last Hop Router Attack"
-        if message_details.ndp_message_number == 135:
+        if message_details.ndp_message_number == 134:
             for x in range(len(router_database)):
-                for y in range(4):
-                    if(vlan == router_database[x][0]):
-                        if(str(message_details.get_source_link_layer_address()) != router_database[x][1]):
-                            print "Rogue Router Advertisement Detected"
-                            return "true"
-                        else:
-                            print "Legitimate Router Advertisement Detected"
-                            return "false"
+                if vlan == router_database[x][0]:
+                    if str(message_details.get_source_link_layer_address()) != router_database[x][1]:
+                        print "Rogue Router Advertisement Detected - " + message_details.get_source_link_layer_address()
+                        #return "true"
+                        test_open = open("../TestFiles/AfterDetectionLastHop",'a')
+                        test_start = datetime.now()
+                        sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f")))/1000000
+                        test_open.write(str(sum))
+                        test_open.write('\n')
+                        test_open.close()
                     else:
-                        print "Incorrect Vlan, Checking other VLANs ..."
-
-
+                        print "Legitimate Router Advertisement Detected"
+                        #return "false"
+                else:
+                    print "Incorrect VLAN, Checking other VLANs ..."
             return "false"
         else:
             return "Not RA"
