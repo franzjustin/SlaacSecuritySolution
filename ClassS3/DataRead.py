@@ -5,6 +5,7 @@ from impacket.ImpactDecoder import EthDecoder, ICMP6Decoder, LinuxSLLDecoder
 from TestFiles import SLAAC_Message
 from TestFiles.Detection import Detection
 import dpkt
+import array
 
 #  print  LinuxSLLDecoder().decode(buf).child().child().child()
 class DataRead:
@@ -65,8 +66,6 @@ class DataRead:
                     source_MAC_address_final = ""
                     destination_MAC_address_final = ""
                     x = 0
-                    #print "****  **********start of packet***************"
-                    # print ethChild2.child()
 
                     for x in range(6):
                         temp_decimal = source_MAC_address[x]
@@ -128,7 +127,7 @@ class DataRead:
                             source_link_layer_address = "n/a"
 
                     elif str(ndp_message_number) == "136":  #Neighbor Advertisement
-                        if str(contains_source) == "true-target":
+                        if str(contains_source) == "true-target" and hex(ethChild2.child().get_bytes()[0:1][0]) == "0xa0":
                             for x in range(6):
                                 target_link_layer_address = target_link_layer_address + packetHex[1 + offset + x][
                                                                                         2:].zfill(2) + ":"
