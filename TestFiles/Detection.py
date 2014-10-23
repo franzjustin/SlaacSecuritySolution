@@ -270,7 +270,8 @@ class Detection:
                 #print microseconds
                 date_addend2 = timedelta(int(date[2]),int(microseconds[0]),int(microseconds[1]),0,int(time[1]),int(time[0]),0)
                 #print date_addend2.total_seconds()
-
+                print date_addend1
+                print date_addend2
                 difference = date_addend1 - date_addend2
                 print difference
                 #print difference.total_seconds()
@@ -304,6 +305,12 @@ class Detection:
                     #    x = 1
                     #return total_difference_seconds
 
+                test_open = open("../TestFiles/AfterDetectionLastHop",'a')
+                test_start = datetime.now()
+                sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f")))/1000000
+                test_open.write(str(sum))
+                test_open.write('\n')
+                test_open.close()
 
 
 
