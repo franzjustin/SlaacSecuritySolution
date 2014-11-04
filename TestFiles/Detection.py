@@ -1,6 +1,7 @@
-from decimal import Decimal
 import os.path
-from datetime import datetime, timedelta
+from datetime import datetime
+from datetime import timedelta
+from decimal import *
 import time
 
 
@@ -19,7 +20,7 @@ class Detection:
         return flag
     def get_router_database(self):
         checkflag = self.check_for_database("../Database/Router_Database")
-        #print checkflag
+        print checkflag
         temp_database = []
         if checkflag:
             router_database = open('../Database/Router_Database','r')
@@ -31,7 +32,7 @@ class Detection:
         else:
             print "No such file detected"
             #must add else here with error message
-            #print len(temp_database)
+            print len(temp_database)
             #print temp_database
         return temp_database
 
@@ -47,23 +48,21 @@ class Detection:
         y=0
         vlan = "1"
         router_database = self.get_router_database()
-        if message_details.ndp_message_number == 134:
+        #print "Checking Last Hop Router Attack"
+        if message_details.ndp_message_number == 135:
             for x in range(len(router_database)):
-                if vlan == router_database[x][0]:
-                    if str(message_details.get_source_link_layer_address()) != router_database[x][1]:
-                        print "Rogue Router Advertisement Detected - " + message_details.get_source_link_layer_address()
-                        #return "true"
-                        test_open = open("../TestFiles/AfterDetectionLastHop",'a')
-                        test_start = datetime.now()
-                        sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f")))/1000000
-                        test_open.write(str(sum))
-                        test_open.write('\n')
-                        test_open.close()
+                for y in range(4):
+                    if(vlan == router_database[x][0]):
+                        if(str(message_details.get_source_link_layer_address()) != router_database[x][1]):
+                            print "Rogue Router Advertisement Detected"
+                            return "true"
+                        else:
+                            print "Legitimate Router Advertisement Detected"
+                            return "false"
                     else:
-                        print "Legitimate Router Advertisement Detected"
-                        #return "false"
-                else:
-                    print "Incorrect VLAN, Checking other VLANs ..."
+                        print "Incorrect Vlan, Checking other VLANs ..."
+
+
             return "false"
         else:
             return "Not RA"
@@ -83,25 +82,32 @@ class Detection:
         vlan = "1"
         if message_details.ndp_message_number == 136:
             for x in range(len(router_database)):
-#                for y in range(4):
-                if(vlan == router_database[x][0]):
-                    #print router_database[x][1]
-                    #print message_details.get_target_address()
-                    if str(router_database[x][2]) != str(message_details.get_target_address()):
-                        if(str(message_details.target_link_layer_address)!= router_database[x][1]):
-                            print "Rogue Neighbor Advertisement Detected - at " + str(datetime.now())
-                            #return "true"
+                for y in range(4):
+                    if(vlan == router_database[x][0]):
+                        print router_database[x][2]
+                        print message_details.get_target_address()
+                        if str(router_database[x][2]) == str(message_details.get_target_address()):
+                            if(str(message_details.get_source_link_layer_address)!= router_database[x][1]):
+                                print "Rogue Neighbor Advertisement Detected"
+                                #return "true"
+                            else:
+                                print "Legitimate Neighbor Advertisement Detected"
+                                #return "false"
                         else:
-                            print "Legitimate Neighbor Advertisement Detected"
-                            #return "false"
+                            print "Valid Neighbor Advertisement"
                     else:
-                        print "Valid Neighbor Advertisement"
-                else:
-                    print "Incorrect Vlan, Checking other VLANs ..."
-            return "false"
+                        print "Incorrect Vlan, Checking other VLANs ..."
+            #return "false"
         else:
-            return "Not NS"
-
+            print "Not NS"
+        test_openb = open("../TestFiles/test2b",'a')
+        test_startb = datetime.now()
+        sum =  Decimal(test_startb.strftime(("%s"))) + Decimal(test_startb.strftime(("%f")))/1000000
+        test_openb.write(str(sum))
+        test_openb.write('\n')
+        test_openb.close()
+        print "Packet Process Ended"
+        print datetime.now()
     def update_attempt_database(self,message_details):
         #This function basically adds entry to the DAD Attempt database
         #it uses the details from the message_details sent from the detect dos in dad func
@@ -115,7 +121,7 @@ class Detection:
         if checkflag :
             #print "Start DAD_Attempt File"
                 f = open('../Database/Dad_Attempt','a')
-                message = str(vlan) + " " + str(message_details.target_address) +" "+ str(datetime.now()) + '\n'
+                message = str(vlan) + " " + str(message_details.get_source_MAC_address()) +" "+ str(datetime.now()) + '\n'
                 #print message
                 f.write(message)
                 f.close()
@@ -137,17 +143,26 @@ class Detection:
         temp_list = [] #array to be used for new list
         attempt_count = []
         attempt_entry = []
-        for x in range(3):
+        for x in range(num_lines):
             attempt = f.readline()
             attempt_entry = attempt.split(' ',2)
-            #print "attempt entry index0 %s"%attempt_entry[0]
-            #print "attempt entry index1 %s"%attempt_entry[1]
-            #print "attempt entry index2 %s"%attempt_entry[2]
-            temp_list.append(attempt)
-        #print temp_list
+            #print attempt_entry[2][:-2]
+            print "attempt entry index0 %s"%attempt_entry[0]
+            print "attempt entry index1 %s"%attempt_entry[1]
+            print "attempt entry index2 %s"%attempt_entry[2]
+            arrival_date = datetime.strptime(attempt_entry[2][:-1],"%Y-%m-%d %H:%M:%S.%f" )
+            check_date = datetime.now()
+            subtrahend = Decimal( arrival_date.strftime(("%s"))) + Decimal(arrival_date.strftime(("%f")))/1000000
+            minuend = Decimal(check_date.strftime(("%s"))) + Decimal(check_date.strftime(("%f")))/1000000
+            difference = minuend - subtrahend
+            time_limit =  Decimal("1.00")
+            if difference < time_limit:
+                temp_list.append(attempt)
+
+
 
             #if len(attempt_count) ==0:
-            #    #print "empty"
+                #print "empty"
             #    new_entry = [1,str(attempt_entry[1])]
             #    attempt_count.append(new_entry)
             #    temp_list.append(attempt)
@@ -206,17 +221,60 @@ class Detection:
         # I think the total seconds allowable should be minimized to at the minimum 1 or 2 seconds
         #DO NOT DELETE THIS LINES :)
         #must check first and last attempt of each address
+
         if message_details.ndp_message_number == 135:
             #print '********************************************************************* - '+ message_details.get_ip_source_address()
             if str(message_details.get_ip_source_address())=="::":
-                print '*********************************************************************'
-                self.update_attempt_database(message_details)
-                self.check_old_attempt()
+                #print '*********************************************************************'
+                #self.update_attempt_database(message_details)
+                #self.check_old_attempt()
                 address_list = []
                 dad_attempt_database = open('../Database/Updated_DAD_attempt')
                 for line in dad_attempt_database:
+                    #print line
+                    found = "false"
                     address_entry = line.split(' ',2)
-                    address_list.append(address_entry)
+                    address_entry[2]=address_entry[2][:-1]
+                    #print address_entry
+                    #bilaangin if how many instance
+                    #print address_entry
+                    if len(address_list) ==0:
+                        new_entry = [str(address_entry[1]),str(address_entry[2]),str(address_entry[1]),str(address_entry[2]),1]
+                        #print new_entry
+                        address_list.append(new_entry)
+                    else:
+                        for x in range(len(address_list)):
+                            if address_list[x][0] == address_entry[1]:
+                                address_list[x][2] = str(address_entry[1])
+                                address_list[x][3] = str(address_entry[2])
+                                address_list[x][4] = address_list[x][4] + 1
+                                found = "true"
+                        if found == "false":
+                            new_entry = [str(address_entry[1]),str(address_entry[2]),str(address_entry[1]),str(address_entry[2]),1]
+                            address_list.append(new_entry)
+                print address_list
+                for address_updated in address_list:
+                    #print address_updated[0]
+                    datetime_minuend = datetime.strptime(str(address_updated[1]),"%Y-%m-%d %H:%M:%S.%f")
+                    datetime_subtrahend = datetime.strptime(str(address_updated[3]),"%Y-%m-%d %H:%M:%S.%f")
+                    #print datetime_minuend
+                    #print datetime_subtrahend
+                    sum_1 = Decimal(datetime_minuend.strftime("%s")) + Decimal(datetime_subtrahend.strftime("%f"))/1000000
+                    sum_2 = Decimal(datetime_subtrahend.strftime("%s")) + Decimal(datetime_subtrahend.strftime("%f"))/1000000
+                    #print str(sum_1)
+                    #print str(sum_2)
+                    difference = sum_1 - sum_2
+                    #print difference
+                    if difference <= 1 and address_updated[4] > 2:
+                        print "DOS in DAD Detected"
+                    else:
+                        print "DAD Legitimate"
+
+                #print len(address_list)
+                #print address_list
+                #    address_list.append(address_entry)
+
+
                     #print "------Start---------"
                     #print line
                     #address_entry = line.split(' ', 2)
@@ -239,7 +297,9 @@ class Detection:
                     #        address_list.append(new_entry)
                     #        #print "new entry"
 
-                dad_attempt_database.close()
+                #dad_attempt_database.close()
+
+
                 #date_sum = datetime.strptime("00-00-00 00:00:00.00000","%Y-%m-%d %H:%M:%S.%f" )
                 #for z in range(len(address_list)):
                 #    print address_list[z]
@@ -248,32 +308,33 @@ class Detection:
                 #time_period = datetime.strptime("00-00-00 00:00")
                 #trytry = timedelta()
                 #print trytry
-
-                date_half = str(address_list[0][2]).split()
+                format = "%Y-%m-%d %H:%M:%S.%f"
                 #print address_list[0][2]
-                date = date_half[0].split("-",3)
-                #print date
-                time = date_half[1].split(":",3)
-                microseconds = time[2].split(".",2)
+                #date_half = str(address_list[0][2]).split()
+                ##print address_list[0][2]
+                #date = date_half[0].split("-",3)
+                ##print date
+                #time = date_half[1].split(":",3)
+                #microseconds = time[2].split(".",2)
                 #print time
                 #print microseconds
-                date_addend1 = timedelta(int(date[2]),int(microseconds[0]),int(microseconds[1]),0,int(time[1]),int(time[0]),0)
+                #date_addend1 = timedelta(int(date[2]),int(microseconds[0]),int(microseconds[1]),0,int(time[1]),int(time[0]),0)
                 #print date_addend1.total_seconds()
 
-                date_half = str(address_list[len(address_list)-1][2]).split()
+                #date_half = str(address_list[len(address_list)-1][2]).split()
                 #print address_list[len(address_list)-1][2]
-                date = date_half[0].split("-",3)
+                #date = date_half[0].split("-",3)
                 #print date
-                time = date_half[1].split(":",3)
-                microseconds = time[2].split(".",2)
+                #time = date_half[1].split(":",3)
+                #microseconds = time[2].split(".",2)
                 #print time
                 #print microseconds
-                date_addend2 = timedelta(int(date[2]),int(microseconds[0]),int(microseconds[1]),0,int(time[1]),int(time[0]),0)
+                #date_addend2 = timedelta(int(date[2]),int(microseconds[0]),int(microseconds[1]),0,int(time[1]),int(time[0]),0)
                 #print date_addend2.total_seconds()
-                print date_addend1
-                print date_addend2
-                difference = date_addend1 - date_addend2
-                print difference
+                #print date_addend1
+                #print date_addend2
+                #difference = date_addend1 - date_addend2
+                #print difference
                 #print difference.total_seconds()
 
                     #new_date    = date[0] + " " + date[1]

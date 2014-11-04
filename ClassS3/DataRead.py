@@ -3,6 +3,8 @@ from collections import deque
 from impacket import ICMP6
 from impacket.ImpactDecoder import EthDecoder, ICMP6Decoder, LinuxSLLDecoder
 from TestFiles import SLAAC_Message
+from datetime import datetime
+from decimal import *
 from TestFiles.Detection import Detection
 import dpkt
 
@@ -133,9 +135,7 @@ class DataRead:
                                 target_link_layer_address = target_link_layer_address + packetHex[1 + offset + x][
                                                                                         2:].zfill(2) + ":"
                             target_link_layer_address = target_link_layer_address[:-1]
-                            #print "*****************************************************************************************"
-                            #print target_link_layer_address
-                            #print "*****************************************************************************************"
+
                         else:
                             target_link_layer_address = "n/a"
 
