@@ -129,6 +129,11 @@ class DataRead:
                             source_link_layer_address = "n/a"
 
                     elif str(ndp_message_number) == "136":  #Neighbor Advertisement
+
+                        #print ethChild2.get_router_flag() #sample code to get router flag of NA
+                        router_flag = ethChild2.get_router_flag()
+                        #if router_flag == False:
+                        #   print "if else of flag worked"
                         if str(contains_source) == "true-target" and hex(ethChild2.child().get_bytes()[0:1][0]) == "0xa0":
                             for x in range(6):
                                 target_link_layer_address = target_link_layer_address + packetHex[1 + offset + x][
@@ -153,18 +158,32 @@ class DataRead:
                                                                   target_link_layer_address)
 
                     #detection_module.detect_rogue_advertisement(message_details)
-                    #print "-----------Packet Details----------"
-                    #print "NDP Message Type %s" % message_details.get_ndp_message_number()
-                    #print "Source Link Layer Address: %s" % message_details.get_source_link_layer_address()
-                    #print "Source IPv6 Address %s " % message_details.get_ip_source_address()
-                    #print "Destination IPv6 Address %s" % message_details.get_ip_destination_address()
-                    #print "Source MAC Address %s" % message_details.get_source_MAC_address()
-                    #print "Destination MAC Address %s" % message_details.get_destination_MAC_address()
-                    #print "Target Address %s" % message_details.get_target_address()
-                    #print "Target Link Layer Address %s" % message_details.get_target_link_layer_address()
-                    #print "----------------END----------------"
-                    listOfMessages.append(message_details)
-                    #print "sucess"
+                    print "-----------Packet Details----------"
+                    print "NDP Message Type %s" % message_details.get_ndp_message_number()
+                    print "Source Link Layer Address: %s" % message_details.get_source_link_layer_address()
+                    print "Source IPv6 Address %s " % message_details.get_ip_source_address()
+                    print "Destination IPv6 Address %s" % message_details.get_ip_destination_address()
+                    print "Source MAC Address %s" % message_details.get_source_MAC_address()
+                    print "Destination MAC Address %s" % message_details.get_destination_MAC_address()
+                    print "Target Address %s" % message_details.get_target_address()
+                    print "Target Link Layer Address %s" % message_details.get_target_link_layer_address()
+                    print "----------------END----------------"
+
+                    #detect_module = Detection()
+
+
+                    #if message_details.get_ndp_message_number()=="134": #Last Hop Router Attack
+                    #    detect_module.detect_rogue_advertisement(message_details)
+                    #elif message_details.get_ndp_message_number()=="135":#Dos in DAD
+                    #    detect_module.detect_dos_dad(message_details)
+                    #elif message_details.get_ndp_message_number()=="136": #Neigbor Spoofing
+                    #    if ethChild2.get_router_flag()=="false":
+                    #        detect_module.detect_neighbor_spoofing((message_details))
+
+
+                    #listOfMessages.append(message_details)
+
+
             except:
                 x = 1
                  #print "Packet Discarded"
