@@ -16,4 +16,5 @@ for message_details in dataRead:
         test_open.write(str(sum))
         test_open.write('\n')
         test_open.close()
+
         detectRA.detect_neighbor_spoofing(message_details)
