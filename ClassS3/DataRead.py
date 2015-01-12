@@ -21,7 +21,8 @@ class DataRead:
         found = "false"
         x = 0
         y = 0
-        #print packetHex
+        router_flag = False
+        override_flag = False
         for entry in packetHex:
             # print entry[2:].zfill(2)
             if str(entry[2:].zfill(2)) == "02":
@@ -109,6 +110,7 @@ class DataRead:
                         else:
                             source_link_layer_address = "n/a"
 
+
                     elif str(ndp_message_number) == "135":  #Neighbor Solicitation
                         for x in range(16):
                             target_address = target_address + packetHex[x][2:].zfill(2)
@@ -129,6 +131,12 @@ class DataRead:
                             source_link_layer_address = "n/a"
 
                     elif str(ndp_message_number) == "136":  #Neighbor Advertisement
+
+                        #print ethChild2.get_router_flag() #sample code to get router flag of NA
+                        #print ethChild2.get_override_flag()
+                        #router_flag = ethChild2.get_router_flag()
+                        #if router_flag == False:
+                        #   print "if else of flag worked"
                         if str(contains_source) == "true-target" and hex(ethChild2.child().get_bytes()[0:1][0]) == "0xa0":
                             for x in range(6):
                                 target_link_layer_address = target_link_layer_address + packetHex[1 + offset + x][
@@ -145,12 +153,14 @@ class DataRead:
                                 if x % 2 != 0:
                                     target_address = target_address + ":"
                         target_address = target_address[:-1]
+                        override_flag = ethChild2.get_override_flag()
+                        router_flag = ethChild2.get_router_flag()
 
                     message_details = SLAAC_Message.SLAAC_Message(ndp_message_number, source_link_layer_address,
                                                                   ip_source_address, ip_destination_address,
                                                                   source_MAC_address_final,
                                                                   destination_MAC_address_final, target_address,
-                                                                  target_link_layer_address)
+                                                                  target_link_layer_address,override_flag,router_flag)
 
                     #detection_module.detect_rogue_advertisement(message_details)
                     #print "-----------Packet Details----------"
@@ -162,9 +172,25 @@ class DataRead:
                     #print "Destination MAC Address %s" % message_details.get_destination_MAC_address()
                     #print "Target Address %s" % message_details.get_target_address()
                     #print "Target Link Layer Address %s" % message_details.get_target_link_layer_address()
+                    #print "Override Flag %s" %message_details.get_override_flag()
+                    #print "Router Flag %s" %message_details.get_router_flag()
                     #print "----------------END----------------"
+
+                    #detect_module = Detection()
+
+
+                    #if message_details.get_ndp_message_number()=="134": #Last Hop Router Attack
+                    #    detect_module.detect_rogue_advertisement(message_details)
+                    #elif message_details.get_ndp_message_number()=="135":#Dos in DAD
+                    #    detect_module.detect_dos_dad(message_details)
+                    #elif message_details.get_ndp_message_number()=="136": #Neigbor Spoofing
+                    #    if ethChild2.get_router_flag()=="false":
+                    #        detect_module.detect_neighbor_spoofing((message_details))
+
+
                     listOfMessages.append(message_details)
-                    #print "sucess"
+
+
             except:
                 x = 1
                  #print "Packet Discarded"

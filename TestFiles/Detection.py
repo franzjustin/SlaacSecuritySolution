@@ -51,7 +51,6 @@ class Detection:
         #print "Checking Last Hop Router Attack"
         if message_details.ndp_message_number == 135:
             for x in range(len(router_database)):
-                for y in range(4):
                     if(vlan == router_database[x][0]):
                         if(str(message_details.get_source_link_layer_address()) != router_database[x][1]):
                             print "Rogue Router Advertisement Detected"
@@ -80,23 +79,36 @@ class Detection:
         router_database = []
         router_database = self.get_router_database()
         vlan = "1"
+
         if message_details.ndp_message_number == 136:
             for x in range(len(router_database)):
-                for y in range(4):
-                    if(vlan == router_database[x][0]):
-                        print router_database[x][2]
-                        print message_details.get_target_address()
-                        if str(router_database[x][2]) == str(message_details.get_target_address()):
-                            if(str(message_details.get_source_link_layer_address)!= router_database[x][1]):
-                                print "Rogue Neighbor Advertisement Detected"
-                                #return "true"
+                if(vlan == router_database[x][0]):
+                    #print router_database[x][2]
+                    #print message_details.get_target_address()
+                    print message_details.get_override_flag()
+                    print message_details.get_router_flag()
+                    if message_details.get_router_flag() == True or  message_details.get_override_flag() == True:
+                        if message_details.get_ip_source_address() == router_database[x][2]:
+                            #address of router is present, check for correct MAC
+                            if message_details.get_source_MAC_address() == router_database[x][1]:
+                                print "Legitimate NA detected ( Same IP and MAC)"
                             else:
-                                print "Legitimate Neighbor Advertisement Detected"
-                                #return "false"
+                                print "Spoofed NA detected"
                         else:
-                            print "Valid Neighbor Advertisement"
+                            print "Legitimate NA detected ( Different IP)"
                     else:
-                        print "Incorrect Vlan, Checking other VLANs ..."
+                        print "Legitimate NA detected (No router or Ovveride) "
+                    #if str(router_database[x][2]) == str(message_details.get_target_address()):
+                    #    if(str(message_details.get_source_link_layer_address)!= router_database[x][1]):
+                    #        print "Rogue Neighbor Advertisement Detected"
+                    #        #return "true"
+                    #    else:
+                    #        print "Legitimate Neighbor Advertisement Detected"
+                    #        #return "false"
+                    #else:
+                    #    print "Valid Neighbor Advertisement"
+                else:
+                    print "Incorrect Vlan, Checking other VLANs ..."
             #return "false"
         else:
             print "Not NS"
@@ -226,8 +238,8 @@ class Detection:
             #print '********************************************************************* - '+ message_details.get_ip_source_address()
             if str(message_details.get_ip_source_address())=="::":
                 #print '*********************************************************************'
-                #self.update_attempt_database(message_details)
-                #self.check_old_attempt()
+                self.update_attempt_database(message_details)
+                self.check_old_attempt()
                 address_list = []
                 dad_attempt_database = open('../Database/Updated_DAD_attempt')
                 for line in dad_attempt_database:
@@ -253,7 +265,10 @@ class Detection:
                             new_entry = [str(address_entry[1]),str(address_entry[2]),str(address_entry[1]),str(address_entry[2]),1]
                             address_list.append(new_entry)
                 print address_list
+                count = 0;
                 for address_updated in address_list:
+                    count = count + 1
+                    print count
                     #print address_updated[0]
                     datetime_minuend = datetime.strptime(str(address_updated[1]),"%Y-%m-%d %H:%M:%S.%f")
                     datetime_subtrahend = datetime.strptime(str(address_updated[3]),"%Y-%m-%d %H:%M:%S.%f")
@@ -264,11 +279,13 @@ class Detection:
                     #print str(sum_1)
                     #print str(sum_2)
                     difference = sum_1 - sum_2
-                    #print difference
+                    print difference
                     if difference <= 1 and address_updated[4] > 2:
                         print "DOS in DAD Detected"
                     else:
                         print "DAD Legitimate"
+                #print "final"
+                #print address_list
 
                 #print len(address_list)
                 #print address_list
