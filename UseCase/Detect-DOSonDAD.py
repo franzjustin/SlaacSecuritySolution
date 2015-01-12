@@ -1,9 +1,10 @@
 from datetime import datetime
 from decimal import Decimal
-from TestFiles.SLAAC_Message import SLAAC_Message
+
 from impacket import version
-from ClassS3 import DataRead
-from TestFiles.Detection import Detection
+
+from ClassS3 import DataRead, Detection
+
 
 print version.BANNER
 #DosOnDATA-Test01.s0i0.pcap

@@ -1,9 +1,9 @@
 import pcapy
 from pcapy import findalldevs
-from TestFiles.Detection import Detection
-from TestFiles import SLAAC_Message
+
 from impacket.ImpactDecoder import *
-from ClassS3 import DataRead
+
+from ClassS3 import DataRead, Detection
 
 
 def getInterface():

@@ -1,8 +1,10 @@
 from datetime import datetime
 from decimal import Decimal
+
 from impacket import version
-from ClassS3 import DataRead
-from TestFiles.Detection import Detection
+
+from ClassS3 import DataRead, Detection
+
 
 print version.BANNER
 

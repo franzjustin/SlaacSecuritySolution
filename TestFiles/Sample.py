@@ -1,12 +1,13 @@
 import pcapy
-import __builtin__
 from pcapy import findalldevs
+import os.path
+
 import impacket
 from impacket.ImpactDecoder import *
-import os.path
 import dpkt
-import SLAAC_Message
-import Detection
+
+from ClassS3 import SLAAC_Message
+
 
 def getInterface():
     # Grab a list of interfaces that pcap is able to listen on.

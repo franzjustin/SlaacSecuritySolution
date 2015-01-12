@@ -1,12 +1,10 @@
 import os.path
 from datetime import datetime
-from datetime import timedelta
 from decimal import *
-import time
 
 
 # Creates a class called Detection
-from TestFiles import BackwardsReader
+from ClassS3 import BackwardsReader
 
 
 class Detection:
