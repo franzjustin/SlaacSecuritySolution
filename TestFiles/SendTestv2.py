@@ -2,10 +2,24 @@ import select
 import socket
 import time
 import sys
+import commands
+import fcntl
+import struct
 
 from impacket import ImpactDecoder, ImpactPacket, IP6, ICMP6, version
 
+#NA and RA
+
 print version.BANNER
+
+def get_ip_address(ifname):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    return socket.inet_ntoa(fcntl.ioctl(
+        s.fileno(),
+        0x8915,  # SIOCGIFADDR
+        struct.pack('256s', ifname[:15])
+    )[20:24])
+
 
 if len(sys.argv) < 3:
 	print "Use: %s <src ip> <dst ip>" % sys.argv[0]
@@ -18,16 +32,20 @@ dst = sys.argv[2]
 
 #todo - How can I send to eth0, it does not see the difference
 
+
+print get_ip_address('eth0')
+
 ip = IP6.IP6()
 ip.set_source_address(src)
 ip.set_destination_address(dst)
 ip.set_traffic_class(0)
 ip.set_flow_label(0)
 ip.set_hop_limit(64)
-    
+
 # Open a raw socket. Special permissions are usually required.
 s = socket.socket(socket.AF_INET6, socket.SOCK_RAW, socket.IPPROTO_ICMPV6)
 
+print socket.gethostname()
 rawHex = u"ff080800000000000000040005010000000005dc030440c0111111110404040400000000fe8000000000000000000000000000000101000c2911b7241803000800001111000000000000000000000000000000001803030800001111200000000000000000000000000000001803070800001111fc0000000000000000000000000000001903000001010101ff0200000000000000000000000000fb"
 payload = rawHex.replace(' ','').decode('hex')
 print payload
@@ -51,4 +69,4 @@ while 1:
 
 	# Send it to the target host.
 	s.sendto(icmp.get_packet(), (dst, 0))
-	print "Send Sucess"
+	print "Send Success"
