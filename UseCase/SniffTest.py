@@ -52,15 +52,15 @@ def recv_pkts(hdr, data):
         print "RA Attack Detected"
     except:
         x = 1
-    #print packet.get_ether_type()
-    #print packet.get_header_size()
-    #print packet.get_ether_dhost()
-    #print packet.get_ether_dhost()
-    #print packet.get_size()
-    #print packet.get_data_as_string()
-    #print packet.get_buffer_as_string()
-    #print packet.get_bytes()
-    #print packet.child()
+    print packet.get_ether_type()
+    print packet.get_header_size()
+    print packet.get_ether_dhost()
+    print packet.get_ether_dhost()
+    print packet.get_size()
+    print packet.get_data_as_string()
+    print packet.get_buffer_as_string()
+    print packet.get_bytes()
+    print packet.child()
     #packetChild = packet.child().child().child()
     #packet21 = ICMP6Decoder().decode(packetChild)
     #filename = "lol"
