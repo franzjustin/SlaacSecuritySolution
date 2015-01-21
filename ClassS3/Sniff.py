@@ -46,24 +46,28 @@ parser = DataParse.Dataparse(mode)
 def recv_pkts(hdr, data):
     try:
         mode = False
-        #------------Time Start------------
-        test_open = open("../TestFiles/realtime_test1_sniff",'a')
-        test_start = datetime.now()
-        sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f")))/1000000
-        test_open.write(str(sum))
-        test_open.write('\n')
-        test_open.close()
-        #-----------------------------------
-        parser.sniffSlaac(data,mode)
-        #------------Time Start------------
-        test_open = open("../TestFiles/realtime_test1_detect",'a')
-        test_start = datetime.now()
-        sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f")))/1000000
-        test_open.write(str(sum))
-        test_open.write('\n')
-        test_open.close()
-        #-----------------------------------
-        #print "Hello"
+        eth = EthDecoder().decode(data)
+        ethChild = eth.child()
+        ethChild2 = ethChild.child()
+        if  ethChild2.get_type() == 135:
+            #------------Time Start------------
+            test_open = open("../TestFiles/realtime_test1_sniff",'a')
+            test_start = datetime.now()
+            sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f")))/1000000
+            test_open.write(str(sum))
+            test_open.write('\n')
+            test_open.close()
+            #-----------------------------------
+            parser.sniffSlaac(data,mode)
+            #------------Time Start------------
+            test_open = open("../TestFiles/realtime_test1_detect",'a')
+            test_start = datetime.now()
+            sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f")))/1000000
+            test_open.write(str(sum))
+            test_open.write('\n')
+            test_open.close()
+            #-----------------------------------
+            #print "Hello"
 
     except:
         x = 1
