@@ -47,15 +47,27 @@ class Detection:
         vlan = "1"
         router_database = self.get_router_database()
         #print "Checking Last Hop Router Attack"
-        if message_details.ndp_message_number == 135:
+        if message_details.ndp_message_number == 134:
+            #print message_details.get_source_link_layer_address()
+            #print router_database[x][1]
             for x in range(len(router_database)):
                     if(vlan == router_database[x][0]):
-                        if(str(message_details.get_source_link_layer_address()) != router_database[x][1]):
+                        if str(message_details.get_source_link_layer_address()) != str(router_database[x][1]):
                             print "Rogue Router Advertisement Detected"
-                            return "true"
+                            test_open = open("../TestFiles/realtime_test_success",'a')
+                            message = "True"
+                            test_open.write(message)
+                            test_open.write('\n')
+                            test_open.close()
+                            #return "true"
                         else:
                             print "Legitimate Router Advertisement Detected"
-                            return "false"
+                            test_open = open("../TestFiles/realtime_test_success",'a')
+                            message = "False"
+                            test_open.write(message)
+                            test_open.write('\n')
+                            test_open.close()
+                            #return "false"
                     else:
                         print "Incorrect Vlan, Checking other VLANs ..."
 
@@ -77,25 +89,45 @@ class Detection:
         router_database = []
         router_database = self.get_router_database()
         vlan = "1"
-
+        #print "Hello World"
         if message_details.ndp_message_number == 136:
             for x in range(len(router_database)):
                 if(vlan == router_database[x][0]):
                     #print router_database[x][2]
                     #print message_details.get_target_address()
-                    print message_details.get_override_flag()
-                    print message_details.get_router_flag()
-                    if message_details.get_router_flag() == True or  message_details.get_override_flag() == True:
+                    #print message_details.get_override_flag()
+                    #print message_details.get_router_flag()
+                    if message_details.get_router_flag() == True and  message_details.get_override_flag() == True:
                         if message_details.get_ip_source_address() == router_database[x][2]:
                             #address of router is present, check for correct MAC
                             if message_details.get_source_MAC_address() == router_database[x][1]:
                                 print "Legitimate NA detected ( Same IP and MAC)"
+                                test_open = open("../TestFiles/realtime_test_success",'a')
+                                message = "False"
+                                test_open.write(message)
+                                test_open.write('\n')
+                                test_open.close()
                             else:
                                 print "Spoofed NA detected"
+                                test_open = open("../TestFiles/realtime_test_success",'a')
+                                message = "True"
+                                test_open.write(message)
+                                test_open.write('\n')
+                                test_open.close()
                         else:
-                            print "Legitimate NA detected ( Different IP)"
+                            print "Spoofed NA ( Different IP)"
+                            test_open = open("../TestFiles/realtime_test_success",'a')
+                            message = "True"
+                            test_open.write(message)
+                            test_open.write('\n')
+                            test_open.close()
                     else:
-                        print "Legitimate NA detected (No router or Ovveride) "
+                        print "Legitimate NA detected (No router and Override) "
+                        test_open = open("../TestFiles/realtime_test_success",'a')
+                        message = "False"
+                        test_open.write(message)
+                        test_open.write('\n')
+                        test_open.close()
                     #if str(router_database[x][2]) == str(message_details.get_target_address()):
                     #    if(str(message_details.get_source_link_layer_address)!= router_database[x][1]):
                     #        print "Rogue Neighbor Advertisement Detected"
@@ -165,7 +197,7 @@ class Detection:
             subtrahend = Decimal( arrival_date.strftime(("%s"))) + Decimal(arrival_date.strftime(("%f")))/1000000
             minuend = Decimal(check_date.strftime(("%s"))) + Decimal(check_date.strftime(("%f")))/1000000
             difference = minuend - subtrahend
-            time_limit =  Decimal("1.00")
+            time_limit =  Decimal("2.00")
             if difference < time_limit:
                 temp_list.append(attempt)
 
@@ -262,7 +294,7 @@ class Detection:
                         if found == "false":
                             new_entry = [str(address_entry[1]),str(address_entry[2]),str(address_entry[1]),str(address_entry[2]),1]
                             address_list.append(new_entry)
-                print address_list
+                #print address_list
                 count = 0;
                 for address_updated in address_list:
                     count = count + 1
@@ -277,11 +309,22 @@ class Detection:
                     #print str(sum_1)
                     #print str(sum_2)
                     difference = sum_1 - sum_2
-                    print difference
-                    if difference <= 1 and address_updated[4] > 2:
+                    #print difference
+                    if difference <= 1 and address_updated[4] >= 2:
                         print "DOS in DAD Detected"
+                        test_open = open("../TestFiles/realtime_test1_success",'a')
+                        message = "True"
+                        test_open.write(message)
+                        test_open.write('\n')
+                        test_open.close()
                     else:
                         print "DAD Legitimate"
+                        test_open = open("../TestFiles/realtime_test1_success",'a')
+                        message = "False"
+                        test_open.write(message)
+                        test_open.write('\n')
+                        test_open.close()
+
                 #print "final"
                 #print address_list
 

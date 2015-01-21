@@ -1,5 +1,7 @@
 import pcapy
 from pcapy import findalldevs
+from datetime import datetime
+from decimal import *
 
 from impacket.ImpactDecoder import *
 
@@ -36,19 +38,41 @@ max_bytes = 1024
 promiscuous = False
 read_timeout = 100 # in milliseconds
 pc = pcapy.open_live(getInterface(), max_bytes, promiscuous, read_timeout)
-pc.setfilter('tcp')
-parser = DataParse.Dataparse()
+pc.setfilter('icmp6')
+mode = False
+parser = DataParse.Dataparse(mode)
     # callback for received packets
 
 def recv_pkts(hdr, data):
     try:
         mode = False
-        parser.sniffSlaac(data,mode)
-        #print "Hello"
+        eth = EthDecoder().decode(data)
+        ethChild = eth.child()
+        ethChild2 = ethChild.child()
+        if  ethChild2.get_type() == 135:
+            #------------Time Start------------
+            test_open = open("../TestFiles/realtime_test1_sniff",'a')
+            test_start = datetime.now()
+            sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f")))/1000000
+            test_open.write(str(sum))
+            test_open.write('\n')
+            test_open.close()
+            #-----------------------------------
+            parser.sniffSlaac(data,mode)
+            #------------Time Start------------
+            test_open = open("../TestFiles/realtime_test1_detect",'a')
+            test_start = datetime.now()
+            sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f")))/1000000
+            test_open.write(str(sum))
+            test_open.write('\n')
+            test_open.close()
+            #-----------------------------------
+            #print "Hello"
 
     except:
         x = 1
-
+        print "error"
 packet_limit = -1 # infinite
 pc.loop(packet_limit, recv_pkts) # capture packets
 
+0
