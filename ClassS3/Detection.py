@@ -1,6 +1,7 @@
 import os.path
 from datetime import datetime
 from decimal import *
+from ClassS3 import S3Log
 
 
 # Creates a class called Detection
