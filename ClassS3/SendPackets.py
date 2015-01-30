@@ -97,19 +97,21 @@ class SendPacket:
             print "Success Sending Packet - %d " % (i)
 #
 
+
+#60000000fe8000000000000010fe089289d3a8da020110bf4896a190
     def create_na_message(self,target_link):
-        flag = u"0a00000000"
+        flag = u"a000000000"
         target_address = self.get_source_address().replace(":", "")#u"fe800000000000008af077fffea1d88c"
         target_link_layer = u"0201"+ target_link
-        na_message = flag.replace(' ','').decode('hex') + target_address + target_link_layer
+        na_message = flag.replace(' ','') + target_address + target_link_layer
         print na_message
-        return na_message
+        return u"60000000fe8000000000000010fe089289d3a8da020110bf4896a190".decode('hex')
 
 
     def create_ra_message(self,source_link_layer):
         FirstPart = u"ff08070800000000000000000101"
         LastPart = u"05010000000005dc"
-        RAmessage = FirstPart.replace(' ','').decode('hex') + source_link_layer + LastPart.replace(' ','').decode('hex')
+        RAmessage = FirstPart.replace(' ','')+ source_link_layer + LastPart.replace(' ','')
         print RAmessage
-        return RAmessage
+        return RAmessage.decode('hex')
 
