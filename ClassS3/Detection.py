@@ -1,7 +1,7 @@
 import os.path
 from datetime import datetime
 from decimal import *
-from ClassS3 import S3Log
+from ClassS3 import RotatingFileOpener
 
 
 # Creates a class called Detection
@@ -55,6 +55,11 @@ class Detection:
                     if(vlan == router_database[x][0]):
                         if str(message_details.get_source_link_layer_address()) != str(router_database[x][1]):
                             print "Rogue Router Advertisement Detected"
+                            with RotatingFileOpener.RotatingFileOpener('../Logs/', prepend='log_report-', append='.s3') as logger:
+                                current_datetime = datetime.now()
+                                log = str(current_datetime) + " SA001 Attacker:" + str(message_details.get_source_link_layer_address())
+                                log =log + ";Victim:" + str(router_database[x][1]) + "\n"
+                                logger.write(log)
                             test_open = open("../TestFiles/realtime_test_success",'a')
                             message = "True"
                             test_open.write(message)
@@ -110,6 +115,12 @@ class Detection:
                                 test_open.close()
                             else:
                                 print "Spoofed NA detected"
+                                with RotatingFileOpener.RotatingFileOpener('../Logs/', prepend='log_report-', append='.s3') as logger:
+                                    current_datetime = datetime.now()
+                                    log = str(current_datetime) + " SA002 Attacker:" + str(message_details.get_source_MAC_address())
+                                    log =log + ";Victim:" + str(router_database[x][1]) + "\n"
+                                    logger.write(log)
+
                                 test_open = open("../TestFiles/realtime_test_success",'a')
                                 message = "True"
                                 test_open.write(message)
@@ -117,6 +128,13 @@ class Detection:
                                 test_open.close()
                         else:
                             print "Spoofed NA ( Different IP)"
+
+                            with RotatingFileOpener.RotatingFileOpener('../Logs/', prepend='log_report-', append='.s3') as logger:
+                                    current_datetime = datetime.now()
+                                    log = str(current_datetime) + " SA002 Attacker:" + str(message_details.get_source_MAC_address())
+                                    log =log + ";Victim:" + str(router_database[x][1]) + "\n"
+                                    logger.write(log)
+
                             test_open = open("../TestFiles/realtime_test_success",'a')
                             message = "True"
                             test_open.write(message)
@@ -290,7 +308,7 @@ class Detection:
                             if address_list[x][0] == address_entry[1]:
                                 address_list[x][2] = str(address_entry[1])
                                 address_list[x][3] = str(address_entry[2])
-                                address_list[x][4] = address_list[x][4] + 1
+                                #address_list[x][4] = address_list[x][4] + 1
                                 found = "true"
                         if found == "false":
                             new_entry = [str(address_entry[1]),str(address_entry[2]),str(address_entry[1]),str(address_entry[2]),1]
@@ -313,6 +331,12 @@ class Detection:
                     #print difference
                     if difference <= 1 and address_updated[4] >= 2:
                         print "DOS in DAD Detected"
+                        with RotatingFileOpener.RotatingFileOpener('../Logs/', prepend='log_report-', append='.s3') as logger:
+                                current_datetime = datetime.now()
+                                log = str(current_datetime) + " SA003 Attacker:" + str(message_details.get_source_MAC_address())
+                                log =log + ";Victim:" + str(message_details.get_destination_MAC_address()) + "\n"
+                                logger.write(log)
+
                         test_open = open("../TestFiles/realtime_test1_success",'a')
                         message = "True"
                         test_open.write(message)

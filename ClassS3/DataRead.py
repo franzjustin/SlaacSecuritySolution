@@ -257,18 +257,18 @@ class DataRead:
                                                                   target_link_layer_address,override_flag,router_flag)
 
                     #detection_module.detect_rogue_advertisement(message_details)
-                    #print "-----------Packet Details----------"
-                    #print "NDP Message Type %s" % message_details.get_ndp_message_number()
-                    #print "Source Link Layer Address: %s" % message_details.get_source_link_layer_address()
-                    #print "Source IPv6 Address %s " % message_details.get_ip_source_address()
-                    #print "Destination IPv6 Address %s" % message_details.get_ip_destination_address()
-                    #print "Source MAC Address %s" % message_details.get_source_MAC_address()
-                    #print "Destination MAC Address %s" % message_details.get_destination_MAC_address()
-                    #print "Target Address %s" % message_details.get_target_address()
-                    #print "Target Link Layer Address %s" % message_details.get_target_link_layer_address()
-                    #print "Override Flag %s" %message_details.get_override_flag()
-                    #print "Router Flag %s" %message_details.get_router_flag()
-                    #print "----------------END----------------"
+                    print "-----------Packet Details----------"
+                    print "NDP Message Type %s" % message_details.get_ndp_message_number()
+                    print "Source Link Layer Address: %s" % message_details.get_source_link_layer_address()
+                    print "Source IPv6 Address %s " % message_details.get_ip_source_address()
+                    print "Destination IPv6 Address %s" % message_details.get_ip_destination_address()
+                    print "Source MAC Address %s" % message_details.get_source_MAC_address()
+                    print "Destination MAC Address %s" % message_details.get_destination_MAC_address()
+                    print "Target Address %s" % message_details.get_target_address()
+                    print "Target Link Layer Address %s" % message_details.get_target_link_layer_address()
+                    print "Override Flag %s" %message_details.get_override_flag()
+                    print "Router Flag %s" %message_details.get_router_flag()
+                    print "----------------END----------------"
 
                     #detect_module = Detection()
 

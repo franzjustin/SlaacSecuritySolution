@@ -9,7 +9,7 @@ from ClassS3 import DataRead, Detection
 print version.BANNER
 
 dataRead = DataRead.DataRead('../Packets/NeighborSpoofing-Test1.s0i0.pcap').getSlaac
-detectRA = Detection()
+detectRA = Detection.Detection()
 for message_details in dataRead:
     if message_details.get_ndp_message_number() == 136:
         test_open = open("../TestFiles/test2",'a')
