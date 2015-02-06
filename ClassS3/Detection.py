@@ -326,7 +326,7 @@ class Detection:
                     sum_1 = Decimal(datetime_minuend.strftime("%s")) + Decimal(datetime_subtrahend.strftime("%f"))/1000000
                     sum_2 = Decimal(datetime_subtrahend.strftime("%s")) + Decimal(datetime_subtrahend.strftime("%f"))/1000000
                     #print str(sum_1)
-                    #print str(sum_2)
+                    print str(sum_2)
                     difference = sum_1 - sum_2
                     #print difference
                     if difference <= 1 and address_updated[4] >= 2:
