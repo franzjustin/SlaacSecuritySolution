@@ -9,7 +9,7 @@ from ClassS3 import DataRead, Detection
 print version.BANNER
 #DosOnDATA-Test01.s0i0.pcap
 dataRead = DataRead.DataRead('../Packets/DosOnDad-Test2v2.s0i0.pcap').getSlaac
-detectRA = Detection()
+detectRA = Detection.Detection()
 for message_details in dataRead:
    # print "Entry Time of Packet: "+str(datetime.now())
     if message_details.get_ndp_message_number() == 135:
