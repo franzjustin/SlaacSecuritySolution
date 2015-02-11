@@ -2,6 +2,8 @@ import select
 import socket
 import time
 from impacket import ImpactDecoder, ImpactPacket, IP6, ICMP6, version
+from netaddr import *
+
 class SendPacket:
     def __init__(self, source_address, target_address):
         self.source_address = source_address
@@ -95,17 +97,18 @@ class SendPacket:
             # Send it to the target host.
             s.sendto(icmp.get_packet(), (self.get_target_address(), 0))
             print "Success Sending Packet - %d " % (i)
-#
 
 
-#60000000fe8000000000000010fe089289d3a8da020110bf4896a190
+#020110bf4896a190
     def create_na_message(self,target_link):
-        flag = u"a000000000"
-        target_address = self.get_source_address().replace(":", "")#u"fe800000000000008af077fffea1d88c"
-        target_link_layer = u"0201"+ target_link
+        flag = u"a0000000"                                           #fe80            20c29fffe043796
+        ip = IPAddress(self.get_source_address())
+        convertedIp = str(hex(ip))[2:]
+        target_address = convertedIp#u"fe8000000000000010fe089289d3a8da"
+        target_link_layer = u"0201"+ target_link #10bf4896a190
         na_message = flag.replace(' ','') + target_address + target_link_layer
-        print na_message
-        return u"60000000fe8000000000000010fe089289d3a8da020110bf4896a190".decode('hex')
+        print u""+str(na_message)
+        return na_message.decode('hex')
 
 
     def create_ra_message(self,source_link_layer):

@@ -9,6 +9,9 @@ from ClassS3 import BackwardsReader
 
 
 class Detection:
+
+    #TODO: TEST ON Real Time Environment
+
     # Initialize when created. Self tells its from this class and the others are your created attributes
     def __init__(self):
         # Self is the new object
@@ -45,7 +48,7 @@ class Detection:
         #if not, it means that there is an attack happening
         x=0
         y=0
-        vlan = "1"
+        vlan = message_details.get_vlan_id()
         router_database = self.get_router_database()
         #print "Checking Last Hop Router Attack"
         if message_details.ndp_message_number == 134:
@@ -94,7 +97,7 @@ class Detection:
         y=0
         router_database = []
         router_database = self.get_router_database()
-        vlan = "1"
+        vlan = message_details.get_vlan_id()
         #print "Hello World"
         if message_details.ndp_message_number == 136:
             for x in range(len(router_database)):
@@ -173,7 +176,7 @@ class Detection:
         #vlan no^ip_address^timestamp
         #where ^ is a space character :)
         checkflag = self.check_for_database('../Database/Dad_Attempt')
-        vlan = 1
+        vlan = message_details.get_vlan_id()
         #add get vlan somewhere in message details later on
         if checkflag :
             #print "Start DAD_Attempt File"

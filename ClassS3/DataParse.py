@@ -3,11 +3,21 @@ from impacket.ImpactDecoder import *
 from datetime import datetime
 from decimal import *
 from ClassS3 import DataRead, Detection, SLAAC_Message, LearningMode
+from impacket.ImpactPacket import *
 
 class Dataparse:
 
     def __init__(self, learn_mode):
         self.learn_mode = learn_mode
+
+    def check_vlanId(self,buf):
+        ether = ImpactPacket.Ethernet(buf)
+        vlanId = 0
+        try:
+            vlanId = ether.get_tag(-1).get_vid()
+        except:
+            trash = 0
+        return vlanId
 
     def check_ipv6_options(self, packetHex):
         check_one = "false"
@@ -38,7 +48,7 @@ class Dataparse:
         checkflag = found
         return checkflag, y + 1
 
-    def sniffSlaac(self, buf, mode):
+    def sniffSlaac(self, buf):
 
             #print "NAKAPASOK NA "
             eth = EthDecoder().decode(buf)
@@ -147,12 +157,17 @@ class Dataparse:
                             target_address = target_address[:-1]
                             override_flag = ethChild2.get_override_flag()
                             router_flag = ethChild2.get_router_flag()
+                        print "Checkpoint3"
+                        vlanId = self.check_vlanId(buf)
 
-                        message_details = SLAAC_Message.SLAAC_Message(ndp_message_number, source_link_layer_address,
+                        #TODO: Check VLAN if Working good
+
+                        message_details = SLAAC_Message.SLAAC_Message(vlanId,ndp_message_number, source_link_layer_address,
                                                                       ip_source_address, ip_destination_address,
                                                                       source_MAC_address_final,
                                                                       destination_MAC_address_final, target_address,
                                                                       target_link_layer_address,override_flag,router_flag)
+
                         print "Checkpoint3"
                         #------------Time Start------------
                         test_open = open("../TestFiles/realtime_test1_parse",'a')
@@ -164,6 +179,7 @@ class Dataparse:
                         #-----------------------------------
                         #detection_module.detect_rogue_advertisement(message_details)
                         print "-----------Packet Details----------"
+                        print "VLAN ID %s" % message_details.get_vlan_id()
                         print "NDP Message Type %s" % message_details.get_ndp_message_number()
                         print "Source Link Layer Address: %s" % message_details.get_source_link_layer_address()
                         print "Source IPv6 Address %s " % message_details.get_ip_source_address()
@@ -195,14 +211,7 @@ class Dataparse:
                             #learningmode = LearningMode.LearningMode()
                             #learningmode.learn(message_details)
                         #print "Line Fin"
-
-
-
-
-            except:
-                x = 1
-                print "Packet Discarded"
-                #print "fail"
+            except Exception,e: print str(e)
 
 
     def activateLearningMode(self,  buf):

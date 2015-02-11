@@ -14,6 +14,7 @@ class DataRead:
         # Self is the new object
         self.location = location
         self.datapacket = datapacket
+
     def check_ipv6_options(self, packetHex):
         check_one = "false"
         found = "false"
@@ -295,7 +296,6 @@ class DataRead:
 
 
     @property
-
     def sniffSlaac(self,buf):
         #f = open(self.location)
         #pcap = dpkt.pcap.Reader(f)
