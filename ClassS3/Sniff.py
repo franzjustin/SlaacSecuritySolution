@@ -49,7 +49,7 @@ def recv_pkts(hdr, data):
         eth = EthDecoder().decode(data)
         ethChild = eth.child()
         ethChild2 = ethChild.child()
-        if  ethChild2.get_type() == 135:
+        if  ethChild2.get_type() == z:
             #------------Time Start------------
             test_open = open("../TestFiles/realtime_test1_sniff",'a')
             test_start = datetime.now()
@@ -74,5 +74,3 @@ def recv_pkts(hdr, data):
         print "error"
 packet_limit = -1 # infinite
 pc.loop(packet_limit, recv_pkts) # capture packets
-
-0

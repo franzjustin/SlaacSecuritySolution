@@ -101,14 +101,14 @@ class Detection:
         #print "Hello World"
         if message_details.ndp_message_number == 136:
             for x in range(len(router_database)):
-                if(vlan == router_database[x][0]):
+                if str(vlan) == str(router_database[x][0]):
                     if message_details.get_router_flag() == True and  message_details.get_override_flag() == True:
                         if message_details.get_ip_source_address() == router_database[x][2]:
                             #address of router is present, check for correct MAC
                             if message_details.get_source_MAC_address() == router_database[x][1]:
                                 print "Legitimate NA detected ( Same IP and MAC)"
                                 test_open = open("../TestFiles/realtime_test_success",'a')
-                                message = "False"
+                                message = "False " + str(message_details.get_source_link_layer_address()) + str(router_database[x][1])
                                 test_open.write(message)
                                 test_open.write('\n')
                                 test_open.close()
@@ -121,7 +121,7 @@ class Detection:
                                     logger.write(log)
 
                                 test_open = open("../TestFiles/realtime_test_success",'a')
-                                message = "True"
+                                message = "True"  + str(message_details.get_source_link_layer_address()) + str(router_database[x][1])
                                 test_open.write(message)
                                 test_open.write('\n')
                                 test_open.close()
@@ -135,14 +135,14 @@ class Detection:
                                     logger.write(log)
 
                             test_open = open("../TestFiles/realtime_test_success",'a')
-                            message = "True"
+                            message = "True"  + str(message_details.get_source_link_layer_address()) + str(router_database[x][1])
                             test_open.write(message)
                             test_open.write('\n')
                             test_open.close()
                     else:
                         print "Legitimate NA detected (No router and Override) "
                         test_open = open("../TestFiles/realtime_test_success",'a')
-                        message = "False"
+                        message = "False"  + str(message_details.get_source_link_layer_address()) + str(router_database[x][1])
                         test_open.write(message)
                         test_open.write('\n')
                         test_open.close()
