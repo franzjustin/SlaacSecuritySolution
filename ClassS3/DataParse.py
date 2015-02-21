@@ -201,11 +201,11 @@ class Dataparse:
                             detect_module.detect_rogue_advertisement(message_details)
 
                         elif str(message_details.get_ndp_message_number())=="135":#Dos in DAD
-                            print "Sending to NA DETECT"
+                            print "Sending to NS DETECT"
                             detect_module.detect_dos_dad(message_details)
                         elif str(message_details.get_ndp_message_number())=="136": #Neigbor Spoofing
                             #if ethChild2.get_router_flag()=="false":
-                            print "Sending to NS DETECT"
+                            print "Sending to NA DETECT"
                             detect_module.detect_neighbor_spoofing((message_details))
                         #else:
                             #learningmode = LearningMode.LearningMode()

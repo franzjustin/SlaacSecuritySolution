@@ -33,10 +33,10 @@ class LearningMode:
         #3 scenarios, 1 is new entry , 2 is duplicate entry, 3 is different vlan
         router_database = self.getRouterList()
         found_flag  = False
-        vlan = "1"
-        vlan2 = "2" # used for testing , will remove once vlan is finalized na
+        vlan = message_details.get_vlan_id()
+        #vlan2 = "2" # used for testing , will remove once vlan is finalized na
         for router_entry in router_database:
-            if router_entry[0] == vlan2: #will chance once vlan number is inserted in message_details
+            if router_entry[0] == vlan: #will chance once vlan number is inserted in message_details
                 router_entry[1] = message_details.get_source_link_layer_address()
                 router_entry[2] = str(message_details.get_ip_source_address())
                 found_flag = True
