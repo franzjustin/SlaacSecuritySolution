@@ -58,7 +58,7 @@ def recv_pkts(hdr, data):
             test_open.write('\n')
             test_open.close()
             #-----------------------------------
-            parser.sniffSlaac(data,mode)
+            parser.sniffSlaac(data)
             #------------Time Start------------
             test_open = open("../TestFiles/realtime_test1_detect",'a')
             test_start = datetime.now()
