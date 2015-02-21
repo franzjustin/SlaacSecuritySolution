@@ -49,7 +49,7 @@ def recv_pkts(hdr, data):
         eth = EthDecoder().decode(data)
         ethChild = eth.child()
         ethChild2 = ethChild.child()
-        if ethChild2.get_type() == 135:
+        if  ethChild2.get_type() == 135:
             #------------Time Start------------
             test_open = open("../TestFiles/realtime_test1_sniff",'a')
             test_start = datetime.now()
@@ -58,7 +58,7 @@ def recv_pkts(hdr, data):
             test_open.write('\n')
             test_open.close()
             #-----------------------------------
-            parser.sniffSlaac(data)
+            parser.sniffSlaac(data,mode)
             #------------Time Start------------
             test_open = open("../TestFiles/realtime_test1_detect",'a')
             test_start = datetime.now()
