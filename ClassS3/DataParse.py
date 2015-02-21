@@ -80,7 +80,7 @@ class Dataparse:
                         source_MAC_address_final = source_MAC_address_final[:-1].zfill(2)
                         destination_MAC_address_final = destination_MAC_address_final[:-1]
                         target_link_layer_address = ""
-                        #print "cheeckpoint3"
+                        print "cheeckpoint3"
                         packetData = (ethChild2.get_originating_packet_data())
                         packetHex = []
                         #print "checkpoint4"

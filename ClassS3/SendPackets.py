@@ -92,7 +92,7 @@ class SendPacket:
             s.send(eth.get_packet())
 
 
-    def send_na_packet(self,target_link, send_frequency,vlan_id):
+    def send_na_packet(self,source_link, send_frequency,target_address,vlan_id):
         ip = IP6.IP6()
         ip.set_source_address(self.get_source_address())
         ip.set_destination_address(self.get_target_address())
@@ -104,7 +104,7 @@ class SendPacket:
         s = socket(AF_PACKET, SOCK_RAW, IPPROTO_ICMPV6)
         s.bind((self.network_card, N))
         #s.sendto(ethh.get_packet(), (self.get_target_address(), 0))
-        payload = self.create_na_message(target_link)
+        payload = self.create_na_message(source_link,target_address)
         print send_frequency
         for i in range(0, send_frequency):
             icmp = ICMP6.ICMP6()
@@ -145,18 +145,18 @@ class SendPacket:
         print target_address
         return ns_message.decode('hex')
 
-    def create_na_message(self,target_link):
+    def create_na_message(self,source_link,target_address):
         flag = u"a0000000"                                           #fe80            20c29fffe043796
-        ip = IPAddress(self.get_source_address())
-        convertedIp = str(hex(ip))[2:]
-        target_address = convertedIp#u"fe8000000000000010fe089289d3a8da"
-        target_link_layer = u"0201"+ target_link #10bf4896a190
+        ip = IPAddress(target_address)
+        target_address = str(hex(ip))[2:]
+        target_link_layer = u"0101"+ source_link #10bf4896a190
         na_message = flag.replace(' ','') + target_address + target_link_layer
         print u""+str(na_message)
         #na_test = "00000000fe800000000000005d7f5d51cff942800101000c11111111" Windows
         #na_test = "00000000fe80000000000000019dd1689d3606dd0101000000000000" Windows 2
         na_test = "a0000000fe80000000000000020c29fffe2331230101000c291f53db" #"a0000000fe80000000000000019dd1689d3606dd0201000c29238450"
-        return na_test.decode('hex')
+        print na_test
+        return na_message.decode('hex')
 
 
     def create_ra_message(self,source_link_layer):
