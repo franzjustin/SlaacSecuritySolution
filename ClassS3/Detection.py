@@ -328,19 +328,19 @@ class Detection:
                             print datetime_minuend
                             print datetime_subtrahend
                             print difference
-                            if dad_entry[4] > 3 and difference <2000000:
+                            print dad_entry[4]
+                            if dad_entry[4] > 2 and difference <2000000:
                                 print "DOS in DAD Detected"
-                                with RotatingFileOpener.RotatingFileOpener('../Logs/', prepend='log_report-', append='.s3') as logger:
-                                    current_datetime = datetime.now()
-                                    log = str(entry_date) + " SA003 Attacker:" + str(dad_entry[0])
-                                    log =log+"\n"
-                                    logger.write(log)
-
                                 test_open = open("../TestFiles/realtime_test1_success",'a')
                                 message = "True"
                                 test_open.write(message)
                                 test_open.write('\n')
                                 test_open.close()
+                                with RotatingFileOpener.RotatingFileOpener('../Logs/', prepend='log_report-', append='.s3') as logger:
+                                    current_datetime = datetime.now()
+                                    log = str(entry_date) + " SA003 Attacker:" + str(dad_entry[0])
+                                    log =log+"\n"
+                                    logger.write(log)
                             else:
                                 print "DAD Legitimate"
                                 test_open = open("../TestFiles/realtime_test1_success",'a')
