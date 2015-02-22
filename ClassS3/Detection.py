@@ -317,44 +317,37 @@ class Detection:
                         #if difference < earliest:
                          #   earliest = difference
 
-                        for dad_entry in count_list:
-                            entry_date = dad_entry[1] + " " + dad_entry[2]
-                            datetime_subtrahend = datetime.strptime(str(entry_date),"%Y-%m-%d %H:%M:%S.%f").microsecond
-                            datetime_minuend = datetime.now().microsecond
-                            difference = datetime_minuend - datetime_subtrahend
-                            print datetime.now()
-                            print entry_date
-                            print "-----"
-                            print datetime_minuend
-                            print datetime_subtrahend
-                            print difference
-                            print dad_entry[4]
-                            if dad_entry[4] > 2 and difference <2000000:
-                                print "DOS in DAD Detected"
-                                test_open = open("../TestFiles/realtime_test1_success",'a')
-                                message = "True"
-                                test_open.write(message)
-                                test_open.write('\n')
-                                test_open.close()
-                                with RotatingFileOpener.RotatingFileOpener('../Logs/', prepend='log_report-', append='.s3') as logger:
-                                    current_datetime = datetime.now()
-                                    log = str(entry_date) + " SA003 Attacker:" + str(dad_entry[0])
-                                    log =log+"\n"
-                                    logger.write(log)
-                            else:
-                                print "DAD Legitimate"
-                                test_open = open("../TestFiles/realtime_test1_success",'a')
-                                message = "False"
-                                test_open.write(message)
-                                test_open.write('\n')
-                                test_open.close()
-
-                    test_open = open("../TestFiles/AfterDetectionLastHop",'a')
-                    test_start = datetime.now()
-                    sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f")))/1000000
-                    test_open.write(str(sum))
-                    test_open.write('\n')
-                    test_open.close()
+                for dad_entry in count_list:
+                    entry_date = dad_entry[1] + " " + dad_entry[2]
+                    datetime_subtrahend = datetime.strptime(str(entry_date),"%Y-%m-%d %H:%M:%S.%f").microsecond
+                    datetime_minuend = datetime.now().microsecond
+                    difference = datetime_minuend - datetime_subtrahend
+                    print datetime.now()
+                    print entry_date
+                    print "-----"
+                    print datetime_minuend
+                    print datetime_subtrahend
+                    print difference
+                    print dad_entry[4]
+                    if dad_entry[4] > 2 and difference <2000000:
+                        print "DOS in DAD Detected"
+                        test_open = open("../TestFiles/realtime_test1_success",'a')
+                        message = "True"
+                        test_open.write(message)
+                        test_open.write('\n')
+                        test_open.close()
+                        with RotatingFileOpener.RotatingFileOpener('../Logs/', prepend='log_report-', append='.s3') as logger:
+                            current_datetime = datetime.now()
+                            log = str(entry_date) + " SA003 Attacker:" + str(dad_entry[0])
+                            log =log+"\n"
+                            logger.write(log)
+                    else:
+                        print "DAD Legitimate"
+                        test_open = open("../TestFiles/realtime_test1_success",'a')
+                        message = "False"
+                        test_open.write(message)
+                        test_open.write('\n')
+                        test_open.close()
 
 
 
