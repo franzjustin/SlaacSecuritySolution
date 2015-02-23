@@ -79,7 +79,8 @@ class Detection:
                             test_open.close()
                             #return "false"
                     else:
-                        print "Incorrect Vlan, Checking other VLANs ..."
+                        lol = 1
+                        #print "Incorrect Vlan, Checking other VLANs ..."
 
 
             return "false"

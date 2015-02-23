@@ -45,7 +45,6 @@ class SendPacket:
             #00:0c:29:23:84:50
             #33:33:00:00:00:01
             eth = ImpactPacket.Ethernet('\x33\x33\x00\x00\x00\x01\x00\x0c\x29\x23\x84\x50\x81\x00')
-            print eth
             eth.pop_tag()
             if vlan_id != 0:
                 vlan = ImpactPacket.EthernetTag()
@@ -146,7 +145,7 @@ class SendPacket:
         return ns_message.decode('hex')
 
     def create_na_message(self,source_link,target_address):
-        flag = u"a0000000"                                           #fe80            20c29fffe043796
+        flag = u"20000000"                                           #fe80            20c29fffe043796
         ip = IPAddress(target_address)
         target_address = str(hex(ip))[2:]
         target_link_layer = u"0101"+ source_link #10bf4896a190
@@ -155,15 +154,16 @@ class SendPacket:
         #na_test = "00000000fe800000000000005d7f5d51cff942800101000c11111111" Windows
         #na_test = "00000000fe80000000000000019dd1689d3606dd0101000000000000" Windows 2
         na_test = "a0000000fe80000000000000020c29fffe2331230101000c291f53db" #"a0000000fe80000000000000019dd1689d3606dd0201000c29238450"
-        print na_test
+        time.sleep(1)
         return na_message.decode('hex')
 
 
     def create_ra_message(self,source_link_layer):
         FirstPart = u"ff08"
-        routerLifeTime = u"0001"
+        routerLifeTime = u"0000"
         SecondPart = u"000000000000000005010000000005dc0101"
         RAmessage = FirstPart + routerLifeTime + SecondPart + source_link_layer
+        time.sleep(1)
         #RAmessage = "ff080800000000000000000005010000000005dc0101000c29238450"
         return RAmessage.decode('hex')
 

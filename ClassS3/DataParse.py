@@ -80,7 +80,7 @@ class Dataparse:
                         source_MAC_address_final = source_MAC_address_final[:-1].zfill(2)
                         destination_MAC_address_final = destination_MAC_address_final[:-1]
                         target_link_layer_address = ""
-                        print "cheeckpoint3"
+                        #print "cheeckpoint3"
                         packetData = (ethChild2.get_originating_packet_data())
                         packetHex = []
                         #print "checkpoint4"
@@ -139,7 +139,11 @@ class Dataparse:
                             #router_flag = ethChild2.get_router_flag()
                             #if router_flag == False:
                             #   print "if else of flag worked"
-                            if str(contains_source) == "true-target" and hex(ethChild2.child().get_bytes()[0:1][0]) == "0xa0":
+                            #print "-------------------------------------------------------------"
+                            #print str(contains_source)
+                            #print hex(ethChild2.child().get_bytes()[0:1][0])
+                            #print "-------------------------------------------------------------"
+                            if str(contains_source) == "true-source" and hex(ethChild2.child().get_bytes()[0:1][0]) == "0xa0":
                                 for x in range(6):
                                     target_link_layer_address = target_link_layer_address + packetHex[1 + offset + x][
                                                                                             2:].zfill(2) + ":"
@@ -155,9 +159,9 @@ class Dataparse:
                                     if x % 2 != 0:
                                         target_address = target_address + ":"
                             target_address = target_address[:-1]
-                            override_flag = ethChild2.get_override_flag()
-                            router_flag = ethChild2.get_router_flag()
-                        print "Checkpoint3"
+                            #override_flag = ethChild2.get_override_flag()
+                            #router_flag = ethChild2.get_router_flag()
+                        #print "Checkpoint3"
                         vlanId = self.check_vlanId(buf)
 
                         #TODO: Check VLAN if Working good
@@ -168,7 +172,7 @@ class Dataparse:
                                                                       destination_MAC_address_final, target_address,
                                                                       target_link_layer_address,override_flag,router_flag)
 
-                        print "Checkpoint3"
+                        #print "Checkpoint3"
                         #------------Time Start------------
                         test_open = open("../TestFiles/realtime_test1_parse",'a')
                         test_start = datetime.now()
@@ -178,19 +182,19 @@ class Dataparse:
                         test_open.close()
                         #-----------------------------------
                         #detection_module.detect_rogue_advertisement(message_details)
-                        print "-----------Packet Details----------"
-                        print "VLAN ID %s" % message_details.get_vlan_id()
-                        print "NDP Message Type %s" % message_details.get_ndp_message_number()
-                        print "Source Link Layer Address: %s" % message_details.get_source_link_layer_address()
-                        print "Source IPv6 Address %s " % message_details.get_ip_source_address()
-                        print "Destination IPv6 Address %s" % message_details.get_ip_destination_address()
-                        print "Source MAC Address %s" % message_details.get_source_MAC_address()
-                        print "Destination MAC Address %s" % message_details.get_destination_MAC_address()
-                        print "Target Address %s" % message_details.get_target_address()
-                        print "Target Link Layer Address %s" % message_details.get_target_link_layer_address()
-                        print "Override Flag %s" %message_details.get_override_flag()
-                        print "Router Flag %s" %message_details.get_router_flag()
-                        print "----------------END----------------"
+                        #print "-----------Packet Details----------"
+                        #print "VLAN ID %s" % message_details.get_vlan_id()
+                        #print "NDP Message Type %s" % message_details.get_ndp_message_number()
+                        #print "Source Link Layer Address: %s" % message_details.get_source_link_layer_address()
+                        #print "Source IPv6 Address %s " % message_details.get_ip_source_address()
+                        #print "Destination IPv6 Address %s" % message_details.get_ip_destination_address()
+                        #print "Source MAC Address %s" % message_details.get_source_MAC_address()
+                        #print "Destination MAC Address %s" % message_details.get_destination_MAC_address()
+                        #print "Target Address %s" % message_details.get_target_address()
+                        #print "Target Link Layer Address %s" % message_details.get_target_link_layer_address()
+                        #print "Override Flag %s" %message_details.get_override_flag()
+                        #print "Router Flag %s" %message_details.get_router_flag()
+                        #print "----------------END----------------"
 
 
 
@@ -213,6 +217,7 @@ class Dataparse:
                             #learningmode.learn(message_details)
                         #print "Line Fin"
             except Exception,e: print str(e)
+            return message_details
 
 
     def activateLearningMode(self,  buf):
