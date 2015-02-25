@@ -54,6 +54,7 @@ class Detection:
         if message_details.ndp_message_number == 134:
             #print message_details.get_source_link_layer_address()
             #print router_database[x][1]
+            print
             for x in range(len(router_database)):
                     if str(vlan) == str(router_database[x][0]):
 

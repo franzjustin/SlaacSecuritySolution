@@ -141,7 +141,7 @@ class SendPacket:
         ns_message = firstPart + target_address + target_link_layer
         #na_test = "00000000fe800000000000005d7f5d51cff942800101000c11111111" Windows
         #na_test = "00000000fe80000000000000019dd1689d3606dd0101000000000000" Windows 2
-        print target_address
+        #print target_address
         return ns_message.decode('hex')
 
     def create_na_message(self,source_link,target_address):
@@ -150,11 +150,11 @@ class SendPacket:
         target_address = str(hex(ip))[2:]
         target_link_layer = u"0101"+ source_link #10bf4896a190
         na_message = flag.replace(' ','') + target_address + target_link_layer
-        print u""+str(na_message)
+        #print u""+str(na_message)
         #na_test = "00000000fe800000000000005d7f5d51cff942800101000c11111111" Windows
         #na_test = "00000000fe80000000000000019dd1689d3606dd0101000000000000" Windows 2
         na_test = "a0000000fe80000000000000020c29fffe2331230101000c291f53db" #"a0000000fe80000000000000019dd1689d3606dd0201000c29238450"
-        time.sleep(1)
+        #print na_test
         return na_message.decode('hex')
 
 

@@ -143,7 +143,12 @@ class Dataparse:
                             #print str(contains_source)
                             #print hex(ethChild2.child().get_bytes()[0:1][0])
                             #print "-------------------------------------------------------------"
-                            if str(contains_source) == "true-source" and hex(ethChild2.child().get_bytes()[0:1][0]) == "0xa0":
+                            flags = hex(ethChild2.child().get_bytes()[0:1][0])
+                            if flags == "0xa0":
+                                override_flag = True
+                                router_flag = True
+
+                            if str(contains_source) == "true-source" and flags == "0xa0":
                                 for x in range(6):
                                     target_link_layer_address = target_link_layer_address + packetHex[1 + offset + x][
                                                                                             2:].zfill(2) + ":"
@@ -151,17 +156,13 @@ class Dataparse:
 
                             else:
                                 target_link_layer_address = "n/a"
-
-
                             for x in range(16):
                                 target_address = target_address + packetHex[x][2:].zfill(2)
                                 if (x > 0):
                                     if x % 2 != 0:
                                         target_address = target_address + ":"
                             target_address = target_address[:-1]
-                            #override_flag = ethChild2.get_override_flag()
-                            #router_flag = ethChild2.get_router_flag()
-                        #print "Checkpoint3"
+                            #print "Checkpoint3"
                         vlanId = self.check_vlanId(buf)
 
                         #TODO: Check VLAN if Working good
@@ -201,22 +202,22 @@ class Dataparse:
                         #if self.learn_mode == False:
                         detect_module = Detection.Detection()
                         if str(message_details.get_ndp_message_number())=="134": #Last Hop Router Attack
-                            print "Sending to RA DETECT"
+                            #print "Sending to RA DETECT"
                             detect_module.detect_rogue_advertisement(message_details)
 
                         elif str(message_details.get_ndp_message_number())=="135" :#Dos in DAD
-                            print "Sending to NS DETECT"
+                            #print "Sending to NS DETECT"
                             if str(message_details.get_ip_source_address()) == "::":
                                 detect_module.detect_dos_dad(message_details)
                         elif str(message_details.get_ndp_message_number())=="136": #Neigbor Spoofing
                             #if ethChild2.get_router_flag()=="false":
-                            print "Sending to NA DETECT"
+                            #print "Sending to NA DETECT"
                             detect_module.detect_neighbor_spoofing((message_details))
                         #else:
                             #learningmode = LearningMode.LearningMode()
                             #learningmode.learn(message_details)
                         #print "Line Fin"
-            except Exception,e: print str(e)
+            except Exception,e: pass
             return message_details
 
 
