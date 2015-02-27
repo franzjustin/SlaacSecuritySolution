@@ -1,7 +1,7 @@
 import os.path
 from datetime import datetime
 from decimal import *
-from ClassS3 import RotatingFileOpener
+from ClassS3 import RotatingFileOpener,  DataRead, SLAAC_Message, LearningMode,SendPackets
 
 
 # Creates a class called Detection
@@ -54,34 +54,41 @@ class Detection:
         if message_details.ndp_message_number == 134:
             #print message_details.get_source_link_layer_address()
             #print router_database[x][1]
-            print
-            for x in range(len(router_database)):
-                    if str(vlan) == str(router_database[x][0]):
+            if str(message_details.get_router_lifetime()) != "00":
+                for x in range(len(router_database)):
+                        if str(vlan) == str(router_database[x][0]):
 
-                        if str(message_details.get_source_link_layer_address()) != str(router_database[x][1]):
-                            print "Rogue Router Advertisement Detected"
-                            with RotatingFileOpener.RotatingFileOpener('../Logs/', prepend='log_report-', append='.s3') as logger:
-                                current_datetime = datetime.now()
-                                log = str(current_datetime) + " SA001 Attacker:" + str(message_details.get_source_link_layer_address())
-                                log =log + ";Victim:" + str(router_database[x][1]) + "\n"
-                                logger.write(log)
-                            test_open = open("../TestFiles/realtime_test_success",'a')
-                            message = "True" +" "+ str(message_details.get_source_MAC_address())+ " " + str(router_database[x][1])
-                            test_open.write(message)
-                            test_open.write('\n')
-                            test_open.close()
-                            #return "true"
+                            if str(message_details.get_source_link_layer_address()) != str(router_database[x][1]):
+                                print "Rogue Router Advertisement Detected"
+                                with RotatingFileOpener.RotatingFileOpener('../Logs/', prepend='log_report-', append='.s3') as logger:
+                                    current_datetime = datetime.now()
+                                    log = str(current_datetime) + " SA001 Attacker:" + str(message_details.get_source_link_layer_address())
+                                    log =log + ";Victim:" + str(router_database[x][1]) + "\n"
+                                    logger.write(log)
+                                test_open = open("../TestFiles/realtime_test_success",'a')
+                                message = "True" +" "+ str(message_details.get_source_MAC_address())+ " " + str(router_database[x][1])
+                                test_open.write(message)
+                                test_open.write('\n')
+                                test_open.close()
+                                #return "true"
+
+                                parseIpSourceAdd =  str(message_details.get_ip_source_address()).lower()
+                                mitigateMessage = SendPackets.SendPacket(parseIpSourceAdd,"ff02::1", "eth0")
+                                #print parseIpSourceAdd
+                                IpSourceMac = message_details.get_source_link_layer_address().replace(':','')
+                                mitigateMessage.mitigate_last_hop_router(parseIpSourceAdd,IpSourceMac,message_details.get_vlan_id())
+
+                            else:
+                                print "Legitimate Router Advertisement Detected"
+                                test_open = open("../TestFiles/realtime_test_success",'a')
+                                message = "False" +" "+ str(message_details.get_source_MAC_address())+ " " + str(router_database[x][1])
+                                test_open.write(message)
+                                test_open.write('\n')
+                                test_open.close()
+                                #return "false"
                         else:
-                            print "Legitimate Router Advertisement Detected"
-                            test_open = open("../TestFiles/realtime_test_success",'a')
-                            message = "False" +" "+ str(message_details.get_source_MAC_address())+ " " + str(router_database[x][1])
-                            test_open.write(message)
-                            test_open.write('\n')
-                            test_open.close()
-                            #return "false"
-                    else:
-                        lol = 1
-                        #print "Incorrect Vlan, Checking other VLANs ..."
+                            lol = 1
+                            #print "Incorrect Vlan, Checking other VLANs ..."
 
 
             return "false"
@@ -334,19 +341,19 @@ class Detection:
                     if dad_entry[4] > 2 and difference <2000000:
                         print "DOS in DAD Detected"
                         test_open = open("../TestFiles/realtime_test1_success",'a')
-                        message = "True"
+                        message = "True" + " " +str(dad_entry[0]) +" " + str(difference) + " " +  str(dad_entry[4])
                         test_open.write(message)
                         test_open.write('\n')
                         test_open.close()
                         with RotatingFileOpener.RotatingFileOpener('../Logs/', prepend='log_report-', append='.s3') as logger:
                             current_datetime = datetime.now()
-                            log = str(entry_date) + " SA003 Attacker:" + str(dad_entry[0])
+                            log = str(entry_date) + " SAd003 Attacker:" + str(dad_entry[0])
                             log =log+"\n"
                             logger.write(log)
                     else:
                         print "DAD Legitimate"
                         test_open = open("../TestFiles/realtime_test1_success",'a')
-                        message = "False"
+                        message = "False" + " " +str(dad_entry[0]) +" " + str(difference) + " " +  str(dad_entry[4])
                         test_open.write(message)
                         test_open.write('\n')
                         test_open.close()

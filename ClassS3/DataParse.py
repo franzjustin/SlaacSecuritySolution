@@ -66,6 +66,7 @@ class Dataparse:
                         destination_MAC_address_final = ""
                         override_flag= False
                         router_flag = False
+                        router_lifetime = "False"
                         #print "Checpoint1"
                         x = 0
 
@@ -83,9 +84,14 @@ class Dataparse:
                         #print "cheeckpoint3"
                         packetData = (ethChild2.get_originating_packet_data())
                         packetHex = []
+                        payloadHex = []
                         #print "checkpoint4"
+                        #print ethChild2.child().get_bytes()
+
+                        #print payloadHex
                         for data in packetData:
                             packetHex.append(hex(data))
+
                         #print "checkpoint5"
                         #print packetHex
                         source_link_layer_address = ""
@@ -97,6 +103,7 @@ class Dataparse:
                         #print packetHex
                         #print "checpoint6"
                         contains_source, offset = self.check_ipv6_options(packetHex)
+                        #print contains_source
                         #print "checkpoint1.3"
                         if str(ndp_message_number) == "134":  #Router Advertisement
                             if str(contains_source) == "true-source":
@@ -111,6 +118,12 @@ class Dataparse:
                                 #print "*****************************************************************************************"
                             else:
                                 source_link_layer_address = "n/a"
+
+                            payload_byte = ethChild2.child().get_bytes()
+                            for payload_data in payload_byte:
+                                payloadHex.append(hex(payload_data))
+                            router_lifetime = payloadHex[2][2:] + payloadHex[3][2:]
+                            print router_lifetime
 
 
                         elif str(ndp_message_number) == "135":  #Neighbor Solicitation
@@ -171,7 +184,7 @@ class Dataparse:
                                                                       ip_source_address, ip_destination_address,
                                                                       source_MAC_address_final,
                                                                       destination_MAC_address_final, target_address,
-                                                                      target_link_layer_address,override_flag,router_flag)
+                                                                      target_link_layer_address,override_flag,router_flag,router_lifetime)
 
                         #print "Checkpoint3"
                         #------------Time Start------------

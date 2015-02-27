@@ -2,7 +2,7 @@
 class SLAAC_Message:
     # Initialize when created. Self tells its from this class and the others are your created attributes
     def __init__(self, vlan_id, ndp_message_number, source_link_layer_address, ip_source_address, ip_destination_address,
-                 source_MAC_address_final, destination_MAC_address_final, target_address,target_link_layer_address,override_flag,router_flag):
+                 source_MAC_address_final, destination_MAC_address_final, target_address,target_link_layer_address,override_flag,router_flag,router_lifetime="00"):
         # Self is the new object
         self.vlan_id = vlan_id
         self.ndp_message_number = ndp_message_number
@@ -15,6 +15,7 @@ class SLAAC_Message:
         self.target_link_layer_address = target_link_layer_address
         self.override_flag = override_flag
         self.router_flag = router_flag
+        self.router_lifetime = router_lifetime
 
     # Creates method called lastname
     def get_vlan_id(self):
@@ -49,3 +50,6 @@ class SLAAC_Message:
 
     def get_router_flag(self):
         return self.router_flag
+
+    def get_router_lifetime(self):
+        return self.router_lifetime

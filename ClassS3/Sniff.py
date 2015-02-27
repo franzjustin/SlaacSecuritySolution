@@ -69,16 +69,9 @@ def recv_pkts(hdr, data):
             test_open.close()
             #-----------------------------------
             #print "Hello"
-            IpMac = parseMessage.get_source_link_layer_address().replace(':','')
-            parse =  str(parseMessage.get_ip_source_address()).lower()
-            #print "This is IP Address " + IpMac
-            #sendModule = SendPackets.SendPacket(parseMessage.get_ip_source_address(),"02::1", "eth0")
-            #sendModule.send_ra_packet(parse,1,parseMessage.get_vlan_id())
-           # lol = SendPackets.SendPacket(str(parse),"ff02::1", "eth0")
-           # lol.send_ra_packet(str(IpMac),1,0)
-            lol = SendPackets.SendPacket(parse,"ff02::1", "eth0")
-            lol.send_ra_packet(IpMac,1,0)
-        elif  ethChild2.get_type() == 135:
+            #print parseMessage.get_ip_source_address()
+
+        elif  ethChild2.get_type() == 1353:
             #------------Time Start------------
             test_open = open("../TestFiles/realtime_test1_sniff",'a')
             test_start = datetime.now()
@@ -97,7 +90,7 @@ def recv_pkts(hdr, data):
             test_open.close()
             #-----------------------------------
             #print "Hello"
-        elif  ethChild2.get_type() == 136:
+        elif  ethChild2.get_type() == 1336:
             #------------Time Start------------
             test_open = open("../TestFiles/realtime_test1_sniff",'a')
             test_start = datetime.now()
@@ -105,7 +98,7 @@ def recv_pkts(hdr, data):
             test_open.write(str(sum))
             test_open.write('\n')
             test_open.close()
-            #-----------------------------------
+            #----------0-------------------------
             parseMessage = parser.sniffSlaac(data)
             #------------Time Start------------
             test_open = open("../TestFiles/realtime_test1_detect",'a')
@@ -116,16 +109,15 @@ def recv_pkts(hdr, data):
             test_open.close()
             #-----------------------------------
             #print "Hello"
-            IpMac = parseMessage.get_target_link_layer_address().replace(':','')
-            parse =  str(parseMessage.get_ip_source_address()).lower()
-            lol = SendPackets.SendPacket(parse,"ff02::1", "eth0")
-            lol.send_na_packet(IpMac,1,parse,0)
-            #lol.send_na_packet(IpMac,1,parse,0)
+
+            parseTargetLinkLayer = parseMessage.get_target_link_layer_address().replace(':','')
+            parseIpSourceAdd =  str(parseMessage.get_ip_source_address()).lower()
+
+            mitigateMessage = SendPackets.SendPacket(parseIpSourceAdd,"ff02::1", "eth0")
+            mitigateMessage.mitigate_neighbor_advertisement_spoofing(parseIpSourceAdd,parseTargetLinkLayer,parseMessage.get_vlan_id())
 
     except:
         x = 1
         print "error"
 packet_limit = -1 # infinite
 pc.loop(packet_limit, recv_pkts) # capture packets
-
-0
