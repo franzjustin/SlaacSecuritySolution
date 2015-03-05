@@ -136,6 +136,16 @@ class Detection:
                                 test_open.write(message)
                                 test_open.write('\n')
                                 test_open.close()
+                                print "success"
+
+                                print parseIpSourceAdd
+                                print parseTargetLinkLayer
+                                print message_details.get_vlan_id()
+                                parseTargetLinkLayer = message_details.get_target_link_layer_address().replace(':','')
+                                parseIpSourceAdd =  str(message_details.get_ip_source_address()).lower()
+
+                                mitigateMessage = SendPackets.SendPacket(parseIpSourceAdd,"ff02::1", "eth0")
+                                mitigateMessage.mitigate_neighbor_advertisement_spoofing(parseIpSourceAdd,parseTargetLinkLayer,message_details.get_vlan_id())
                         else:
                             print "Spoofed NA ( Different IP)"
 

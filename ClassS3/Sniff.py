@@ -59,7 +59,7 @@ def recv_pkts(hdr, data):
             test_open.write('\n')
             test_open.close()
             #-----------------------------------
-            parseMessage = parser.sniffSlaac(data)
+            parser.sniffSlaac(data)
             #------------Time Start------------
             test_open = open("../TestFiles/realtime_test1_detect",'a')
             test_start = datetime.now()
@@ -69,9 +69,8 @@ def recv_pkts(hdr, data):
             test_open.close()
             #-----------------------------------
             #print "Hello"
-            #print parseMessage.get_ip_source_address()
 
-        elif  ethChild2.get_type() == 1353:
+        elif  ethChild2.get_type() == 135:
             #------------Time Start------------
             test_open = open("../TestFiles/realtime_test1_sniff",'a')
             test_start = datetime.now()
@@ -90,7 +89,7 @@ def recv_pkts(hdr, data):
             test_open.close()
             #-----------------------------------
             #print "Hello"
-        elif  ethChild2.get_type() == 1336:
+        elif  ethChild2.get_type() == 136:
             #------------Time Start------------
             test_open = open("../TestFiles/realtime_test1_sniff",'a')
             test_start = datetime.now()
@@ -99,7 +98,7 @@ def recv_pkts(hdr, data):
             test_open.write('\n')
             test_open.close()
             #----------0-------------------------
-            parseMessage = parser.sniffSlaac(data)
+            parser.sniffSlaac(data)
             #------------Time Start------------
             test_open = open("../TestFiles/realtime_test1_detect",'a')
             test_start = datetime.now()
@@ -109,12 +108,6 @@ def recv_pkts(hdr, data):
             test_open.close()
             #-----------------------------------
             #print "Hello"
-
-            parseTargetLinkLayer = parseMessage.get_target_link_layer_address().replace(':','')
-            parseIpSourceAdd =  str(parseMessage.get_ip_source_address()).lower()
-
-            mitigateMessage = SendPackets.SendPacket(parseIpSourceAdd,"ff02::1", "eth0")
-            mitigateMessage.mitigate_neighbor_advertisement_spoofing(parseIpSourceAdd,parseTargetLinkLayer,parseMessage.get_vlan_id())
 
     except:
         x = 1
