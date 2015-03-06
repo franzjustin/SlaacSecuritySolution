@@ -142,15 +142,28 @@ class Notif(flask.views.MethodView):
             return flask.render_template('status.html', running=running)
 
 
-class Learn(flask.views.MethodView):
+class Config(flask.views.MethodView):
     @login_required
     def get(self):
-        return 0
+        flask.flash("enabled")
+        return flask.render_template('config.html', running=running)
 
     @login_required
     def post(self):
-        return 0
-
+        if flask.request.form['submit'] == 'Start Learning':
+            flask.flash("disabled")
+            return flask.render_template('config.html', running=running)
+        elif flask.request.form['submit'] == 'Stop Learning':
+            pass # learning mode stop
+        elif flask.request.form['submit'] == 'Select Interface':
+            pass # learning mode stop
+        elif flask.request.form['submit'] == 'Delete Logs':
+            logfile = "log_report-" + time.strftime('%Y%m%d') + ".s3"
+            pass # learning mode stop
+        elif flask.request.form['submit'] == 'Create Accounts':
+            return flask.redirect(flask.url_for('signUp'))
+        elif flask.request.form['submit'] == 'Delete Accounts':
+            pass # learning mode stop
 
 class signUpUser(flask.views.MethodView):
     def get(self):
@@ -161,9 +174,7 @@ class signUpUser(flask.views.MethodView):
         password = flask.request.form['password'];
         f = open('../Database/Accounts.txt', 'a')
         f.write(user + " " + password)
-        print "Check1"
         f.close()
-        print "Check2"
         return flask.redirect(flask.url_for('index'))
         #return flask.render_template('index.html', running=running)
 
@@ -173,7 +184,7 @@ app.add_url_rule('/sniffer', view_func=Sniffer.as_view('sniffer'), methods=['GET
 app.add_url_rule('/test', view_func=Test.as_view('test'), methods=['GET'])
 app.add_url_rule('/stop', view_func=Stop.as_view('stop'), methods=['GET', 'POST'])
 app.add_url_rule('/notification', view_func=Notif.as_view('notif'), methods=['GET', 'POST'])
-app.add_url_rule('/learn', view_func=Learn.as_view('learn'), methods=['GET', 'POST'])
+app.add_url_rule('/config', view_func=Config.as_view('config'), methods=['GET', 'POST'])
 app.add_url_rule('/signUpUser', view_func=signUpUser.as_view('signUp'), methods=['GET', 'POST'])
 
 if __name__ == "__main__":

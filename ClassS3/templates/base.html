@@ -21,7 +21,7 @@
 	        <div id="header">
 	            <!-- Logo -->
 	            <div id="logo">
-	                <h1><a href="index.html">IPv6 SLAAC Monitoring and Mitigation</a></h1>
+	                <h1><a href="{{url_for('index')}}">IPv6 SLAAC Monitoring and Mitigation</a></h1>
 	                <p>System with Multiple VLAN Support</p>
 	            </div>
 	            <!-- Nav -->
@@ -34,7 +34,7 @@
 	                    	<li><a href="{{url_for('sniffer')}}">Test Run</a></li>
 	                    {% endif %}
                         <li class="current"><a href="{{url_for('notif')}}">Status</a></li>
-                        <li class="current"><a href="{{url_for('learn')}}">Learn</a></li>
+                        <li class="current"><a href="{{url_for('config')}}">Configuration</a></li>
 	                </ul>
 	            </nav>
 	        </div>
