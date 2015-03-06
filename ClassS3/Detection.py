@@ -1,11 +1,11 @@
 import os.path
 from datetime import datetime
 from decimal import *
-from ClassS3 import RotatingFileOpener,  DataRead, SLAAC_Message, LearningMode,SendPackets
+import RotatingFileOpener,  DataRead, SLAAC_Message, LearningMode,SendPackets
 
 
 # Creates a class called Detection
-from ClassS3 import BackwardsReader
+import BackwardsReader
 
 
 class Detection:

@@ -3,7 +3,7 @@ from impacket import ICMP6
 from impacket.ImpactDecoder import EthDecoder
 import dpkt
 
-from ClassS3 import SLAAC_Message
+import SLAAC_Message
 
 
 

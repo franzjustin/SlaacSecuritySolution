@@ -105,15 +105,30 @@ class Sniffer(flask.views.MethodView):
 
 
 class Notif(flask.views.MethodView):
+
 	@login_required
 	def get(self):
+
+		def File_Existence(filepath):
+			try:
+				f = open(filepath)
+			except IOError, OSError: # Note OSError is for later versions of python
+				return False
+
+			return True
+
 		logfile = "log_report-" + time.strftime('%Y%m%d') + ".s3"   # creates the string filename of the current log file used
 		#print logfile
 		global running
-		with open(os.path.join(APP_STATIC, logfile)) as f:
-			stat = str(f.read())
-			flask.flash(stat)
-			return flask.render_template('status.html', running = running)
+
+		if File_Existence(os.path.join(APP_STATIC, logfile)) is True:
+			with open(os.path.join(APP_STATIC, logfile)) as f:
+				stat = str(f.read())
+				flask.flash(stat)
+				return flask.render_template('status.html', running = running)
+		else:
+			 flask.flash("everything is fine :)")
+			 return flask.render_template('status.html', running = running)
 
 
 class Learn(flask.views.MethodView):

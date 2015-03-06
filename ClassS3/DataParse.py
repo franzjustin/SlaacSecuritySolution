@@ -2,7 +2,7 @@ import pcapy
 from impacket.ImpactDecoder import *
 from datetime import datetime
 from decimal import *
-from ClassS3 import DataRead, Detection, SLAAC_Message, LearningMode
+import DataRead, Detection, SLAAC_Message, LearningMode
 from impacket.ImpactPacket import *
 
 class Dataparse:
