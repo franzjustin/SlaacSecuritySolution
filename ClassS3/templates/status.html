@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block body %}
+<body class="homepage">
+
+    <!-- Intro -->
+    <div id="intro-wrapper" class="wrapper style1"> 
+        <section id="intro" class="container">
+            <h1>Logs</h1>
+                {% with messages = get_flashed_messages() %}
+                    {% for message in messages %}
+                        <p class="style1">{{message}}</p>
+                    {% endfor %}
+                {% endwith %}
+            <ul class="actions">
+                <li><a href="{{url_for('notif')}}" class="button style3 big">Refresh</a></li>
+            </ul>
+        </section>
+    </div>
+     
+
+    <!-- Footer -->
+    <div id="footer-wrapper" class="wrapper">
+     
+        <div id="copyright">
+            <ul>
+                <li>&copy; S3</li>
+                <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+{% endblock %}

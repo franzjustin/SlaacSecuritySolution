@@ -1,0 +1,28 @@
+﻿{% extends "base.html" %}
+{% block body %}
+<body class="homepage">
+
+    <!-- Intro -->
+    <div id="intro-wrapper" class="wrapper style1"> 
+        <section id="intro" class="container">
+            <h1>Currently sniffing for packets</h1>
+            <ul class="actions">
+                <li><a href="{{url_for('stop')}}" class="button style3 big">Stop!</a></li>
+            </ul>
+        </section>
+    </div>
+     
+
+    <!-- Footer -->
+    <div id="footer-wrapper" class="wrapper">
+     
+        <div id="copyright">
+            <ul>
+                <li>&copy; S3</li>
+                <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+{% endblock %}

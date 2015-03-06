@@ -1,0 +1,143 @@
+﻿{% extends "base.html" %}
+{% block body %}
+	<body class="homepage">
+		<!-- Header -->
+		
+		<!-- Intro -->
+        <div class="wrapper">
+            {% if 'username' in session %}
+                <p>Welcome back {{session['username']}}!</p>
+                <form action="{{url_for('index')}}" method="post">
+                    <input type="submit" name="logout" value="logout" />
+                </form>
+            {% else %}
+                <p>A login is required:</p>
+                <form action="{{url_for('index')}}" method="POST">
+                    <p>Username:<br />
+                    <input type="text" name="username" /></p>
+                    <p>Password:<br />
+                    <input type="password" name="password" /></p>
+                    <p><input type="submit" value="submit" /></p>
+                </form>
+            {% endif %}
+            {% with messages = get_flashed_messages() %}
+                    {% for message in messages %}
+                        <p class="style1">{{message}}</p>
+                    {% endfor %}
+            {% endwith %}
+        </div>
+			<div id="intro-wrapper" class="wrapper style1">
+				<div class="title">The Introduction</div>
+				<section id="intro" class="container">
+					<p class="style1">So in case you were wondering what this is all about ...</p>
+					<p class="style2">
+                        This study aims to develop a system that is capable of monitoring  multiple VLANs and mitigating IPv6 SLAAC related attacks.<br class="mobile-hide" />
+						 
+					</p>
+					<p class="style3">A Thesis Presented to the Faculty of the College of Computer Studies De La Salle University
+					    <br/>by<br /> Buenaventura, Franz Justin A.|Gonzales, John Paul L.|Lu, Matthew Emanuel A. <br/>
+                         Arlyn Verina L. Ong (Faculty Adviser) 
+                    </p>
+					<ul class="actions">
+						<li><a href="#" class="button style3 big">Want to know more?</a></li>
+					</ul>
+				</section>
+			</div>
+		
+		<!-- Main -->
+			<div class="wrapper style2">
+				<div class="title">The Details</div>
+				<div id="main" class="container"> 
+					
+					<!-- Features -->
+						<section id="features">
+							<header class="style1">
+								<h2>Want to try the program?</h2>
+							    <p>The program needs PCAPY, Impacket and Python 2.7 to run</p>
+							    <p>This is also only tested using in Ubuntu Platform</p>
+                                <p>Ask one of the creators for more information on compatability.</p>
+                                <ul class="actions actions-centered">
+                                    <li><a href="{{url_for('sniffer')}}" class="button style1 big">Get Started</a></li>
+                                    <li><a href="#" class="button style2 big">More Info</a></li>
+                                </ul>
+							</header> 
+						</section> 
+				</div>
+			</div>
+		 
+		<!-- Footer -->
+			<div id="footer-wrapper" class="wrapper">
+				<div class="title">Contact Us</div>
+				<div id="footer" class="container">
+					<header class="style1">
+						<h2>Need To Contact any one of us?</h2>
+						<p>
+							As much as we want to entertain you promptly please do consider<br />
+							we are very happy to answer your inquiries as soon as possible.
+						</p>
+					</header>
+					<hr />
+					<div class="row 150%">
+						<div class="6u">
+
+							<!-- Contact Form -->
+								<section>
+									<form method="post" action="#">
+										<div class="row 50%">
+											<div class="6u">
+												<input type="text" name="name" id="contact-name" placeholder="Name" />
+											</div>
+											<div class="6u">
+												<input type="text" name="email" id="contact-email" placeholder="Email" />
+											</div>
+										</div>
+										<div class="row 50%">
+											<div class="12u">
+												<textarea name="message" id="contact-message" placeholder="Message" rows="4"></textarea>
+											</div>
+										</div>
+										<div class="row">
+											<div class="12u">
+												<ul class="actions">
+													<li><input type="submit" class="style1" value="Send" /></li>
+													<li><input type="reset" class="style2" value="Reset" /></li>
+												</ul>
+											</div>
+										</div>
+									</form>
+								</section>
+
+						</div>
+						<div class="6u">
+						
+							<!-- Contact -->
+								<section class="feature-list small">
+									<div class="row"> 
+									</div>
+									<div class="row">
+										<div class="6u">
+											<section>
+												<h3 class="icon fa-envelope">Email</h3>
+												<p>
+                                                    <a href="#">John Paul Gonzales - gonzales.pgon@gmail.com</a>
+                                                    <a href="#">Matthew Emanuel Lu - matt_eman94@yahoo.com</a>
+                                                    <a href="#">Franz Buenaventura - franz_buenaventura@hotmail.com</a> 
+												</p>
+											</section>
+										</div> 
+									</div>
+								</section>
+								
+						</div>
+					</div>
+					<hr />
+				</div>
+				<div id="copyright">
+					<ul>
+						<li>&copy; S3</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</div>
+
+	</body>
+{% endblock %}

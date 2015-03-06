@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block body %}
+<body class="homepage">
+    <!-- Header -->
+
+    <!-- Intro -->
+    <div id="intro-wrapper" class="wrapper style1"> 
+        <section id="intro" class="container">
+            <h1> Please select an interface:</h1>
+            <form action="{{url_for('sniffer')}}" method="POST">
+	            <input type="submit" value="Learn" />
+            </form>
+        </section>
+    </div>
+     
+
+    <!-- Footer -->
+    <div id="footer-wrapper" class="wrapper">
+     
+        <div id="copyright">
+            <ul>
+                <li>&copy; S3</li>
+                <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+{% endblock %}
+
