@@ -4,7 +4,8 @@ import functools
 import threading
 import Sniff
 import time
-
+import pcapy
+from pcapy import findalldevs
 # from sniffer import StoppableThread
 
 # snifferFile = StoppableThread()
@@ -37,6 +38,7 @@ def File_Existence(filepath):
 class Main(flask.views.MethodView):  # the main page
     def get(self):  # when open, this is the first page it gets
         #print File_Existence(os.path.join(APP_ACC, 'Accounts.txt'))
+
         if File_Existence(os.path.join(APP_ACC, 'Accounts.txt')) is False:
             print "NO Accounts.txt"
             return flask.render_template('signUp.html',running=running)  #flask uses templates of html files for the interface // in this case, the index page
@@ -96,7 +98,11 @@ class Sniffer(flask.views.MethodView):
     def get(self):
         print "went to sniffer, running is"
         print str(running)
-        return flask.render_template('sniffer.html', running=running)
+        interface_list = self.getInterface()
+        print interface_list[0]
+        return flask.render_template('sniffer.html', running=running, interface_list=interface_list)
+    def getInterface(self):
+        return findalldevs()
 
     @login_required
     def post(self):
