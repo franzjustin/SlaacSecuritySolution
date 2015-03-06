@@ -4,14 +4,16 @@
 		<!-- Header -->
 		<!-- Intro -->
 
-        <div class="wrapper style2">
-            {% if 'username' in session %}
+
+			<div id="intro-wrapper" class="wrapper style1">
+				<div class="title">The Introduction</div>
+                 {% if 'username' in session %}
                 <p>Welcome back {{session['username']}}!</p>
                 <form action="{{url_for('index')}}" method="post">
                     <input type="submit" name="logout" value="logout" />
                 </form>
             {% else %}
-                <p>A login is required:</p>
+                <p>Login:</p>
                 <form action="{{url_for('index')}}" method="POST">
                     <p>Username:<br />
                     <input type="text" name="username" /></p>
@@ -25,10 +27,6 @@
                         <p class="style1">{{message}}</p>
                     {% endfor %}
             {% endwith %}
-        </div>
-
-			<div id="intro-wrapper" class="wrapper style1">
-				<div class="title">The Introduction</div>
 				<section id="intro" class="container">
 					<p class="style1">So in case you were wondering what this is all about ...</p>
 					<p class="style2">
@@ -44,7 +42,7 @@
 					</ul>
 				</section>
 			</div>
-		
+
 		<!-- Main -->
 			<div class="wrapper style2">
 				<div class="title">The Details</div>

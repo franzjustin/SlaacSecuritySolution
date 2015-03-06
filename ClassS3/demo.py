@@ -6,11 +6,8 @@ import Sniff
 import time
 
 # from sniffer import StoppableThread
-
 # snifferFile = StoppableThread()
-
 #!/usr/bin/python
-#todo working
 
 import thread
 
@@ -58,6 +55,36 @@ class Main(flask.views.MethodView):  # the main page
                 return flask.redirect(flask.url_for('index'))
             username = flask.request.form['username']
             password = flask.request.form['password']
+
+
+
+            usersDictionary = {}
+            f = open('../Database/Accounts.txt', 'r')
+            users = f.read()
+            f.close()
+            users = users.split(' ')
+
+            usersUsername = []
+            usersPassword = []
+            i = 0
+            for user in users:
+                if i == 0:
+                    usersUsername.append(user)
+                    i = 1
+                elif i == 1:
+                    usersPassword.append(user)
+                    i = 0
+            print usersUsername
+            print usersPassword
+
+            usersDictionary = {}
+            for i in range(len(usersUsername)):
+                usersDictionary[usersUsername[i]] = usersPassword[i]
+
+            for keys,values in usersDictionary.items():
+                print(keys)
+                print(values)
+
             if username in users and users[username] == password:
                 flask.session['username'] = username
             else:
@@ -155,9 +182,7 @@ class signUpUser(flask.views.MethodView):
         password = flask.request.form['password'];
         f = open('../Database/Accounts.txt', 'a')
         f.write(user + " " + password)
-        print "Check1"
         f.close()
-        print "Check2"
         return flask.redirect(flask.url_for('index'))
         #return flask.render_template('index.html', running=running)
 
