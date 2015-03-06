@@ -6,8 +6,11 @@ import Sniff
 import time
 
 # from sniffer import StoppableThread
+
 # snifferFile = StoppableThread()
+
 #!/usr/bin/python
+#todo working
 
 import thread
 
@@ -181,8 +184,8 @@ class signUpUser(flask.views.MethodView):
         user = flask.request.form['username'];
         password = flask.request.form['password'];
         f = open('../Database/Accounts.txt', 'a')
-        f.write(user + " " + password)
-        f.close()
+        f.write(user + " " + password) 
+        f.close() 
         return flask.redirect(flask.url_for('index'))
         #return flask.render_template('index.html', running=running)
 
@@ -192,7 +195,7 @@ app.add_url_rule('/sniffer', view_func=Sniffer.as_view('sniffer'), methods=['GET
 app.add_url_rule('/test', view_func=Test.as_view('test'), methods=['GET'])
 app.add_url_rule('/stop', view_func=Stop.as_view('stop'), methods=['GET', 'POST'])
 app.add_url_rule('/notification', view_func=Notif.as_view('notif'), methods=['GET', 'POST'])
-app.add_url_rule('/learn', view_func=Learn.as_view('learn'), methods=['GET', 'POST'])
+app.add_url_rule('/config', view_func=Config.as_view('config'), methods=['GET', 'POST'])
 app.add_url_rule('/signUpUser', view_func=signUpUser.as_view('signUp'), methods=['GET', 'POST'])
 
 if __name__ == "__main__":
