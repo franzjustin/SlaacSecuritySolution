@@ -14,7 +14,7 @@ from pcapy import findalldevs
 #!/usr/bin/python
 
 import thread
-
+#todo lollololol
 APP_ROOT = os.path.dirname(os.getcwd())
 APP_STATIC = os.path.join(APP_ROOT, 'Logs')
 APP_ACC = os.path.join(APP_ROOT, 'Database')
