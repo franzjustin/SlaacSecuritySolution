@@ -26,6 +26,7 @@ running = False
 app = flask.Flask(__name__)
 
 app.secret_key = "bacon"
+
 users = {'admin': 'admin'}
 
 
@@ -47,55 +48,54 @@ class Main(flask.views.MethodView):  # the main page
 			print "there is an Accounts.txt"
 			return flask.render_template('index.html',running=running)  #flask uses templates of html files for the interface // in this case, the index page
 
-    def post(self):
-        if 'logout' in flask.request.form:
-            flask.session.pop('username', None)
-            global running
-            running = False
-            l.stop()
-            return flask.redirect(flask.url_for('index'))
-        required = ['username', 'password']
-        for r in required:
-            if r not in flask.request.form:
-                flask.flash("Error {0} is required.".format(r))
-                return flask.redirect(flask.url_for('index'))
-            username = flask.request.form['username']
-            password = flask.request.form['password']
+	def post(self):
+		if 'logout' in flask.request.form:
+			flask.session.pop('username', None)
+			global running
+			running = False
+			l.stop()
+			return flask.redirect(flask.url_for('index'))
+		required = ['username', 'password']
+		for r in required:
+			if r not in flask.request.form:
+				flask.flash("Error {0} is required.".format(r))
+				return flask.redirect(flask.url_for('index'))
+			username = flask.request.form['username']
+			password = flask.request.form['password']
 
+			usersDictionary = {}
+			f = open('../Database/Accounts.txt', 'r')
+			users = f.read()
+			f.close()
+			users = users.split()
+			#users = users.split('\n')
 
+			usersUsername = []
+			usersPassword = []
+			i = 0
+			for user in users:
+				if i == 0:
+					usersUsername.append(user)
+					i = 1
+				elif i == 1:
+					usersPassword.append(user)
+					i = 0
+			print usersUsername
+			print usersPassword
 
-            usersDictionary = {}
-            f = open('../Database/Accounts.txt', 'r')
-            users = f.read()
-            f.close()
-            users = users.split(' ')
+			usersDictionary = {}
+			for i in range(len(usersUsername)):
+				usersDictionary[usersUsername[i]] = usersPassword[i]
 
-            usersUsername = []
-            usersPassword = []
-            i = 0
-            for user in users:
-                if i == 0:
-                    usersUsername.append(user)
-                    i = 1
-                elif i == 1:
-                    usersPassword.append(user)
-                    i = 0
-            print usersUsername
-            print usersPassword
+			for keys,values in usersDictionary.items():
+				print(keys)
+				print(values)
 
-            usersDictionary = {}
-            for i in range(len(usersUsername)):
-                usersDictionary[usersUsername[i]] = usersPassword[i]
-
-            for keys,values in usersDictionary.items():
-                print(keys)
-                print(values)
-
-            if username in users and users[username] == password:
-                flask.session['username'] = username
-            else:
-                flask.flash("username doesn't exist or incorrect password")
-            return flask.redirect(flask.url_for('index'))
+			if username in usersDictionary and usersDictionary[username] == password:
+				flask.session['username'] = username
+			else:
+				flask.flash("username doesn't exist or incorrect password")
+			return flask.redirect(flask.url_for('index'))
 
 
 def login_required(method):
@@ -150,35 +150,6 @@ class Sniffer(flask.views.MethodView):
 			raise e
 		return flask.render_template('test.html', running=running)  #goes to the test.html page
 
-	@login_required
-	def get(self):
-		print "went to sniffer, running is"
-		print str(running)
-		interface_list = self.getInterface()
-		print interface_list[0]
-		return flask.render_template('sniffer.html', running=running, interface_list=interface_list)
-	def getInterface(self):
-		return findalldevs()
-
-	@login_required
-	def post(self):
-		global running
-		expression = str(flask.request.form['expression'])  # gets the input of the user
-		l.setExpression(expression)  # sets the input of the user to know where to sniff
-		try:
-			if l.isRunning == False:  # if the thread has been shut down
-				l.isRunning = True  # change it to true, so it could loop again
-				running = True
-				l.start()  # starts the forever loop / declared from the top to be a global variable
-				print str(running)
-			else:
-				running = True
-				print str(running)
-				l.start()
-		except Exception, e:
-			raise e
-		return flask.render_template('test.html', running=running)  #goes to the test.html page
-
 
 class Notif(flask.views.MethodView):
 	@login_required
@@ -201,6 +172,7 @@ class Notif(flask.views.MethodView):
 class Config(flask.views.MethodView):
 	@login_required
 	def get(self):
+		global learning
 		if File_Existence(os.path.join(APP_ACC, 'Accounts.txt')) is True:
 			acc = open(os.path.join(APP_ACC, 'Accounts.txt'))
 			user = acc.readline()
@@ -217,14 +189,26 @@ class Config(flask.views.MethodView):
 			else:
 				message = Markup("<br></br>")
 		flask.flash(message)
-		return flask.render_template('config.html', running=running)
+		print "learning is"
+		print learning
+		return flask.render_template('config.html', running=running, learning=learning)
 
 	@login_required
 	def post(self):
+		global learning
 		if flask.request.form['submit'] == 'Start Learning':
+			print "hidden is"
+			mode = flask.request.form['hidden']
+			l.setMode(mode)
+			# run learning code
+			#learn.activateLearningMode()
+			learning = True
 			return flask.redirect(flask.url_for('config'))
 		elif flask.request.form['submit'] == 'Stop Learning':
-			pass # learning mode stop
+			learning = False
+			# learning mode stop
+			l.setMode(False)
+			return flask.redirect(flask.url_for('config'))
 		elif flask.request.form['submit'] == 'Select Interface':
 			pass # learning mode stop
 		elif flask.request.form['submit'] == 'Delete Logs':
