@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block body %}
+<body class="homepage">
+    <!-- Header -->
+
+    <!-- Intro -->
+    <div id="intro-wrapper" class="wrapper style1">
+        <section id="intro" class="container">
+            <form action="{{url_for('config')}}" method="POST">
+                <h2>Interface Mode</h2>
+                <input type="submit" name="submit" value="Select Interface" />
+                <br></br>
+                <h2>Learning Mode</h2>
+                {% with messages = get_flashed_messages() %}
+                    {% for message in messages %}
+                        <input type="submit" name="submit" value="Start Learning" {{message}}/>
+                    {% endfor %}
+                {% endwith %}
+	            <input type="submit" name="submit" value="Stop Learning" />
+                <br></br>
+                <h2>Delete Logs</h2>
+                <input type="submit" name="submit" value="Delete Logs" />
+                <br></br>
+                <h2>Account Mode</h2>
+                <input type="submit" name="submit" value="Create Accounts" />
+                <input type="submit" name="submit" value="Delete Accounts" />
+            </form>
+        </section>
+    </div>
+
+
+    <!-- Footer -->
+    <div id="footer-wrapper" class="wrapper">
+
+        <div id="copyright">
+            <ul>
+                <li>&copy; S3</li>
+                <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+{% endblock %}
