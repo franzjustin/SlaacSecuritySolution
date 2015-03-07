@@ -10,7 +10,7 @@ import time
 # snifferFile = StoppableThread()
 
 #!/usr/bin/python
-#todo working
+#todo AYOKO
 
 import thread
 
