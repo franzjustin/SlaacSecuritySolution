@@ -11,19 +11,12 @@
                 <input type="submit" name="submit" value="Select Interface" />
                 <br></br>
                 <h2>Learning Mode</h2>
-                {% with messages = get_flashed_messages() %}
-                    {% for message in messages %}
-                        <input type="submit" name="submit" value="Start Learning" {{message}}/>
-                    {% endfor %}
-                {% endwith %}
-	            <input type="submit" name="submit" value="Stop Learning" />
+                <input type="submit" name="submit" value="Start Learning" />
+                <input type="submit" name="submit" value="Stop Learning" />
                 <br></br>
-                <h2>Delete Logs</h2>
-                <input type="submit" name="submit" value="Delete Logs" />
-                <br></br>
-                <h2>Account Mode</h2>
-                <input type="submit" name="submit" value="Create Accounts" />
-                <input type="submit" name="submit" value="Delete Accounts" />
+                {% for message in get_flashed_messages() %}
+                    {{message}}
+                {% endfor %}
             </form>
         </section>
     </div>

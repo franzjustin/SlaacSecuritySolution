@@ -4,13 +4,12 @@ import functools
 import threading
 import Sniff
 import time
-
+from flask import Markup
 # from sniffer import StoppableThread
 
 # snifferFile = StoppableThread()
 
 #!/usr/bin/python
-#todo working
 
 import thread
 
@@ -27,150 +26,168 @@ users = {'admin': 'admin'}
 
 
 def File_Existence(filepath):
-    try:
-        f = open(filepath)
-    except IOError, OSError:  # Note OSError is for later versions of python
-        return False
+	try:
+		f = open(filepath)
+	except IOError, OSError:  # Note OSError is for later versions of python
+		return False
 
-    return True
+	return True
 
 class Main(flask.views.MethodView):  # the main page
-    def get(self):  # when open, this is the first page it gets
-        #print File_Existence(os.path.join(APP_ACC, 'Accounts.txt'))
-        if File_Existence(os.path.join(APP_ACC, 'Accounts.txt')) is False:
-            print "NO Accounts.txt"
-            return flask.render_template('signUp.html',running=running)  #flask uses templates of html files for the interface // in this case, the index page
-        else:
-            print "there is an Accounts.txt"
-            return flask.render_template('index.html',running=running)  #flask uses templates of html files for the interface // in this case, the index page
+	def get(self):  # when open, this is the first page it gets
+		#print File_Existence(os.path.join(APP_ACC, 'Accounts.txt'))
+		if File_Existence(os.path.join(APP_ACC, 'Accounts.txt')) is False:
+			print "NO Accounts.txt"
+			return flask.render_template('signUp.html',running=running)  #flask uses templates of html files for the interface // in this case, the index page
+		else:
+			print "there is an Accounts.txt"
+			return flask.render_template('index.html',running=running)  #flask uses templates of html files for the interface // in this case, the index page
 
-    def post(self):
-        if 'logout' in flask.request.form:
-            flask.session.pop('username', None)
-            global running
-            running = False
-            l.stop()
-            return flask.redirect(flask.url_for('index'))
-        required = ['username', 'password']
-        for r in required:
-            if r not in flask.request.form:
-                flask.flash("Error {0} is required.".format(r))
-                return flask.redirect(flask.url_for('index'))
-            username = flask.request.form['username']
-            password = flask.request.form['password']
-            if username in users and users[username] == password:
-                flask.session['username'] = username
-            else:
-                flask.flash("username doesn't exist or incorrect password")
-            return flask.redirect(flask.url_for('index'))
+	def post(self):
+		if 'logout' in flask.request.form:
+			flask.session.pop('username', None)
+			global running
+			running = False
+			l.stop()
+			return flask.redirect(flask.url_for('index'))
+		required = ['username', 'password']
+		for r in required:
+			if r not in flask.request.form:
+				flask.flash("Error {0} is required.".format(r))
+				return flask.redirect(flask.url_for('index'))
+			username = flask.request.form['username']
+			password = flask.request.form['password']
+			if username in users and users[username] == password:
+				flask.session['username'] = username
+			else:
+				flask.flash("username doesn't exist or incorrect password")
+			return flask.redirect(flask.url_for('index'))
 
 
 def login_required(method):
-    @functools.wraps(method)
-    def wrapper(*args, **kwargs):
-        if 'username' in flask.session:
-            return method(*args, **kwargs)
-        else:
-            flask.flash('A login is required to see the page')
-            return flask.redirect(flask.url_for('index'))
+	@functools.wraps(method)
+	def wrapper(*args, **kwargs):
+		if 'username' in flask.session:
+			return method(*args, **kwargs)
+		else:
+			flask.flash('A login is required to see the page')
+			return flask.redirect(flask.url_for('index'))
 
-    return wrapper
+	return wrapper
 
 
 class Test(flask.views.MethodView):
-    def get(self):
-        return flask.render_template('test.html', running=running)
+	def get(self):
+		return flask.render_template('test.html', running=running)
 
 
 class Stop(flask.views.MethodView):
-    @login_required
-    def get(self):
-        global running
-        running = False
-        l.stop()
-        return flask.render_template('index.html', running=running)
+	@login_required
+	def get(self):
+		global running
+		running = False
+		l.stop()
+		return flask.render_template('index.html', running=running)
 
 
 class Sniffer(flask.views.MethodView):
-    @login_required
-    def get(self):
-        print "went to sniffer, running is"
-        print str(running)
-        return flask.render_template('sniffer.html', running=running)
+	@login_required
+	def get(self):
+		print "went to sniffer, running is"
+		print str(running)
+		return flask.render_template('sniffer.html', running=running)
 
-    @login_required
-    def post(self):
-        global running
-        expression = str(flask.request.form['expression'])  # gets the input of the user
-        l.setExpression(expression)  # sets the input of the user to know where to sniff
-        try:
-            if l.isRunning == False:  # if the thread has been shut down
-                l.isRunning = True  # change it to true, so it could loop again
-                running = True
-                l.start()  # starts the forever loop / declared from the top to be a global variable
-                print str(running)
-            else:
-                running = True
-                print str(running)
-                l.start()
-        except Exception, e:
-            raise e
-        return flask.render_template('test.html', running=running)  #goes to the test.html page
+	@login_required
+	def post(self):
+		global running
+		expression = str(flask.request.form['expression'])  # gets the input of the user
+		l.setExpression(expression)  # sets the input of the user to know where to sniff
+		try:
+			if l.isRunning == False:  # if the thread has been shut down
+				l.isRunning = True  # change it to true, so it could loop again
+				running = True
+				l.start()  # starts the forever loop / declared from the top to be a global variable
+				print str(running)
+			else:
+				running = True
+				print str(running)
+				l.start()
+		except Exception, e:
+			raise e
+		return flask.render_template('test.html', running=running)  #goes to the test.html page
 
 
 class Notif(flask.views.MethodView):
-    @login_required
-    def get(self):
+	@login_required
+	def get(self):
 
-        logfile = "log_report-" + time.strftime('%Y%m%d') + ".s3"  # creates the string filename of the current log file used
-        #print logfile
-        global running
+		logfile = "log_report-" + time.strftime('%Y%m%d') + ".s3"  # creates the string filename of the current log file used
+		#print logfile
+		global running
 
-        if File_Existence(os.path.join(APP_STATIC, logfile)) is True:
-            with open(os.path.join(APP_STATIC, logfile)) as f:
-                stat = str(f.read())
-                flask.flash(stat)
-                return flask.render_template('status.html', running=running)
-        else:
-            flask.flash("everything is fine :)")
-            return flask.render_template('status.html', running=running)
+		if File_Existence(os.path.join(APP_STATIC, logfile)) is True:
+			with open(os.path.join(APP_STATIC, logfile)) as f:
+				stat = str(f.read())
+				flask.flash(stat)
+				return flask.render_template('status.html', running=running)
+		else:
+			flask.flash("everything is fine :)")
+			return flask.render_template('status.html', running=running)
 
 
 class Config(flask.views.MethodView):
-    @login_required
-    def get(self):
-        flask.flash("enabled")
-        return flask.render_template('config.html', running=running)
+	@login_required
+	def get(self):
+		if File_Existence(os.path.join(APP_ACC, 'Accounts.txt')) is True:
+			acc = open(os.path.join(APP_ACC, 'Accounts.txt'))
+			user = acc.readline()
+			myname = user.partition(' ')[0]
+			print flask.session['username']
+			if myname == flask.session['username']:
+				message = Markup(
+					'<h2>Delete Logs</h2>'
+					'<input type="submit" name="submit" value="Delete Logs" />'
+					'<br></br>'
+					'<h2>Account Mode</h2>'
+					'<input type="submit" name="submit" value="Create Accounts" />'
+					'<input type="submit" name="submit" value="Delete Accounts" />')
+			else:
+				message = Markup("<br></br>")
+		flask.flash(message)
+		return flask.render_template('config.html', running=running)
 
-    @login_required
-    def post(self):
-        if flask.request.form['submit'] == 'Start Learning':
-            flask.flash("disabled")
-            return flask.render_template('config.html', running=running)
-        elif flask.request.form['submit'] == 'Stop Learning':
-            pass # learning mode stop
-        elif flask.request.form['submit'] == 'Select Interface':
-            pass # learning mode stop
-        elif flask.request.form['submit'] == 'Delete Logs':
-            logfile = "log_report-" + time.strftime('%Y%m%d') + ".s3"
-            pass # learning mode stop
-        elif flask.request.form['submit'] == 'Create Accounts':
-            return flask.redirect(flask.url_for('signUp'))
-        elif flask.request.form['submit'] == 'Delete Accounts':
-            pass # learning mode stop
+	@login_required
+	def post(self):
+		if flask.request.form['submit'] == 'Start Learning':
+			return flask.redirect(flask.url_for('config'))
+		elif flask.request.form['submit'] == 'Stop Learning':
+			pass # learning mode stop
+		elif flask.request.form['submit'] == 'Select Interface':
+			pass # learning mode stop
+		elif flask.request.form['submit'] == 'Delete Logs':
+			logfile = "log_report-" + time.strftime('%Y%m%d') + ".s3"
+			if File_Existence(os.path.join(APP_STATIC, logfile)) is True:
+				os.remove(os.path.join(APP_STATIC, logfile))
+				flask.redirect(flask.url_for('config'))
+			else:
+				flask.redirect(flask.url_for('config'))
+		elif flask.request.form['submit'] == 'Create Accounts':
+			return flask.redirect(flask.url_for('signUp'))
+		elif flask.request.form['submit'] == 'Delete Accounts':
+			pass # learning mode stop
 
 class signUpUser(flask.views.MethodView):
-    def get(self):
-        return flask.render_template('signUp.html', running=running)
+	def get(self):
+		return flask.render_template('signUp.html', running=running)
 
-    def post(self):
-        user = flask.request.form['username'];
-        password = flask.request.form['password'];
-        f = open('../Database/Accounts.txt', 'a')
-        f.write(user + " " + password)
-        f.close()
-        return flask.redirect(flask.url_for('index'))
-        #return flask.render_template('index.html', running=running)
+	def post(self):
+		user = flask.request.form['username'];
+		password = flask.request.form['password'];
+		f = open('../Database/Accounts.txt', 'a')
+		f.write(user + " " + password + "\n")
+		f.close()
+		return flask.redirect(flask.url_for('index'))
+		#return flask.render_template('index.html', running=running)
 
 
 app.add_url_rule('/', view_func=Main.as_view('index'), methods=['GET', 'POST'])
@@ -182,7 +199,7 @@ app.add_url_rule('/config', view_func=Config.as_view('config'), methods=['GET', 
 app.add_url_rule('/signUpUser', view_func=signUpUser.as_view('signUp'), methods=['GET', 'POST'])
 
 if __name__ == "__main__":
-    app.run()
+	app.run()
 
 app.debug = True
 app.run()

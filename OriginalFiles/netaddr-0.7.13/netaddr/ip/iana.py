@@ -174,7 +174,7 @@ class IPv4Parser(XMLRecordParser):
 
         record = {}
         for key in ('prefix', 'designation', 'date', 'whois', 'status'):
-            record[key] = str(rec.get(key, '')).strip()
+            record[key] = str(rec.get).strip()
 
         #   Strip leading zeros from octet.
         if '/' in record['prefix']:
@@ -213,9 +213,9 @@ class IPv6Parser(XMLRecordParser):
         """
 
         record = {
-                'prefix':       str(rec.get('prefix', '')).strip(),
-                'allocation':   str(rec.get('description', '')).strip(),
-                'reference':    str(rec.get('rfc', [''])[0]).strip(),
+                'prefix':       str(rec.get).strip(),
+                'allocation':   str(rec.get).strip(),
+                'reference':    str(rec.get[0]).strip(),
             }
 
         return record
@@ -265,7 +265,7 @@ class MulticastParser(XMLRecordParser):
         if 'addr' in rec:
             record = {
                     'address': self.normalise_addr(str(rec['addr'])),
-                    'descr': str(rec.get('description', '')),
+                    'descr': str(rec.get),
                 }
             return record
 
