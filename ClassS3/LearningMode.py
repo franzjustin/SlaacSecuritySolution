@@ -45,7 +45,7 @@ class LearningMode:
             temp_array= [ vlan, str(message_details.get_source_link_layer_address()), str(message_details.get_ip_source_address())]
             router_database.append(temp_array)
         print router_database
-        updated_router_database = open('../Database/Updated_Router_Database','w')
+        updated_router_database = open('../Database/Router_Database','w')
 
         for updated_entry in router_database:
             line = updated_entry[0] +" "+ updated_entry[1] + " " + updated_entry[2]+"\n"

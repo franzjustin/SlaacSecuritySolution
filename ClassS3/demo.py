@@ -3,6 +3,7 @@ import os
 import functools
 import threading
 import Sniff
+import DataParse
 import time
 from flask import Markup
 import pcapy
@@ -19,7 +20,10 @@ APP_ROOT = os.path.dirname(os.getcwd())
 APP_STATIC = os.path.join(APP_ROOT, 'Logs')
 APP_ACC = os.path.join(APP_ROOT, 'Database')
 l = Sniff.Forever_Loop()  #the python file class with the function of forever loop / to use as a thread
+learn = DataParse.Dataparse(False) #the python file with the learning mode
 global running
+global learning
+learning = False
 running = False
 app = flask.Flask(__name__)
 
@@ -198,6 +202,7 @@ class Notif(flask.views.MethodView):
 class Config(flask.views.MethodView):
 	@login_required
 	def get(self):
+		global learning
 		if File_Existence(os.path.join(APP_ACC, 'Accounts.txt')) is True:
 			acc = open(os.path.join(APP_ACC, 'Accounts.txt'))
 			user = acc.readline()
@@ -214,14 +219,26 @@ class Config(flask.views.MethodView):
 			else:
 				message = Markup("<br></br>")
 		flask.flash(message)
-		return flask.render_template('config.html', running=running)
+		print "learning is"
+		print learning
+		return flask.render_template('config.html', running=running, learning=learning)
 
 	@login_required
 	def post(self):
+		global learning
 		if flask.request.form['submit'] == 'Start Learning':
+			print "hidden is"
+			mode = flask.request.form['hidden']
+			l.setMode(mode)
+			# run learning code
+			#learn.activateLearningMode()
+			learning = True
 			return flask.redirect(flask.url_for('config'))
 		elif flask.request.form['submit'] == 'Stop Learning':
-			pass # learning mode stop
+			learning = False
+			# learning mode stop
+			l.setMode(False)
+			return flask.redirect(flask.url_for('config'))
 		elif flask.request.form['submit'] == 'Select Interface':
 			pass # learning mode stop
 		elif flask.request.form['submit'] == 'Delete Logs':

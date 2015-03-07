@@ -235,12 +235,12 @@ class Dataparse:
 
 
     def activateLearningMode(self,  buf):
-                eth = EthDecoder().decode(buf)
-                ethChild = eth.child()
-                ethChild2 = ethChild.child()
-
-                try:
-                    #print ethChild2
+            eth = EthDecoder().decode(buf)
+            ethChild = eth.child()
+            ethChild2 = ethChild.child()
+            #print "Checkpoint00"
+            try:
+                    #print ethChild
                     if ethChild2.get_ip_protocol_number() == 58:
                         destination_MAC_address = []
                         source_MAC_address = []
@@ -248,8 +248,10 @@ class Dataparse:
                         source_MAC_address = eth.get_ether_shost()
                         source_MAC_address_final = ""
                         destination_MAC_address_final = ""
-                        override_flag = False
+                        override_flag= False
                         router_flag = False
+                        router_lifetime = "False"
+                        #print "Checpoint1"
                         x = 0
 
                         for x in range(6):
@@ -259,16 +261,23 @@ class Dataparse:
                             temp_decimal = destination_MAC_address[x]
                             temp_hex = hex(temp_decimal)
                             destination_MAC_address_final = destination_MAC_address_final + temp_hex[2:] + ":"
-
+                        #print "checkpoint2"
                         source_MAC_address_final = source_MAC_address_final[:-1].zfill(2)
                         destination_MAC_address_final = destination_MAC_address_final[:-1]
                         target_link_layer_address = ""
-
+                        #print "cheeckpoint3"
                         packetData = (ethChild2.get_originating_packet_data())
                         packetHex = []
+                        payloadHex = []
+                        #print "checkpoint4"
+                        #print ethChild2.child().get_bytes()
+
+                        #print payloadHex
                         for data in packetData:
                             packetHex.append(hex(data))
-                        # print packetHex
+
+                        #print "checkpoint5"
+                        #print packetHex
                         source_link_layer_address = ""
                         target_address = ""
                         ip_source_address = ethChild.get_source_address()
@@ -276,7 +285,10 @@ class Dataparse:
                         ndp_message_number = ethChild2.get_type()
                         x = 0
                         #print packetHex
+                        #print "checpoint6"
                         contains_source, offset = self.check_ipv6_options(packetHex)
+                        #print contains_source
+                        #print "checkpoint1.3"
                         if str(ndp_message_number) == "134":  #Router Advertisement
                             if str(contains_source) == "true-source":
                                 for x in range(6):
@@ -291,32 +303,43 @@ class Dataparse:
                             else:
                                 source_link_layer_address = "n/a"
 
-
-
-                        message_details = SLAAC_Message.SLAAC_Message(ndp_message_number, source_link_layer_address,
+                            payload_byte = ethChild2.child().get_bytes()
+                            for payload_data in payload_byte:
+                                payloadHex.append(hex(payload_data))
+                            router_lifetime = payloadHex[2][2:] + payloadHex[3][2:]
+                            print router_lifetime
+                            vlanId = self.check_vlanId(buf)
+                            message_details = SLAAC_Message.SLAAC_Message(vlanId,ndp_message_number, source_link_layer_address,
                                                                       ip_source_address, ip_destination_address,
                                                                       source_MAC_address_final,
                                                                       destination_MAC_address_final, target_address,
-                                                                      target_link_layer_address,override_flag,router_flag)
-
-
-                        print "-----------Packet Details----------"
-                        print "NDP Message Type %s" % message_details.get_ndp_message_number()
-                        print "Source Link Layer Address: %s" % message_details.get_source_link_layer_address()
-                        print "Source IPv6 Address %s " % message_details.get_ip_source_address()
-                        print "Destination IPv6 Address %s" % message_details.get_ip_destination_address()
-                        print "Source MAC Address %s" % message_details.get_source_MAC_address()
-                        print "Destination MAC Address %s" % message_details.get_destination_MAC_address()
-                        print "Target Address %s" % message_details.get_target_address()
-                        print "Target Link Layer Address %s" % message_details.get_target_link_layer_address()
-                        print "Override Flag %s" %message_details.get_override_flag()
-                        print "Router Flag %s" %message_details.get_router_flag()
-                        print "----------------END----------------"
+                                                                      target_link_layer_address,override_flag,router_flag,router_lifetime)
 
 
 
 
-                except:
-                    x = 1
+
+
+
+                            print "-----------Packet Details----------"
+                            print "NDP Message Type %s" % message_details.get_ndp_message_number()
+                            print "Source Link Layer Address: %s" % message_details.get_source_link_layer_address()
+                            print "Source IPv6 Address %s " % message_details.get_ip_source_address()
+                            print "Destination IPv6 Address %s" % message_details.get_ip_destination_address()
+                            print "Source MAC Address %s" % message_details.get_source_MAC_address()
+                            print "Destination MAC Address %s" % message_details.get_destination_MAC_address()
+                            print "Target Address %s" % message_details.get_target_address()
+                            print "Target Link Layer Address %s" % message_details.get_target_link_layer_address()
+                            print "Override Flag %s" %message_details.get_override_flag()
+                            print "Router Flag %s" %message_details.get_router_flag()
+                            print "----------------END----------------"
+                            learning_sub_module = LearningMode.LearningMode()
+                            learning_sub_module.learn(message_details)
+
+
+
+
+            except:
+                x = 1
 
 

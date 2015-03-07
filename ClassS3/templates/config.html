@@ -11,7 +11,12 @@
                 <input type="submit" name="submit" value="Select Interface" />
                 <br></br>
                 <h2>Learning Mode</h2>
-                <input type="submit" name="submit" value="Start Learning" />
+                {% if learning == True %}:
+	                    	<input type="submit" name="submit" value="Start Learning" disabled/>
+	                    {% else %}
+	                    	<input type="submit" name="submit" value="Start Learning" />
+                            <input type="hidden" name="hidden" value="True" />
+	                    {% endif %}
                 <input type="submit" name="submit" value="Stop Learning" />
                 <br></br>
                 {% for message in get_flashed_messages() %}
