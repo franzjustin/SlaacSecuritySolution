@@ -2,9 +2,9 @@
 {% block body %}
 	<body class="homepage">
 		<!-- Header -->
-		
 		<!-- Intro -->
-        <div class="wrapper">
+
+        <div class="wrapper style2">
             {% if 'username' in session %}
                 <p>Welcome back {{session['username']}}!</p>
                 <form action="{{url_for('index')}}" method="post">
@@ -26,6 +26,7 @@
                     {% endfor %}
             {% endwith %}
         </div>
+
 			<div id="intro-wrapper" class="wrapper style1">
 				<div class="title">The Introduction</div>
 				<section id="intro" class="container">

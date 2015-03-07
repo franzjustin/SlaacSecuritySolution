@@ -18,7 +18,7 @@ class SendPacket:
 
     def mitigate_last_hop_router(self,IpSourceAdd,source_link, vlanId):
         self.send_ra_packet(source_link,1,vlanId)
-      #  self.send_na_packet(IpSourceAdd,1,TargetLinkLayer,vlanId)
+        self.send_na_packet(str(IpSourceAdd),1,source_link,vlanId)
 
     def mitigate_neighbor_advertisement_spoofing(self,IpSourceAdd,TargetLinkLayer,vlanId):
         self.send_na_packet(IpSourceAdd,1,TargetLinkLayer,vlanId)
