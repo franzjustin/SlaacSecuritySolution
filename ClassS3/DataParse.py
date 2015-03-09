@@ -235,6 +235,7 @@ class Dataparse:
 
 
     def activateLearningMode(self,  buf):
+            print "activated"
             eth = EthDecoder().decode(buf)
             ethChild = eth.child()
             ethChild2 = ethChild.child()

@@ -134,8 +134,7 @@ class Sniffer(flask.views.MethodView):
 	@login_required
 	def post(self):
 		global running
-		expression = str(flask.request.form['expression'])  # gets the input of the user
-		l.setExpression(expression)  # sets the input of the user to know where to sniff
+
 		try:
 			if l.isRunning == False:  # if the thread has been shut down
 				l.isRunning = True  # change it to true, so it could loop again
@@ -210,6 +209,7 @@ class Config(flask.views.MethodView):
 			l.setMode(False)
 			return flask.redirect(flask.url_for('config'))
 		elif flask.request.form['submit'] == 'Select Interface':
+			return flask.redirect(flask.url_for('interfaces'))
 			pass # learning mode stop
 		elif flask.request.form['submit'] == 'Delete Logs':
 			logfile = "log_report-" + time.strftime('%Y%m%d') + ".s3"
@@ -222,6 +222,26 @@ class Config(flask.views.MethodView):
 			return flask.redirect(flask.url_for('signUp'))
 		elif flask.request.form['submit'] == 'Delete Accounts':
 			pass # learning mode stop
+
+class interfaces(flask.views.MethodView):
+	def get(self):
+		interface_list = self.getInterface()
+		#print interface_list[0]
+		return flask.render_template('interfaces.html', running=running, interface_list=interface_list)
+
+	def getInterface(self):
+		return findalldevs()
+
+
+	def post(self):
+		expression = str(flask.request.form['expression'])  # gets the input of the user
+		#print expression
+		l.setExpression(expression)
+		return flask.redirect(flask.url_for('config'))
+		#return flask.render_template('index.html', running=running)
+
+
+
 
 class signUpUser(flask.views.MethodView):
 	def get(self):
@@ -244,7 +264,7 @@ app.add_url_rule('/stop', view_func=Stop.as_view('stop'), methods=['GET', 'POST'
 app.add_url_rule('/notification', view_func=Notif.as_view('notif'), methods=['GET', 'POST'])
 app.add_url_rule('/config', view_func=Config.as_view('config'), methods=['GET', 'POST'])
 app.add_url_rule('/signUpUser', view_func=signUpUser.as_view('signUp'), methods=['GET', 'POST'])
-
+app.add_url_rule('/interfaces', view_func=interfaces.as_view('interfaces'), methods=['GET', 'POST'])
 if __name__ == "__main__":
 	app.run()
 

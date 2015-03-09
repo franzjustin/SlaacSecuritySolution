@@ -52,7 +52,8 @@ class Forever_Loop(threading.Thread):
         def recv_pkts(hdr, data):
 
             try:
-                if parser.learn_mode == False:
+                print "parser.mode is "+ parser.learn_mode
+                if str(parser.learn_mode) == str(False):
                     eth = EthDecoder().decode(data)
                     ethChild = eth.child()
                     ethChild2 = ethChild.child()
@@ -114,7 +115,8 @@ class Forever_Loop(threading.Thread):
                         test_open.close()
                     # -----------------------------------
                     #print "Hello"
-                elif parser.learn_mode == True:
+                elif str(parser.learn_mode) == str(True):
+                    print "activating learning mode"
                     parser.activateLearningMode(data)
             except:
                 x = 1
@@ -124,7 +126,7 @@ class Forever_Loop(threading.Thread):
         max_bytes = 1024
         promiscuous = False
         read_timeout = 100  # in milliseconds
-
+        print "self.mode " + self.mode
         parser = DataParse.Dataparse(self.mode)
         # callback for received packets
         pc = pcapy.open_live(getInterface(self.expression), max_bytes, promiscuous, read_timeout)

@@ -1,4 +1,7 @@
-﻿
+
+
+
+
 
 {% extends "base.html" %}
 {% block body %}
@@ -8,13 +11,16 @@
     <!-- Intro -->
     <div id="intro-wrapper" class="wrapper style1">
         <section id="intro" class="container">
-            <h1>Sniff the network for attacks</h1>
-            <h4>make sure to set the interface first in the config page</h4>
+            <h1> Please select an interface:</h1>
 
+            {%for interface in interface_list%}
+            <h1> {{loop.index - 1}} - {{interface}}</h1>
 
-            <form action="{{url_for('sniffer')}}" method="POST">
+            {%endfor %}
 
-	            <input type="submit" value="RUN!" />
+            <form action="{{url_for('interfaces')}}" method="POST">
+	            <input type="text" name="expression" />
+	            <input type="submit" value="Set" />
             </form>
         </section>
     </div>
@@ -32,4 +38,3 @@
     </div>
 </body>
 {% endblock %}
-

@@ -7,10 +7,10 @@ class LearningMode:
         #constructor for Learning mode
 
     def getRouterList(self):
-        checkflag = os.path.isfile("../Database/Router_Database")
+        checkflag = os.path.isfile("../Database/Updated_Router_Database")
         temp_database = []
         if checkflag:
-            router_database = open('../Database/Router_Database','r')
+            router_database = open('../Database/Updated_Router_Database','r')
             for line in router_database:
                 templine = line.split(' ',3)
                 templine[2] = templine[2][:-1]
@@ -45,13 +45,10 @@ class LearningMode:
             temp_array= [ vlan, str(message_details.get_source_link_layer_address()), str(message_details.get_ip_source_address())]
             router_database.append(temp_array)
         print router_database
-        updated_router_database = open('../Database/Router_Database','w')
-
+        updated_router_database = open('../Database/Updated_Router_Database','w')
+        print "writing"
         for updated_entry in router_database:
             line = updated_entry[0] +" "+ updated_entry[1] + " " + updated_entry[2]+"\n"
             updated_router_database.write(line)
-
-
-
         updated_router_database.close()
 
