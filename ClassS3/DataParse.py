@@ -49,7 +49,6 @@ class Dataparse:
         return checkflag, y + 1
 
     def sniffSlaac(self, buf):
-
             #print "NAKAPASOK NA "
             eth = EthDecoder().decode(buf)
             ethChild = eth.child()
@@ -188,12 +187,12 @@ class Dataparse:
 
                         #print "Checkpoint3"
                         #------------Time Start------------
-                        test_open = open("../TestFiles/realtime_test1_parse",'a')
-                        test_start = datetime.now()
-                        sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f")))/1000000
-                        test_open.write(str(sum))
-                        test_open.write('\n')
-                        test_open.close()
+                       # test_open = open("../TestFiles/realtime_test1_parse",'a')
+                       # test_start = datetime.now()
+                       # sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f")))/1000000
+                        #test_open.write(str(sum))
+                        #test_open.write('\n')
+                        #test_open.close()
                         #-----------------------------------
                         #detection_module.detect_rogue_advertisement(message_details)
                         #print "-----------Packet Details----------"
@@ -215,7 +214,7 @@ class Dataparse:
                         #if self.learn_mode == False:
                         detect_module = Detection.Detection()
                         if str(message_details.get_ndp_message_number())=="134": #Last Hop Router Attack
-                            #print "Sending to RA DETECT"
+                            print "Sending to RA DETECT"
                             detect_module.detect_rogue_advertisement(message_details)
 
                         elif str(message_details.get_ndp_message_number())=="135" :#Dos in DAD
@@ -322,18 +321,18 @@ class Dataparse:
 
 
 
-                            print "-----------Packet Details----------"
-                            print "NDP Message Type %s" % message_details.get_ndp_message_number()
-                            print "Source Link Layer Address: %s" % message_details.get_source_link_layer_address()
-                            print "Source IPv6 Address %s " % message_details.get_ip_source_address()
-                            print "Destination IPv6 Address %s" % message_details.get_ip_destination_address()
-                            print "Source MAC Address %s" % message_details.get_source_MAC_address()
-                            print "Destination MAC Address %s" % message_details.get_destination_MAC_address()
-                            print "Target Address %s" % message_details.get_target_address()
-                            print "Target Link Layer Address %s" % message_details.get_target_link_layer_address()
-                            print "Override Flag %s" %message_details.get_override_flag()
-                            print "Router Flag %s" %message_details.get_router_flag()
-                            print "----------------END----------------"
+                         #   print "-----------Packet Details----------"
+                          #  print "NDP Message Type %s" % message_details.get_ndp_message_number()
+                          #  print "Source Link Layer Address: %s" % message_details.get_source_link_layer_address()
+                         #   print "Source IPv6 Address %s " % message_details.get_ip_source_address()
+                           # print "Destination IPv6 Address %s" % message_details.get_ip_destination_address()
+                         #   print "Source MAC Address %s" % message_details.get_source_MAC_address()
+                          #  print "Destination MAC Address %s" % message_details.get_destination_MAC_address()
+                            #print "Target Address %s" % message_details.get_target_address()
+                           # print "Target Link Layer Address %s" % message_details.get_target_link_layer_address()
+                            #print "Override Flag %s" %message_details.get_override_flag()
+                           # print "Router Flag %s" %message_details.get_router_flag()
+                            #print "----------------END----------------"
                             learning_sub_module = LearningMode.LearningMode()
                             learning_sub_module.learn(message_details)
 

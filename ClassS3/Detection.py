@@ -51,13 +51,15 @@ class Detection:
         vlan = message_details.get_vlan_id()
         router_database = self.get_router_database()
         #print "Checking Last Hop Router Attack"
+        #print "123 Detected"
+
         if message_details.ndp_message_number == 134:
             #print message_details.get_source_link_layer_address()
             #print router_database[x][1]
             if str(message_details.get_router_lifetime()) != "00":
                 for x in range(len(router_database)):
                         if str(vlan) == str(router_database[x][0]):
-
+                            #print "123456 Detected"
                             if str(message_details.get_source_link_layer_address()) != str(router_database[x][1]):
                                 print "Rogue Router Advertisement Detected"
                                 with RotatingFileOpener.RotatingFileOpener('../Logs/', prepend='log_report-', append='.s3') as logger:

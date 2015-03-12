@@ -50,30 +50,29 @@ class Forever_Loop(threading.Thread):
             return ifs[input]  # returns the inputted interface
 
         def recv_pkts(hdr, data):
-
             try:
-                print "parser.mode is "+ parser.learn_mode
+                #print "parser.mode is "+ str(parser.learn_mode)
                 if str(parser.learn_mode) == str(False):
                     eth = EthDecoder().decode(data)
                     ethChild = eth.child()
                     ethChild2 = ethChild.child()
                     if ethChild2.get_type() == 134:
                         # ------------Time Start------------
-                        test_open = open("../TestFiles/realtime_test1_sniff", 'a')
-                        test_start = datetime.now()
-                        sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
-                        test_open.write(str(sum))
-                        test_open.write('\n')
-                        test_open.close()
+                        #test_open = open("../TestFiles/realtime_test1_sniff", 'a')
+                        #test_start = datetime.now()
+                        #sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
+                        #test_open.write(str(sum))
+                        #test_open.write('\n')
+                        #test_open.close()
                         # -----------------------------------
                         parser.sniffSlaac(data)
                         # ------------Time Start------------
-                        test_open = open("../TestFiles/realtime_test1_detect", 'a')
-                        test_start = datetime.now()
-                        sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
-                        test_open.write(str(sum))
-                        test_open.write('\n')
-                        test_open.close()
+                        #test_open = open("../TestFiles/realtime_test1_detect", 'a')
+                        #test_start = datetime.now()
+                        #sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
+                        #test_open.write(str(sum))
+                        #test_open.write('\n')
+                        #test_open.close()
                     # -----------------------------------
                     # print "Hello"
 
@@ -116,7 +115,7 @@ class Forever_Loop(threading.Thread):
                     # -----------------------------------
                     #print "Hello"
                 elif str(parser.learn_mode) == str(True):
-                    print "activating learning mode"
+                    #print "activating learning mode"
                     parser.activateLearningMode(data)
             except:
                 x = 1
@@ -126,9 +125,11 @@ class Forever_Loop(threading.Thread):
         max_bytes = 1024
         promiscuous = False
         read_timeout = 100  # in milliseconds
-        print "self.mode " + str(self.mode)
+        #print "self.mode " + str(self.mode)
         parser = DataParse.Dataparse(self.mode)
         # callback for received packets
+        #print "---------------"
+        #print self.expression
         pc = pcapy.open_live(getInterface(self.expression), max_bytes, promiscuous, read_timeout)
         pc.setfilter('icmp6')
         # list all the network devices
