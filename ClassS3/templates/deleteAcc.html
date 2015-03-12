@@ -1,0 +1,38 @@
+
+
+
+
+
+{% extends "base.html" %}
+{% block body %}
+<body class="homepage">
+    <!-- Header -->
+
+    <!-- Intro -->
+    <div id="intro-wrapper" class="wrapper style1">
+        <section id="intro" class="container">
+            <h1> Please Select Account to Delete:</h1>
+
+            {%for account in accounts%}
+            <h1> {{loop.index}} - {{account}}</h1>
+
+            {%endfor %}
+
+            <form action="{{url_for('delete')}}" method="POST">
+	            <input type="text" name="acc_no" />
+	            <input type="submit" value="Set" />
+            </form>
+        </section>
+    </div>
+ 
+    <div id="footer-wrapper" class="wrapper">
+
+        <div id="copyright">
+            <ul>
+                <li>&copy; S3</li>
+                <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+{% endblock %}

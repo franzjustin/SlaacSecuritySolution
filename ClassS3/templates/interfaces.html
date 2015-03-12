@@ -1,8 +1,5 @@
 
 
-
-
-
 {% extends "base.html" %}
 {% block body %}
 <body class="homepage">
@@ -11,7 +8,7 @@
     <!-- Intro -->
     <div id="intro-wrapper" class="wrapper style1">
         <section id="intro" class="container">
-            <h1> Please select an interface:</h1>
+            <h1> Select an account to be deleted</h1>
 
             {%for interface in interface_list%}
             <h1> {{loop.index - 1}} - {{interface}}</h1>

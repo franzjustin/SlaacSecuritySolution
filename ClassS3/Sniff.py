@@ -126,7 +126,7 @@ class Forever_Loop(threading.Thread):
         max_bytes = 1024
         promiscuous = False
         read_timeout = 100  # in milliseconds
-        print "self.mode " + self.mode
+        print "self.mode " + str(self.mode)
         parser = DataParse.Dataparse(self.mode)
         # callback for received packets
         pc = pcapy.open_live(getInterface(self.expression), max_bytes, promiscuous, read_timeout)
