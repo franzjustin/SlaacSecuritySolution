@@ -15,20 +15,21 @@ from pcapy import findalldevs
 #!/usr/bin/python
 
 import thread
-#todo lollololol
 APP_ROOT = os.path.dirname(os.getcwd())
 APP_STATIC = os.path.join(APP_ROOT, 'Logs')
 APP_ACC = os.path.join(APP_ROOT, 'Database')
 l = Sniff.Forever_Loop()  #the python file class with the function of forever loop / to use as a thread
 global running
 global learning
+global manual
+manual = False
 learning = False
 running = False
 app = flask.Flask(__name__)
 
 app.secret_key = "bacon"
 
-users = {'admin': 'admin'}
+#users = {'admin': 'admin'}
 
 
 def File_Existence(filepath):
@@ -248,19 +249,50 @@ class Config(flask.views.MethodView):
 	@login_required
 	def get(self):
 		global learning
+		global manual
 		if File_Existence(os.path.join(APP_ACC, 'Accounts.txt')) is True:
 			acc = open(os.path.join(APP_ACC, 'Accounts.txt'))
 			user = acc.readline()
 			myname = user.partition(' ')[0]
 			print flask.session['username']
-			if myname == flask.session['username']:
+			if myname == flask.session['username'] and manual is False:
 				message = Markup(
 					'<h2>Delete Logs</h2>'
 					'<input type="submit" name="submit" value="Delete Logs" />'
 					'<br></br>'
 					'<h2>Account Mode</h2>'
 					'<input type="submit" name="submit" value="Create Accounts" />'
-					'<input type="submit" name="submit" value="Delete Accounts" />')
+					'<input type="submit" name="submit" value="Delete Accounts" />'
+					'<br></br>'
+					'<h2>Manual VLAN Mode</h2>'
+					'<input type="submit" name="submit" value="Edit Router Database*" />'
+					'<br></br>'
+					'<h2>*should be activated if the network contains vlans<br>'
+					'and the network interface card does not support vlan tag layer</h2>'
+					'<br>'
+					'<input type="submit" name="submit" value="Enable manual vlan mitigation**" />'
+					'<br></br>'
+					'<h2>**this would activate the mitigate module that would send<br>'
+					'all mitigate messages that are found in the router database</h2>')
+			elif myname == flask.session['username'] and manual is True:
+				message = Markup(
+					'<h2>Delete Logs</h2>'
+					'<input type="submit" name="submit" value="Delete Logs" />'
+					'<br></br>'
+					'<h2>Account Mode</h2>'
+					'<input type="submit" name="submit" value="Create Accounts" />'
+					'<input type="submit" name="submit" value="Delete Accounts" />'
+					'<br></br>'
+					'<h2>Manual VLAN Mode</h2>'
+					'<input type="submit" name="submit" value="Edit Router Database*" />'
+					'<br></br>'
+					'<h2>*should be activated if the network contains vlans<br>'
+					'and the network interface card does not support vlan tag layer</h2>'
+					'<br>'
+					'<input type="submit" name="submit" value="Disable manual vlan mitigation**" />'
+					'<br></br>'
+					'<h2>**this would activate the mitigate module that would send<br>'
+					'all mitigate messages that are found in the router database</h2>')
 			else:
 				message = Markup("<br></br>")
 		flask.flash(message)
@@ -289,9 +321,7 @@ class Config(flask.views.MethodView):
 			pass # learning mode stop
 		elif flask.request.form['submit'] == 'Delete Logs':
 			filenames = next(os.walk("../Logs"))[2]
-
 			#logfile = "log_report-" + time.strftime('%Y%m%d') + ".s3"
-
 			for x in filenames:
 			 if File_Existence(os.path.join(APP_STATIC, x)) is True:
 				os.remove(os.path.join(APP_STATIC, x))
@@ -302,6 +332,12 @@ class Config(flask.views.MethodView):
 			return flask.redirect(flask.url_for('signUp'))
 		elif flask.request.form['submit'] == 'Delete Accounts':
 			return flask.redirect(flask.url_for('delete'))
+		elif flask.request.form['submit'] == 'Edit Router Database*':
+			return flask.redirect(flask.url_for('editRDB'))
+		elif flask.request.form['submit'] == 'Enable manual vlan mitigation**':
+			return flask.redirect(flask.url_for('enableVlan'))
+		elif flask.request.form['submit'] == 'Disable manual vlan mitigation**':
+			return flask.redirect(flask.url_for('enableVlan'))
 
 class interfaces(flask.views.MethodView):
 	def get(self):
@@ -326,15 +362,24 @@ class deleteAcc(flask.views.MethodView):
 		f = open('../Database/Accounts.txt', 'r')
 		users = f.read()
 		f.close()
-		names = users.split('\n')
-		del names[0]
-		del names[len(names)-1]
+		names = users.split()
+		namectr = len(names) - 2
+		print namectr#counter for account names and passwords
+		passctr = 1                  #counter for passwords to be deleted in the array // to not be shown in the array
+		del names[0]                #deletes the first and second index in the array
+		del names[0]                   # as it represents the admin account name and password
+		while namectr > passctr:             # while there is still account name and password
+			del names[passctr]
+			passctr += 1
+			print names
+			namectr = len(names)
 		print names
 		return names
 
 	def get(self):
 		accounts = self.getAccounts()
 		return flask.render_template('deleteAcc.html', running=running, accounts=accounts)
+
 	def post(self):
 		acc_no = flask.request.form['acc_no']
 		names = []
@@ -343,7 +388,6 @@ class deleteAcc(flask.views.MethodView):
 		f.close()
 		names = users.split('\n')
 		del names[int(acc_no)]
-		del names[len(names)-1]
 		f = open('../Database/Accounts.txt', 'w')
 		for user in names:
 			f.write(user + "\n")
@@ -367,6 +411,35 @@ class signUpUser(flask.views.MethodView):
 		#return flask.render_template('index.html', running=running)
 
 
+class EditRDB(flask.views.MethodView):
+	def get(self):
+		f = open('../Database/Router_Database', 'r')
+		message = f.read()
+		f.close()
+		return flask.render_template('editRDB.html', running=running, message=message)
+
+	def post(self):
+		message = flask.request.form['message']
+		f = open('../Database/Router_Database', 'w')
+		f.write(message)
+		f.close()
+		return flask.redirect(flask.url_for('config'))
+		#return flask.render_template('index.html', running=running)
+
+class EnableVlan(flask.views.MethodView):
+	def get(self):
+		global manual
+		f = open('../Database/Manual_VLAN', 'w')
+		if manual == True:
+			manual = False
+			f.write('False')
+		else:
+			manual = True
+			f.write('True')
+		f.close()
+		return flask.redirect(flask.url_for('config'))
+
+
 app.add_url_rule('/', view_func=Main.as_view('index'), methods=['GET', 'POST'])
 app.add_url_rule('/sniffer', view_func=Sniffer.as_view('sniffer'), methods=['GET', 'POST'])
 app.add_url_rule('/test', view_func=Test.as_view('test'), methods=['GET'])
@@ -376,6 +449,8 @@ app.add_url_rule('/config', view_func=Config.as_view('config'), methods=['GET', 
 app.add_url_rule('/signUpUser', view_func=signUpUser.as_view('signUp'), methods=['GET', 'POST'])
 app.add_url_rule('/interfaces', view_func=interfaces.as_view('interfaces'), methods=['GET', 'POST'])
 app.add_url_rule('/delete', view_func=deleteAcc.as_view('delete'), methods=['GET', 'POST'])
+app.add_url_rule('/editRDB', view_func=EditRDB.as_view('editRDB'), methods=['GET', 'POST'])
+app.add_url_rule('/enableVlan', view_func=EnableVlan.as_view('enableVlan'), methods=['GET', 'POST'])
 
 if __name__ == "__main__":
 	app.run()

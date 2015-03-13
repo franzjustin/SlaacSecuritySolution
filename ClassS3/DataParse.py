@@ -48,7 +48,7 @@ class Dataparse:
         checkflag = found
         return checkflag, y + 1
 
-    def sniffSlaac(self, buf):
+    def sniffSlaac(self, buf,getInterface):
             #print "NAKAPASOK NA "
             eth = EthDecoder().decode(buf)
             ethChild = eth.child()
@@ -183,7 +183,7 @@ class Dataparse:
                                                                       ip_source_address, ip_destination_address,
                                                                       source_MAC_address_final,
                                                                       destination_MAC_address_final, target_address,
-                                                                      target_link_layer_address,override_flag,router_flag,router_lifetime)
+                                                                      target_link_layer_address,override_flag,router_flag,router_lifetime,getInterface)
 
                         #print "Checkpoint3"
                         #------------Time Start------------
@@ -212,19 +212,18 @@ class Dataparse:
 
 
                         #if self.learn_mode == False:
+
                         detect_module = Detection.Detection()
                         if str(message_details.get_ndp_message_number())=="134": #Last Hop Router Attack
-                            print "Sending to RA DETECT"
                             detect_module.detect_rogue_advertisement(message_details)
 
                         elif str(message_details.get_ndp_message_number())=="135" :#Dos in DAD
-                            #print "Sending to NS DETECT"
                             if str(message_details.get_ip_source_address()) == "::":
                                 detect_module.detect_dos_dad(message_details)
+
                         elif str(message_details.get_ndp_message_number())=="136": #Neigbor Spoofing
-                            #if ethChild2.get_router_flag()=="false":
-                            #print "Sending to NA DETECT"
                             detect_module.detect_neighbor_spoofing((message_details))
+
                         #else:
                             #learningmode = LearningMode.LearningMode()
                             #learningmode.learn(message_details)

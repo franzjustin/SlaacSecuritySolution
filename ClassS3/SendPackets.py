@@ -17,7 +17,7 @@ class SendPacket:
 		return self.target_address
 
 	def set_target_address(self,address):
-	     self.target_address = address
+		 self.target_address = address
 
 	def getLegitRouter(self, vlanId):
 		f = open('../Database/Router_Database', 'r')
@@ -41,8 +41,8 @@ class SendPacket:
 		self.send_ra_packet(routerIp[1].replace(':',''),1,vlanId, "Add")
 
 	def mitigate_neighbor_advertisement_spoofing(self,IpSourceAdd,TargetLinkLayer,vlanId):
-		#print "SEND MITIGATE FOR NA Spoofing"
 		self.send_na_packet(IpSourceAdd,1,TargetLinkLayer,vlanId)
+		routerIp = self.getLegitRouter(vlanId)
 		self.source_address = routerIp[2]
 		self.send_ra_packet(routerIp[1].replace(':',''),1,vlanId, "Add")
 
@@ -151,7 +151,7 @@ class SendPacket:
 		return ns_message.decode('hex')
 
 	def create_na_message(self,source_link,target_address):
-		flag = u"20000000"                                           #fe80            20c29fffe043796
+		flag = u"20000000"
 		ip = IPAddress(target_address)
 		target_address = str(hex(ip))[2:]
 		target_link_layer = u"0101"+ source_link #10bf4896a190
