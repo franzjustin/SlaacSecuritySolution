@@ -85,20 +85,23 @@ class Detection:
 									log = str(current_datetime) + " SA001 Attacker:" + str(message_details.get_source_link_layer_address())
 									log =log + ";Victim:" + str(router_database[x][1]) + "\n"
 									logger.write(log)
-								test_open = open("../TestFiles/realtime_test_success",'a')
-								message = "True" +" "+ str(message_details.get_source_MAC_address())+ " " + str(router_database[x][1])
-								test_open.write(message)
-								test_open.write('\n')
-								test_open.close()
+								#test_open = open("../TestFiles/realtime_test_success",'a')
+								#message = "True" +" "+ str(message_details.get_source_MAC_address())+ " " + str(router_database[x][1])
+								#test_open.write(message)
+								#test_open.write('\n')
+								#test_open.close()
 								#return "true"
 								parseIpSourceAdd =  str(message_details.get_ip_source_address()).lower()
 								mitigateMessage = SendPackets.SendPacket(parseIpSourceAdd,"ff02::1", str(message_details.get_interface()))
 								IpSourceMac = message_details.get_source_link_layer_address().replace(':','')
-
-								if  manualVlan == "True":
-									for x in self.getVlanFromRouterDb():
-										mitigateMessage.mitigate_last_hop_router(parseIpSourceAdd,IpSourceMac,x)
+								print self.manualVlan
+								if  self.manualVlan == "True":
+										for x in self.getVlanFromRouterDb():
+											print "-----"+x+"-----"
+											mitigateMessage.mitigate_last_hop_router(parseIpSourceAdd,IpSourceMac,str(x))
+											#print "Check1"
 								else:
+									#print "Check2"
 									mitigateMessage.mitigate_last_hop_router(parseIpSourceAdd,IpSourceMac,message_details.get_vlan_id())
 								#print parseIpSourceAdd
 

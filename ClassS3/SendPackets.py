@@ -34,10 +34,11 @@ class SendPacket:
 
 
 	def mitigate_last_hop_router(self,IpSourceAdd,source_link, vlanId):
+		vlanId = int(vlanId)
 		self.send_ra_packet(source_link,1,vlanId)
 		routerIp = self.getLegitRouter(vlanId)
 		self.send_na_packet(source_link,1,str(IpSourceAdd),vlanId)
-		self.source_address = routerIp[2]
+		self.source_address = routerIp[2][:-1].lower()
 		self.send_ra_packet(routerIp[1].replace(':',''),1,vlanId, "Add")
 
 	def mitigate_neighbor_advertisement_spoofing(self,IpSourceAdd,TargetLinkLayer,vlanId):
@@ -56,7 +57,6 @@ class SendPacket:
 		s = socket(AF_PACKET, SOCK_RAW, IPPROTO_ICMPV6)
 		s.bind((self.network_card, N))
 		payload = self.create_ra_message(source_link_layer, Type)
-		print send_frequency
 		for i in range(0, send_frequency):
 			icmp = ICMP6.ICMP6()
 			icmp.set_byte(0, 134) # Put Type?
@@ -76,6 +76,7 @@ class SendPacket:
 			icmp.calculate_checksum()
 			eth.contains(ip)
 			s.send(eth.get_packet())
+
 
 
 	def send_ns_packet(self,source_link, send_frequency,target_address,vlan_id = 0):
