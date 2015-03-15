@@ -44,11 +44,11 @@ class Main(flask.views.MethodView):  # the main page
 	def get(self):  # when open, this is the first page it gets
 		#print File_Existence(os.path.join(APP_ACC, 'Accounts.txt'))
 		if File_Existence(os.path.join(APP_ACC, 'Accounts.txt')) is False:
-			print "NO Accounts.txt"
-			return flask.render_template('signUp.html',running=running)  #flask uses templates of html files for the interface // in this case, the index page
+			print "There is No Account Database found"
+			return flask.render_template('signUp.html',running=running)
 		else:
-			print "there is an Accounts.txt"
-			return flask.render_template('index.html',running=running)  #flask uses templates of html files for the interface // in this case, the index page
+			print "There is an Account Database"
+			return flask.render_template('index.html',running=running)
 
 	def post(self):
 		if 'logout' in flask.request.form:
@@ -424,7 +424,13 @@ class EditRDB(flask.views.MethodView):
 		f.write(message)
 		f.close()
 		return flask.redirect(flask.url_for('config'))
-		#return flask.render_template('index.html', running=running)
+
+class dashboard(flask.views.MethodView):
+	def get(self):
+		return flask.render_template('dashboard.html', running=running)
+
+	def post(self):
+		return flask.redirect(flask.url_for('dashboard'))
 
 class EnableVlan(flask.views.MethodView):
 	def get(self):
@@ -450,6 +456,7 @@ app.add_url_rule('/signUpUser', view_func=signUpUser.as_view('signUp'), methods=
 app.add_url_rule('/interfaces', view_func=interfaces.as_view('interfaces'), methods=['GET', 'POST'])
 app.add_url_rule('/delete', view_func=deleteAcc.as_view('delete'), methods=['GET', 'POST'])
 app.add_url_rule('/editRDB', view_func=EditRDB.as_view('editRDB'), methods=['GET', 'POST'])
+app.add_url_rule('/dashboard', view_func=dashboard.as_view('dashboard'), methods=['GET', 'POST'])
 app.add_url_rule('/enableVlan', view_func=EnableVlan.as_view('enableVlan'), methods=['GET', 'POST'])
 
 if __name__ == "__main__":

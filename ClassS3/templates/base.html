@@ -1,44 +1,189 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>S3</title>
-		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<meta name="description" content="" />
-		<meta name="keywords" content="" />
-		<!--[if lte IE 8]><script src="css/ie/html5shiv.js"></script><![endif]-->
-		<script src="static/js/jquery.min.js"></script>
-		<script src="static/js/jquery.dropotron.min.js"></script>
-		<script src="static/js/skel.min.js"></script>
-		<script src="static/js/skel-layers.min.js"></script>
-		<script src="static/js/init.js"></script>
-		
-		<link rel="stylesheet" href="{{ url_for('static' , filename='css/skel.css') }}" />
-		<link rel="stylesheet" href="{{ url_for('static' , filename='css/style.css') }}" />
-		<link rel="stylesheet" href="{{ url_for('static' , filename='css/style-desktop.css') }}" />
-	</head>
+    <head>
+      <meta charset="utf-8">
+      <title>S3 - SLAAC Security Solution</title>
+      <meta name="author" content="Buenaventura - Gonzales - Lu">
+      <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport">
+      <meta name="description" content="SLAAC Security Solution">
+      <meta name="keywords" content="SLAAC Security Solution">
+      <script src="static/js/html5-trunk.js"></script>
+      <link href="static/icomoon/style.css" rel="stylesheet">
+
+      <link href="static/css/main.css" rel="stylesheet">
+      <link href="static/css/fullcalendar.css" rel="stylesheet">
+    </head>
+
+
 	<body class="homepage">
-		<div id="header-wrapper" class="wrapper">
-	        <div id="header">
-	            <!-- Logo -->
-	            <div id="logo">
-	                <h1><a href="{{url_for('index')}}">IPv6 SLAAC Monitoring and Mitigation</a></h1>
-	                <p>System with Multiple VLAN Support</p>
-	            </div>
-	            <!-- Nav -->
-	            <nav id="nav">
-	                <ul>
-	                    <li class="current"><a href="{{url_for('index')}}">Home</a></li>
-	                    {% if running == True %}:
-	                    	<li><a href="{{url_for('test')}}">Test Run</a></li>
+      <header>
+        <a href="{{url_for('index')}}" class="logo">S3 - SLAAC Security Solution</a>
+        <div id="mini-nav">
+          <ul class="hidden-phone">
+            <li class="dropdown">
+              <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                Alerts <span id="messagesCountDown">21</span>
+                <b class="caret icon-white"></b>
+              </a>
+              <ul class="dropdown-menu pull-right">
+                <li class="quick-messages">
+                  <img src="img/avatar-1.png" class="avatar" alt="Avatar">
+                  <div class="message-date text-info">
+                    <i>02 <span class="month">mins</span></i>
+                  </div>
+                  <div class="message-wrapper">
+                    <h4 class="message-heading">Ubiquitous customized</h4>
+                    <p class="message">
+                      Enable impactful niches engage impactful
+                    </p>
+                  </div>
+                </li>
+                <li class="quick-messages">
+                  <img src="img/avatar-2.png" class="avatar" alt="Avatar">
+                  <div class="message-date text-info">
+                    <i>02 <span class="month">mins</span></i>
+                  </div>
+                  <div class="message-wrapper">
+                    <h4 class="message-heading">Ubiquitous customized</h4>
+                    <p class="message">
+                      Enable impactful niches engage impactful
+                    </p>
+                  </div>
+                </li>
+                <li class="quick-messages">
+                  <img src="img/avatar-5.png" class="avatar" alt="Avatar">
+                  <div class="message-date text-info">
+                    <i>38 <span class="month">mins</span></i>
+                  </div>
+                  <div class="message-wrapper">
+                    <h4 class="message-heading">Ubiquitous customized</h4>
+                    <p class="message">
+                      Enable impactful niches engage impactful
+                    </p>
+                  </div>
+                </li>
+                <li class="quick-messages">
+                  <img src="img/avatar-4.png" class="avatar" alt="Avatar">
+                  <div class="message-date text-info">
+                    <i>27 <span class="month">Apr</span></i>
+                  </div>
+                  <div class="message-wrapper">
+                    <h4 class="message-heading">Ubiquitous customized</h4>
+                    <p class="message">
+                      Enable impactful niches engage impactful
+                    </p>
+                  </div>
+                </li>
+                <li class="quick-messages">
+                  <img src="img/avatar-6.png" class="avatar" alt="Avatar">
+                  <div class="message-date text-info">
+                    <i>18 <span class="month">Apr</span></i>
+                  </div>
+                  <div class="message-wrapper">
+                    <h4 class="message-heading">Ubiquitous customized</h4>
+                    <p class="message">
+                      Enable impactful niches engage impactful
+                    </p>
+                  </div>
+                </li>
+              </ul>
+            </li>
+            <li><a href="{{url_for('index')}}">Logout</a></li>
+          </ul>
+        </div>
+      </header>
+
+      <div class="container-fluid">
+        <div id="mainnav" class="hidden-phone hidden-tablet">
+          <ul>
+            <li>
+              <a href="{{url_for('dashboard')}}">
+                <div class="icon">
+                  <span class="fs1" aria-hidden="true" data-icon="&#xe000;"></span>
+                </div>
+                Dashboard
+              </a>
+            </li>
+               {% if running == True %}:
+                        <li>
+                          <a href="{{url_for('test')}}">
+                            <div class="icon">
+                              <span class="fs1" aria-hidden="true" data-icon="&#xe0ac;"></span>
+                            </div>
+                              Stop Sniffer
+
+                          </a>
+                        </li>
 	                    {% else %}
-	                    	<li><a href="{{url_for('sniffer')}}">Test Run</a></li>
+                        <li>
+                          <a href="{{url_for('sniffer')}}">
+                            <div class="icon">
+                              <span class="fs1" aria-hidden="true" data-icon="&#xe0ac;"></span>
+                            </div>
+                                  Run Sniffer
+                          </a>
+                        </li>
 	                    {% endif %}
-                        <li class="current"><a href="{{url_for('notif')}}">Status</a></li>
-                        <li class="current"><a href="{{url_for('config')}}">Configuration</a></li>
-	                </ul>
-	            </nav>
-	        </div>
-	    </div>
+
+            <li>
+              <a href="{{url_for('notif')}}">
+                <div class="icon">
+                  <span class="fs1" aria-hidden="true" data-icon="&#xe1cf;"></span>
+                </div>
+                Status
+              </a>
+            </li>
+            <li>
+              <a href="{{url_for('config')}}">
+                <div class="icon">
+                  <span class="fs1" aria-hidden="true" data-icon="&#xe090;"></span>
+                </div>
+                Configuration
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="dashboard-wrapper">
+          <div class="main-container">
+            <div class="navbar hidden-desktop">
+              <div class="navbar-inner">
+                <div class="container">
+                  <a data-target=".navbar-responsive-collapse" data-toggle="collapse" class="btn btn-navbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
 		{% block body %}{% endblock %}
+          </div>
+        </div><!-- dashboard-container -->
+      </div><!-- container-fluid -->
+
+      <script src="static/js/jquery.min.js"></script>
+      <script src="static/js/bootstrap.js"></script>
+      <script src="static/js/jquery-ui-1.8.23.custom.min.js"></script>
+
+      <!-- morris charts -->
+      <script src="static/js/morris/morris.js"></script>
+      <script src="static/js/morris/raphael-min.js"></script>
+
+      <!-- Flow charts -->
+      <script src="static/js/flot/jquery.flot.js"></script>
+      <script src="static/js/flot/jquery.flot.resize.min.js"></script>
+
+      <!-- Calendar Js -->
+      <script src="static/js/fullcalendar.js"></script>
+
+      <!-- Tiny Scrollbar JS -->
+      <script src="static/js/tiny-scrollbar.js"></script>
+
+      <!-- custom Js -->
+      <script src="static/js/custom-index.js"></script>
+      <script src="static/js/custom.js"></script>
+
 	</body>
 </html>

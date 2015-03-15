@@ -2,6 +2,16 @@
 
 {% extends "base.html" %}
 {% block body %}
+<div class="row-fluid">
+  <div class="span12">
+    <ul class="breadcrumb-beauty">
+      <li>
+        <a href="index.html"><span class="fs1" aria-hidden="true" data-icon="&#xe000;"></span> Edit Router Database</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
 <body class="homepage">
 	<!-- Header -->
 
@@ -11,23 +21,14 @@
 			<h1>Router Database</h1>
 			<br>
 			<form action="{{url_for('editRDB')}}" method="POST">
-                <textarea name="message">{{message}}</textarea>
+                <textarea rows="4" cols="100" name="message">{{message}}</textarea>
+                <br>
 				<input type="submit" value="RUN!" />
 			</form>
 		</section>
 
 	</div>
 
-	<!-- Footer -->
-	<div id="footer-wrapper" class="wrapper">
-
-		<div id="copyright">
-			<ul>
-				<li>&copy; S3</li>
-				<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-			</ul>
-		</div>
-	</div>
 </body>
 {% endblock %}
 
