@@ -42,11 +42,11 @@ class SendPacket:
 		self.send_ra_packet(routerIp[1].replace(':',''),1,vlanId, "Add")
 
 	def mitigate_neighbor_advertisement_spoofing(self,IpSourceAdd,TargetLinkLayer,vlanId):
-		self.send_na_packet(IpSourceAdd,1,TargetLinkLayer,vlanId)
+		vlanId = int(vlanId)
+		self.send_na_packet(IpSourceAdd,1,str(TargetLinkLayer),vlanId)
 		routerIp = self.getLegitRouter(vlanId)
-		self.source_address = routerIp[2]
+		self.source_address = routerIp[2][:-1].lower()
 		self.send_ra_packet(routerIp[1].replace(':',''),1,vlanId, "Add")
-
 	def send_ra_packet(self,source_link_layer, send_frequency,vlan_id = 0, Type="Erase"):
 		ip = IP6.IP6()
 		ip.set_source_address(self.get_source_address())

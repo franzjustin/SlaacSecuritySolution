@@ -187,12 +187,12 @@ class Dataparse:
 
                         #print "Checkpoint3"
                         #------------Time Start------------
-                       # test_open = open("../TestFiles/realtime_test1_parse",'a')
-                       # test_start = datetime.now()
-                       # sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f")))/1000000
-                        #test_open.write(str(sum))
-                        #test_open.write('\n')
-                        #test_open.close()
+                        test_open = open("../TestFiles/realtime_test1_parse",'a')
+                        test_start = datetime.now()
+                        sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f")))/1000000
+                        test_open.write(str(sum))
+                        test_open.write('\n')
+                        test_open.close()
                         #-----------------------------------
                         #detection_module.detect_rogue_advertisement(message_details)
                         #print "-----------Packet Details----------"
