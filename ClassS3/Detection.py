@@ -78,14 +78,56 @@ class Detection:
             if str(message_details.get_router_lifetime()) != "00":
                 for x in range(len(router_database)):
                         if str(vlan) == str(router_database[x][0]):
-                            if str(message_details.get_source_link_layer_address()) != str(router_database[x][1]):
-                                test_open = open("../TestFiles/mitigation_detect", 'a')
-                                test_start = datetime.now()
-                                sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
-                                test_open.write(str(sum))
-                                test_open.write('\n')
-                                test_open.close()
+                           if  str(message_details.get_ip_source_address()) == str(router_database[x][2]) :
+                                if str(message_details.get_source_link_layer_address()) != str(router_database[x][1]):
+                                    test_open = open("../TestFiles/mitigation_detect", 'a')
+                                    test_start = datetime.now()
+                                    sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
+                                    test_open.write(str(sum))
+                                    test_open.write('\n')
+                                    test_open.close()
 
+                                    print "Rogue Router Advertisement Detected"
+                                    with RotatingFileOpener.RotatingFileOpener('../Logs/', prepend='log_report-', append='.s3') as logger:
+                                        current_datetime = datetime.now()
+                                        log = str(current_datetime) + " SA001 Attacker:" + str(message_details.get_source_link_layer_address())
+                                        log =log + ";Victim:" + str(router_database[x][1]) + "\n"
+                                        logger.write(log)
+                                    test_open = open("../TestFiles/realtime_test_success",'a')
+                                    message = "True" +" "+ str(message_details.get_source_MAC_address())+ " " + str(router_database[x][1])
+                                    test_open.write(message)
+                                    test_open.write('\n')
+                                    test_open.close()
+                                    #return "true"
+                                    parseIpSourceAdd =  str(message_details.get_ip_source_address()).lower()
+                                    mitigateMessage = SendPackets.SendPacket(parseIpSourceAdd,"ff02::1", str(message_details.get_interface()))
+                                    IpSourceMac = message_details.get_source_link_layer_address().replace(':','')
+
+
+                                    if  self.manualVlan == "True":
+                                            for x in self.getVlanFromRouterDb():
+                                                mitigateMessage.mitigate_last_hop_router(parseIpSourceAdd,IpSourceMac,str(x))
+                                                #print "Check1"
+                                    else:
+                                        #print "Check2"
+                                        mitigateMessage.mitigate_last_hop_router(parseIpSourceAdd,IpSourceMac,message_details.get_vlan_id())
+                                    #print parseIpSourceAdd
+
+                                    test_open = open("../TestFiles/mitigate_attack", 'a')
+                                    test_start = datetime.now()
+                                    sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
+                                    test_open.write(str(sum))
+                                    test_open.write('\n')
+                                    test_open.close()
+                                else:
+                                    print "Legitimate Router Advertisement Detected"
+                                    test_open = open("../TestFiles/realtime_test_success",'a')
+                                    message = "False" +" "+ str(message_details.get_source_MAC_address())+ " " + str(router_database[x][1])
+                                    test_open.write(message)
+                                    test_open.write('\n')
+                                    test_open.close()
+                                    #return "false"
+                           else:
                                 print "Rogue Router Advertisement Detected"
                                 with RotatingFileOpener.RotatingFileOpener('../Logs/', prepend='log_report-', append='.s3') as logger:
                                     current_datetime = datetime.now()
@@ -97,35 +139,6 @@ class Detection:
                                 test_open.write(message)
                                 test_open.write('\n')
                                 test_open.close()
-                                #return "true"
-                                parseIpSourceAdd =  str(message_details.get_ip_source_address()).lower()
-                                mitigateMessage = SendPackets.SendPacket(parseIpSourceAdd,"ff02::1", str(message_details.get_interface()))
-                                IpSourceMac = message_details.get_source_link_layer_address().replace(':','')
-
-
-                                if  self.manualVlan == "True":
-                                        for x in self.getVlanFromRouterDb():
-                                            mitigateMessage.mitigate_last_hop_router(parseIpSourceAdd,IpSourceMac,str(x))
-                                            #print "Check1"
-                                else:
-                                    #print "Check2"
-                                    mitigateMessage.mitigate_last_hop_router(parseIpSourceAdd,IpSourceMac,message_details.get_vlan_id())
-                                #print parseIpSourceAdd
-
-                                test_open = open("../TestFiles/mitigate_attack", 'a')
-                                test_start = datetime.now()
-                                sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
-                                test_open.write(str(sum))
-                                test_open.write('\n')
-                                test_open.close()
-                            else:
-                                print "Legitimate Router Advertisement Detected"
-                                test_open = open("../TestFiles/realtime_test_success",'a')
-                                message = "False" +" "+ str(message_details.get_source_MAC_address())+ " " + str(router_database[x][1])
-                                test_open.write(message)
-                                test_open.write('\n')
-                                test_open.close()
-                                #return "false"
                         else:
                             lol = 1
                             #print "Incorrect Vlan, Checking other VLANs ..."
@@ -322,7 +335,7 @@ class Detection:
             subtrahend = Decimal( arrival_date.strftime(("%s"))) + Decimal(arrival_date.strftime(("%f")))/1000000
             minuend = Decimal(check_date.strftime(("%s"))) + Decimal(check_date.strftime(("%f")))/1000000
             difference = minuend - subtrahend
-            time_limit =  Decimal("2.00")
+            time_limit =  Decimal("3.00")
             if difference < time_limit:
                 temp_list.append(attempt)
 
@@ -361,72 +374,31 @@ class Detection:
                     #print address_entry[2]
                     #print address_entry[3]
                     #print address_entry[4]
-                    #format for address entry is 0     ,  1      ,      2     ,     3      ,     4
-                    #                            VLAN  , SRC_MAC , entry date , entry time , DEST_MAC
+                    #format for address entry is 0     ,  1      ,      2     ,     3      ,     4            5
+                    #                            VLAN  , SRC_MAC , entry date , entry time , DEST_MAC ,     count
                     #format for address list
-                    #format for new entry/   is  0        ,  1      ,      2     ,     3     ,   4
-                    #                            SRC_MAC  ,DEST_MAC , entry date , entry time , VLAN
+                    #format for new entry/   is  0        ,  1      ,      2     ,     3     ,   4          5
+                    #                            SRC_MAC  ,DEST_MAC , entry date , entry time , VLAN ,   count
 
                     if len(address_list) ==0:
-                        new_entry = [str(address_entry[1]),str(address_entry[4][:-1]),str(address_entry[2]),str(address_entry[3]),str(address_entry[0])]
+                        new_entry = [str(address_entry[1]),str(address_entry[4][:-1]),str(address_entry[2]),str(address_entry[3]),str(address_entry[0]),0]
                         address_list.append(new_entry)
 
 
                     else :
                         for x in range(len(address_list)):
-                            if address_list[x][0] == address_entry[1] and address_list[x][1]==address_entry[4]:
+                            if address_list[x][0] == address_entry[1] :
                                 found = True
+                                address_list[x][5] = address_list[x][5] + 1
 
                         if found == False:
-                            new_entry = [str(address_entry[1]),str(address_entry[4][:-1]),str(address_entry[2]),str(address_entry[3]),str(address_entry[0])]
+                            new_entry = [str(address_entry[1]),str(address_entry[4][:-1]),str(address_entry[2]),str(address_entry[3]),str(address_entry[0]),0]
                             address_list.append(new_entry)
-                earliest= 0
-                #print address_list.__len__()
-                searched_list = []
-                count_list = []
-                for x in range(len(address_list)-2):
-                    #check count per source first
-                    #format for address list/   is  0        ,  1      ,      2     ,     3     ,   4
-                    #                           SRC_MAC  ,DEST_MAC , entry date , entry time , VLAN
-                    #format for count list  /   is  0   ,  1      ,      2     ,     3    , 4
-                    #                           SRC_MAC  , entry date , entry time , VLAN , count
-                    y = x +1
-                    print "????"
-                    print len(address_list)
-                    while y <= len(address_list)-1:
-                        found = False
-                        if y in searched_list:
-                            pass
-                        else:
-                            print "**"
-                            print x
-                            print y
-                            if address_list[x][0] == address_list[y][0]:
-                                searched_list.append(y)
-                                #search for entry
-                                if len(count_list) == 0:
-                                    new_entry = [address_list[x][0],address_list[x][2],address_list[x][3],address_list[x][4],1]
-                                    count_list.append(new_entry)
-                                else:
-                                    for count_entry in count_list:
-                                        if count_entry[0] == address_list[y][0]:
-                                            count_entry[4] = count_entry[4] + 1
-                                            found = True
-                                    if found == False:
-                                        new_entry =  [address_list[x][0],address_list[x][2],address_list[x][3],address_list[x][4],1]
-                                        count_list.append(new_entry)
-                        y = y+1
-                        print "y now is " + str(y)
-                        #entry_date = address_updated[2] + " " + address_updated[3]
-                        #datetime_subtrahend = datetime.strptime(str(entry_date),"%Y-%m-%d %H:%M:%S.%f").microsecond
-                        #datetime_minuend = datetime.now().microsecond
-                        #difference = datetime_minuend - datetime_subtrahend
-                        print count_list
-                        #if difference < earliest:
-                         #   earliest = difference
 
-                for dad_entry in count_list:
-                    entry_date = dad_entry[1] + " " + dad_entry[2]
+                #print address_list.__len__()
+
+                for dad_entry in address_list:
+                    entry_date = dad_entry[2] + " " + dad_entry[3]
                     datetime_subtrahend = datetime.strptime(str(entry_date),"%Y-%m-%d %H:%M:%S.%f").microsecond
                     datetime_minuend = datetime.now().microsecond
                     difference = datetime_minuend - datetime_subtrahend
@@ -437,10 +409,10 @@ class Detection:
                     print datetime_subtrahend
                     print difference
                     print dad_entry[4]
-                    if dad_entry[4] > 2 and difference <2000000:
+                    if dad_entry[5] > 2 and difference <2000000:
                         print "DOS in DAD Detected"
                         test_open = open("../TestFiles/realtime_test1_success",'a')
-                        message = "True" + " " +str(dad_entry[0]) +" " + str(difference) + " " +  str(dad_entry[4])
+                        message = "True" + " " +str(dad_entry[0]) +" " + str(difference) + " " +  str(dad_entry[5])
                         test_open.write(message)
                         test_open.write('\n')
                         test_open.close()
@@ -452,7 +424,7 @@ class Detection:
                     else:
                         print "DAD Legitimate"
                         test_open = open("../TestFiles/realtime_test1_success",'a')
-                        message = "False" + " " +str(dad_entry[0]) +" " + str(difference) + " " +  str(dad_entry[4])
+                        message = "False" + " " +str(dad_entry[0]) +" " + str(difference) + " " +  str(dad_entry[5])
                         test_open.write(message)
                         test_open.write('\n')
                         test_open.close()
