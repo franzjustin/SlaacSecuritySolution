@@ -335,7 +335,7 @@ class Detection:
             subtrahend = Decimal( arrival_date.strftime(("%s"))) + Decimal(arrival_date.strftime(("%f")))/1000000
             minuend = Decimal(check_date.strftime(("%s"))) + Decimal(check_date.strftime(("%f")))/1000000
             difference = minuend - subtrahend
-            time_limit =  Decimal("3.00")
+            time_limit =  Decimal("2.00")
             if difference < time_limit:
                 temp_list.append(attempt)
 
@@ -399,32 +399,23 @@ class Detection:
 
                 for dad_entry in address_list:
                     entry_date = dad_entry[2] + " " + dad_entry[3]
-                    datetime_subtrahend = datetime.strptime(str(entry_date),"%Y-%m-%d %H:%M:%S.%f").microsecond
-                    datetime_minuend = datetime.now().microsecond
-                    difference = datetime_minuend - datetime_subtrahend
-                    print datetime.now()
-                    print entry_date
-                    print "-----"
-                    print datetime_minuend
-                    print datetime_subtrahend
-                    print difference
-                    print dad_entry[4]
-                    if dad_entry[5] > 2 and difference <2000000:
+
+                    if dad_entry[5] > 2 :
                         print "DOS in DAD Detected"
                         test_open = open("../TestFiles/realtime_test1_success",'a')
-                        message = "True" + " " +str(dad_entry[0]) +" " + str(difference) + " " +  str(dad_entry[5])
+                        message = "True" + " " +str(dad_entry[0]) + " " +  str(dad_entry[5])
                         test_open.write(message)
                         test_open.write('\n')
                         test_open.close()
                         with RotatingFileOpener.RotatingFileOpener('../Logs/', prepend='log_report-', append='.s3') as logger:
                             current_datetime = datetime.now()
-                            log = str(entry_date) + " SAd003 Attacker:" + str(dad_entry[0])
+                            log = str(entry_date) + " SA003 Victim:" + str(dad_entry[0])
                             log =log+"\n"
                             logger.write(log)
                     else:
                         print "DAD Legitimate"
                         test_open = open("../TestFiles/realtime_test1_success",'a')
-                        message = "False" + " " +str(dad_entry[0]) +" " + str(difference) + " " +  str(dad_entry[5])
+                        message = "False" + " " +str(dad_entry[0]) + " " +  str(dad_entry[5])
                         test_open.write(message)
                         test_open.write('\n')
                         test_open.close()

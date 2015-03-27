@@ -57,7 +57,7 @@ class Forever_Loop(threading.Thread):
 					eth = EthDecoder().decode(data)
 					ethChild = eth.child()
 					ethChild2 = ethChild.child()
-					if ethChild2.get_type() == 134:
+					if ethChild2.get_type() == 1134:
 						# ------------Time Start------------
 						test_open = open("../TestFiles/realtime_test1_sniff", 'a')
 						test_start = datetime.now()
@@ -96,7 +96,7 @@ class Forever_Loop(threading.Thread):
 						test_open.close()
 					# -----------------------------------
 					#print "Hello"
-					elif ethChild2.get_type() == 136:
+					elif ethChild2.get_type() == 1136:
 						# ------------Time Start------------
 						test_open = open("../TestFiles/realtime_test1_sniff", 'a')
 						test_start = datetime.now()
