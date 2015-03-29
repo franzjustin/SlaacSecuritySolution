@@ -146,6 +146,7 @@ class DataRead:
         checker = ICMP6.ICMP6.protocol
         listOfMessages = []
         i = 1
+
         for ts, buf in pcap:
             eth = EthDecoder().decode(buf)
             ethChild = eth.child()
@@ -251,7 +252,7 @@ class DataRead:
                         override_flag = ethChild2.get_override_flag()
                         router_flag = ethChild2.get_router_flag()
 
-                    message_details = SLAAC_Message.SLAAC_Message(ndp_message_number, source_link_layer_address,
+                    message_details = SLAAC_Message.SLAAC_Message(1,ndp_message_number, source_link_layer_address,
                                                                   ip_source_address, ip_destination_address,
                                                                   source_MAC_address_final,
                                                                   destination_MAC_address_final, target_address,
