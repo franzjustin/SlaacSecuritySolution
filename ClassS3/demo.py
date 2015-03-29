@@ -26,10 +26,11 @@ manual = False
 learning = False
 running = False
 app = flask.Flask(__name__)
-thread = None
+socketThread = None
 app.secret_key = "bacon"
 socketio = SocketIO(app)
 #users = {'admin': 'admin'}
+
 
 def background_thread():
     """Example of how to send server generated events to clients."""
@@ -37,16 +38,77 @@ def background_thread():
     while True:
         time.sleep(1)
         count += 1
-        print "ABAB"
         socketio.emit('my response',
                       {'data': 'Server generated event', 'count': count},
                       namespace='/test')
 
 
-global thread
-if thread is None:
-    thread = Thread(target=background_thread)
-    thread.start()
+@socketio.on('my event', namespace='/test')
+def test_message(message):
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    emit('my response',
+         {'data': message['data'], 'count': session['receive_count']})
+
+
+@socketio.on('my broadcast event', namespace='/test')
+def test_broadcast_message(message):
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    emit('my response',
+         {'data': message['data'], 'count': session['receive_count']},
+         broadcast=True)
+
+
+@socketio.on('join', namespace='/test')
+def join(message):
+    join_room(message['room'])
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    emit('my response',
+         {'data': 'In rooms: ' + ', '.join(request.namespace.rooms),
+          'count': session['receive_count']})
+
+
+@socketio.on('leave', namespace='/test')
+def leave(message):
+    leave_room(message['room'])
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    emit('my response',
+         {'data': 'In rooms: ' + ', '.join(request.namespace.rooms),
+          'count': session['receive_count']})
+
+
+@socketio.on('close room', namespace='/test')
+def close(message):
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    emit('my response', {'data': 'Room ' + message['room'] + ' is closing.',
+                         'count': session['receive_count']},
+         room=message['room'])
+    close_room(message['room'])
+
+
+@socketio.on('my room event', namespace='/test')
+def send_room_message(message):
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    emit('my response',
+         {'data': message['data'], 'count': session['receive_count']},
+         room=message['room'])
+
+
+@socketio.on('disconnect request', namespace='/test')
+def disconnect_request():
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    emit('my response',
+         {'data': 'Disconnected!', 'count': session['receive_count']})
+    disconnect()
+
+
+@socketio.on('connect', namespace='/test')
+def test_connect():
+    emit('my response', {'data': 'Connected', 'count': 0})
+
+
+@socketio.on('disconnect', namespace='/test')
+def test_disconnect():
+    print('Client disconnected')
 
 
 def File_Existence(filepath):
@@ -59,13 +121,12 @@ def File_Existence(filepath):
 
 class Main(flask.views.MethodView):  # the main page
     def get(self):  # when open, this is the first page it gets
-        #print File_Existence(os.path.join(APP_ACC, 'Accounts.txt'))
         if File_Existence(os.path.join(APP_ACC, 'Accounts.txt')) is False:
             print "There is No Account Database found"
-            return flask.render_template('signUp.html',running=running)
+            return  flask.render_template('signUp.html',running=running)+flask.render_template('popup.html')
         else:
             print "There is an Account Database"
-            return flask.render_template('index.html',running=running)
+            return  flask.render_template('index.html',running=running)
 
     def post(self):
         if 'logout' in flask.request.form:
@@ -133,7 +194,7 @@ class Stop(flask.views.MethodView):
         global running
         running = False
         l.stop()
-        return flask.render_template('index.html', running=running)
+        return flask.render_template('popup.html') + flask.render_template('index.html', running=running)
 
 
 class Sniffer(flask.views.MethodView):
@@ -141,7 +202,7 @@ class Sniffer(flask.views.MethodView):
     def get(self):
         print "went to sniffer, running is"
         print str(running)
-        return flask.render_template('sniffer.html', running=running)
+        return flask.render_template('popup.html') + flask.render_template('sniffer.html', running=running)
 
     @login_required
     def post(self):
@@ -159,7 +220,7 @@ class Sniffer(flask.views.MethodView):
                 l.start()
         except Exception, e:
             raise e
-        return flask.render_template('test.html', running=running)  #goes to the test.html page
+        return flask.render_template('popup.html') + flask.render_template('test.html', running=running)  #goes to the test.html page
 
 
 class Notif(flask.views.MethodView):
@@ -182,10 +243,10 @@ class Notif(flask.views.MethodView):
                 with open(os.path.join(APP_STATIC, logfile)) as f:
                     stat = str(f.read())
                     flask.flash(stat)
-                    return flask.render_template('status.html', running=running , filename_list = filename_list, attack_list = attack_list)
+                    return flask.render_template('popup.html') + flask.render_template('status.html', running=running , filename_list = filename_list, attack_list = attack_list)
             else:
                 flask.flash("everything is fine :)")
-                return flask.render_template('status.html', running=running, filename_list = filename_list, attack_list = attack_list)
+                return flask.render_template('popup.html') + flask.render_template('status.html', running=running, filename_list = filename_list, attack_list = attack_list)
 
         elif File_Existence(os.path.join(APP_STATIC, logfile)) is True:
             with open(os.path.join(APP_STATIC, logfile)) as f:
@@ -212,10 +273,10 @@ class Notif(flask.views.MethodView):
                 #print "lolo was"
                 #print lolol
                 #flask.flash(attack_message)
-                return flask.render_template('status.html', running=running , filename_list = filename_list, attack_list = attack_list)
+                return flask.render_template('popup.html') + flask.render_template('status.html', running=running , filename_list = filename_list, attack_list = attack_list)
         else:
             flask.flash("everything is fine :)")
-            return flask.render_template('status.html', running=running, filename_list = filename_list, attack_list = attack_list)
+            return flask.render_template('popup.html') + flask.render_template('status.html', running=running, filename_list = filename_list, attack_list = attack_list)
 
 
     def printlogs(self, running, attack_list, filename_list, logfile):
@@ -230,10 +291,10 @@ class Notif(flask.views.MethodView):
                 for x in range(5):
                     flask.flash(stat[y])
                     y=y-1
-                return flask.render_template('status.html', running=running , filename_list = filename_list, attack_list = attack_list)
+                return flask.render_template('popup.html') + flask.render_template('status.html', running=running , filename_list = filename_list, attack_list = attack_list)
         else:
             flask.flash("everything is fine :)")
-            return flask.render_template('status.html', running=running, filename_list = filename_list, attack_list = attack_list)
+            return flask.render_template('popup.html') + flask.render_template('status.html', running=running, filename_list = filename_list, attack_list = attack_list)
 
     @login_required
     def get(self):
@@ -315,7 +376,7 @@ class Config(flask.views.MethodView):
         flask.flash(message)
         print "learning is"
         print learning
-        return flask.render_template('config.html', running=running, learning=learning)
+        return flask.render_template('popup.html') + flask.render_template('config.html', running=running, learning=learning)
 
     @login_required
     def post(self):
@@ -360,7 +421,7 @@ class interfaces(flask.views.MethodView):
     def get(self):
         interface_list = self.getInterface()
         #print interface_list[0]
-        return flask.render_template('interfaces.html', running=running, interface_list=interface_list)
+        return flask.render_template('popup.html') + flask.render_template('interfaces.html', running=running, interface_list=interface_list)
 
     def getInterface(self):
         return findalldevs()
@@ -395,7 +456,7 @@ class deleteAcc(flask.views.MethodView):
 
     def get(self):
         accounts = self.getAccounts()
-        return flask.render_template('deleteAcc.html', running=running, accounts=accounts)
+        return flask.render_template('popup.html') + flask.render_template('deleteAcc.html', running=running, accounts=accounts)
 
     def post(self):
         acc_no = flask.request.form['acc_no']
@@ -416,7 +477,7 @@ class deleteAcc(flask.views.MethodView):
 
 class signUpUser(flask.views.MethodView):
     def get(self):
-        return flask.render_template('signUp.html', running=running)
+        return flask.render_template('popup.html') + flask.render_template('signUp.html', running=running)
 
     def post(self):
         user = flask.request.form['username'];
@@ -433,7 +494,7 @@ class EditRDB(flask.views.MethodView):
         f = open('../Database/Router_Database', 'r')
         message = f.read()
         f.close()
-        return flask.render_template('editRDB.html', running=running, message=message)
+        return flask.render_template('popup.html') + flask.render_template('editRDB.html', running=running, message=message)
 
     def post(self):
         message = flask.request.form['message']
@@ -444,6 +505,10 @@ class EditRDB(flask.views.MethodView):
 
 class dashboard(flask.views.MethodView):
     def get(self):
+        global socketThread
+        if socketThread is None:
+            socketThread = Thread(target=background_thread)
+            socketThread.start()
         return flask.render_template('dashboard.html', running=running)
 
     def post(self):
@@ -478,9 +543,7 @@ app.add_url_rule('/enableVlan', view_func=EnableVlan.as_view('enableVlan'), meth
 
 if __name__ == "__main__":
     socketio.run(app)
-    app.run()
     app.debug = True
 
-app.run()
 socketio.run(app)
 app.debug = True

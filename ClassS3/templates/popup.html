@@ -36,7 +36,7 @@
       right: 10px;
       top: 9px;
       text-indent: -9999px;
-      background: url(static/img/close.png);
+      background: url(../static/img/close.png);
       height: 16px;
       width: 16px;
       cursor: pointer;
@@ -59,14 +59,9 @@
 
 <body>
 
-	<div id="page-wrap">
-		
     <div id="note">
         You smell good. <a id="close">[close]</a>
     </div>
-
-    <button id = "trykolang">try ko lang</button>
-
 
   <script>
    close = document.getElementById("close");
@@ -94,8 +89,8 @@
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
   <script type="text/javascript" charset="utf-8">
         $(document).ready(function() {
-            namespace = '/test'; // change to an empty string to use the global namespace
 
+            namespace = '/test'; // change to an empty string to use the global namespace
             // the socket.io documentation recommends sending an explicit package upon connection
             // this is specially important when using the global namespace
             var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
@@ -110,7 +105,6 @@
             });
         });
   </script>
-<h2>Receive:</h2>
     <div id="log"></div>
 </body>
 
