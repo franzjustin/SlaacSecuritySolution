@@ -4,7 +4,7 @@
       <meta charset="utf-8">
       <title>S3 - SLAAC Security Solution</title>
       <meta name="author" content="Buenaventura - Gonzales - Lu">
-      <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport">
+      <meta content="width=device-width,    initial-scale=1.0, user-scalable=no" name="viewport">
       <meta name="description" content="SLAAC Security Solution">
       <meta name="keywords" content="SLAAC Security Solution">
       <script src="static/js/html5-trunk.js"></script>
@@ -46,7 +46,7 @@
       right: 10px;
       top: 9px;
       text-indent: -9999px;
-      background: url(../static/img/close.png);
+      #background: url(../static/img/close.png);
       height: 16px;
       width: 16px;
       cursor: pointer;
@@ -81,7 +81,15 @@
             // event handler for server sent data
             // the data is displayed in the "Received" section of the page
             socket.on('my response', function(msg) {
+
+                $('#note').show(100,function(){
+            setTimeout(function(){
+                $('#note').hide(100);
+                //alert("complete");
+
+            },2000)});
                 $('#log').append('<br>Received #' + msg.count + ': ' + msg.data);
+
             });
 
             // handlers for the different forms in the page
@@ -116,7 +124,11 @@
             });
         });
     </script>
+        <div id="note">
+        You smell good. <a id="close">[close]</a>
+        </div>
         <div id="log"></div>
+
 
      <!-------------------------------------------------------------------------------->
 
