@@ -59,60 +59,60 @@ class Forever_Loop(threading.Thread):
                     ethChild2 = ethChild.child()
                     if ethChild2.get_type() == 134:
                         # ------------Time Start------------
-                        test_open = open("../TestFiles/realtime_test1_sniff", 'a')
-                        test_start = datetime.now()
-                        sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
-                        test_open.write(str(sum))
-                        test_open.write('\n')
-                        test_open.close()
+                        #test_open = open("../TestFiles/realtime_test1_sniff", 'a')
+                        #test_start = datetime.now()
+                        #sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
+                        #test_open.write(str(sum))
+                        #test_open.write('\n')
+                        #test_open.close()
                         # -----------------------------------
                         parser.sniffSlaac(data,currentInt)
                         # ------------Time Start------------
-                        test_open = open("../TestFiles/realtime_test1_detect", 'a')
-                        test_start = datetime.now()
-                        sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
-                        test_open.write(str(sum))
-                        test_open.write('\n')
-                        test_open.close()
+                        #test_open = open("../TestFiles/realtime_test1_detect", 'a')
+                        #test_start = datetime.now()
+                        #sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
+                        #test_open.write(str(sum))
+                        #test_open.write('\n')
+                        #test_open.close()
                     # -----------------------------------
                     # print "Hello"
 
                     elif ethChild2.get_type() == 135:
                         # ------------Time Start------------
-                        test_open = open("../TestFiles/realtime_test1_sniff", 'a')
-                        test_start = datetime.now()
-                        sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
-                        test_open.write(str(sum))
-                        test_open.write('\n')
-                        test_open.close()
+                        #test_open = open("../TestFiles/realtime_test1_sniff", 'a')
+                        #test_start = datetime.now()
+                        #sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
+                        #test_open.write(str(sum))
+                        #test_open.write('\n')
+                        #test_open.close()
                         # -----------------------------------
                         parser.sniffSlaac(data,currentInt)
                         #------------Time Start------------
-                        test_open = open("../TestFiles/realtime_test1_detect", 'a')
-                        test_start = datetime.now()
-                        sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
-                        test_open.write(str(sum))
-                        test_open.write('\n')
-                        test_open.close()
+                        #test_open = open("../TestFiles/realtime_test1_detect", 'a')
+                        #test_start = datetime.now()
+                        #sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
+                        #test_open.write(str(sum))
+                        #test_open.write('\n')
+                        #test_open.close()
                     # -----------------------------------
                     #print "Hello"
                     elif ethChild2.get_type() == 136:
                         # ------------Time Start------------
-                        test_open = open("../TestFiles/realtime_test1_sniff", 'a')
-                        test_start = datetime.now()
-                        sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
-                        test_open.write(str(sum))
-                        test_open.write('\n')
-                        test_open.close()
+                        #test_open = open("../TestFiles/realtime_test1_sniff", 'a')
+                        #test_start = datetime.now()
+                        #sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
+                        #test_open.write(str(sum))
+                        #test_open.write('\n')
+                        #test_open.close()
                         # ----------0-------------------------
                         parser.sniffSlaac(data,currentInt)
                         #------------Time Start------------
-                        test_open = open("../TestFiles/realtime_test1_detect", 'a')
-                        test_start = datetime.now()
-                        sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
-                        test_open.write(str(sum))
-                        test_open.write('\n')
-                        test_open.close()
+                        #test_open = open("../TestFiles/realtime_test1_detect", 'a')
+                        #test_start = datetime.now()
+                        #sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
+                        #test_open.write(str(sum))
+                        #test_open.write('\n')
+                        #test_open.close()
                     # -----------------------------------
                     #print "Hello"
                 elif str(parser.learn_mode) == str(True):

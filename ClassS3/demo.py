@@ -194,7 +194,7 @@ class Stop(flask.views.MethodView):
         global running
         running = False
         l.stop()
-        return flask.render_template('popup.html') + flask.render_template('index.html', running=running)
+        return  flask.render_template('index.html', running=running)
 
 
 class Sniffer(flask.views.MethodView):
@@ -202,7 +202,7 @@ class Sniffer(flask.views.MethodView):
     def get(self):
         print "went to sniffer, running is"
         print str(running)
-        return flask.render_template('popup.html') + flask.render_template('sniffer.html', running=running)
+        return  flask.render_template('sniffer.html', running=running)
 
     @login_required
     def post(self):
@@ -220,7 +220,7 @@ class Sniffer(flask.views.MethodView):
                 l.start()
         except Exception, e:
             raise e
-        return flask.render_template('popup.html') + flask.render_template('test.html', running=running)  #goes to the test.html page
+        return  flask.render_template('test.html', running=running)  #goes to the test.html page
 
 
 class Notif(flask.views.MethodView):
@@ -243,10 +243,10 @@ class Notif(flask.views.MethodView):
                 with open(os.path.join(APP_STATIC, logfile)) as f:
                     stat = str(f.read())
                     flask.flash(stat)
-                    return flask.render_template('popup.html') + flask.render_template('status.html', running=running , filename_list = filename_list, attack_list = attack_list)
+                    return  flask.render_template('status.html', running=running , filename_list = filename_list, attack_list = attack_list)
             else:
                 flask.flash("everything is fine :)")
-                return flask.render_template('popup.html') + flask.render_template('status.html', running=running, filename_list = filename_list, attack_list = attack_list)
+                return  flask.render_template('status.html', running=running, filename_list = filename_list, attack_list = attack_list)
 
         elif File_Existence(os.path.join(APP_STATIC, logfile)) is True:
             with open(os.path.join(APP_STATIC, logfile)) as f:
@@ -273,10 +273,10 @@ class Notif(flask.views.MethodView):
                 #print "lolo was"
                 #print lolol
                 #flask.flash(attack_message)
-                return flask.render_template('popup.html') + flask.render_template('status.html', running=running , filename_list = filename_list, attack_list = attack_list)
+                return  flask.render_template('status.html', running=running , filename_list = filename_list, attack_list = attack_list)
         else:
             flask.flash("everything is fine :)")
-            return flask.render_template('popup.html') + flask.render_template('status.html', running=running, filename_list = filename_list, attack_list = attack_list)
+            return  flask.render_template('status.html', running=running, filename_list = filename_list, attack_list = attack_list)
 
 
     def printlogs(self, running, attack_list, filename_list, logfile):
@@ -291,10 +291,10 @@ class Notif(flask.views.MethodView):
                 for x in range(5):
                     flask.flash(stat[y])
                     y=y-1
-                return flask.render_template('popup.html') + flask.render_template('status.html', running=running , filename_list = filename_list, attack_list = attack_list)
+                return  flask.render_template('status.html', running=running , filename_list = filename_list, attack_list = attack_list)
         else:
             flask.flash("everything is fine :)")
-            return flask.render_template('popup.html') + flask.render_template('status.html', running=running, filename_list = filename_list, attack_list = attack_list)
+            return  flask.render_template('status.html', running=running, filename_list = filename_list, attack_list = attack_list)
 
     @login_required
     def get(self):
@@ -376,7 +376,7 @@ class Config(flask.views.MethodView):
         flask.flash(message)
         print "learning is"
         print learning
-        return flask.render_template('popup.html') + flask.render_template('config.html', running=running, learning=learning)
+        return  flask.render_template('config.html', running=running, learning=learning)
 
     @login_required
     def post(self):
@@ -385,21 +385,17 @@ class Config(flask.views.MethodView):
             print "hidden is"
             mode = flask.request.form['hidden']
             l.setMode(mode)
-            # run learning code
-            #learn.activateLearningMode()
             learning = True
             return flask.redirect(flask.url_for('config'))
         elif flask.request.form['submit'] == 'Stop Learning':
             learning = False
-            # learning mode stop
             l.setMode(False)
             return flask.redirect(flask.url_for('config'))
         elif flask.request.form['submit'] == 'Select Interface':
             return flask.redirect(flask.url_for('interfaces'))
-            pass # learning mode stop
+            pass
         elif flask.request.form['submit'] == 'Delete Logs':
             filenames = next(os.walk("../Logs"))[2]
-            #logfile = "log_report-" + time.strftime('%Y%m%d') + ".s3"
             for x in filenames:
              if File_Existence(os.path.join(APP_STATIC, x)) is True:
                 os.remove(os.path.join(APP_STATIC, x))
@@ -420,19 +416,16 @@ class Config(flask.views.MethodView):
 class interfaces(flask.views.MethodView):
     def get(self):
         interface_list = self.getInterface()
-        #print interface_list[0]
-        return flask.render_template('popup.html') + flask.render_template('interfaces.html', running=running, interface_list=interface_list)
+        return  flask.render_template('interfaces.html', running=running, interface_list=interface_list)
 
     def getInterface(self):
         return findalldevs()
 
 
     def post(self):
-        expression = str(flask.request.form['expression'])  # gets the input of the user
-        #print expression
+        expression = str(flask.request.form['expression'])
         l.setExpression(expression)
         return flask.redirect(flask.url_for('config'))
-        #return flask.render_template('index.html', running=running)
 
 class deleteAcc(flask.views.MethodView):
     def getAccounts(self):
@@ -456,7 +449,7 @@ class deleteAcc(flask.views.MethodView):
 
     def get(self):
         accounts = self.getAccounts()
-        return flask.render_template('popup.html') + flask.render_template('deleteAcc.html', running=running, accounts=accounts)
+        return  flask.render_template('deleteAcc.html', running=running, accounts=accounts)
 
     def post(self):
         acc_no = flask.request.form['acc_no']
@@ -477,7 +470,7 @@ class deleteAcc(flask.views.MethodView):
 
 class signUpUser(flask.views.MethodView):
     def get(self):
-        return flask.render_template('popup.html') + flask.render_template('signUp.html', running=running)
+        return  flask.render_template('signUp.html', running=running)
 
     def post(self):
         user = flask.request.form['username'];
@@ -494,7 +487,7 @@ class EditRDB(flask.views.MethodView):
         f = open('../Database/Router_Database', 'r')
         message = f.read()
         f.close()
-        return flask.render_template('popup.html') + flask.render_template('editRDB.html', running=running, message=message)
+        return  flask.render_template('editRDB.html', running=running, message=message)
 
     def post(self):
         message = flask.request.form['message']

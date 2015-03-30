@@ -80,12 +80,6 @@ class Detection:
                         if str(vlan) == str(router_database[x][0]):
                            if  str(message_details.get_ip_source_address()) == str(router_database[x][2]) :
                                 if str(message_details.get_source_link_layer_address()) != str(router_database[x][1]):
-                                    test_open = open("../TestFiles/mitigation_detect", 'a')
-                                    test_start = datetime.now()
-                                    sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
-                                    test_open.write(str(sum))
-                                    test_open.write('\n')
-                                    test_open.close()
 
                                     print "Rogue Router Advertisement Detected"
                                     with RotatingFileOpener.RotatingFileOpener('../Logs/', prepend='log_report-', append='.s3') as logger:
@@ -93,11 +87,11 @@ class Detection:
                                         log = str(current_datetime) + " SA001 Attacker:" + str(message_details.get_source_link_layer_address())
                                         log =log + ";Victim:" + str(router_database[x][1]) + "\n"
                                         logger.write(log)
-                                    test_open = open("../TestFiles/realtime_test_success",'a')
-                                    message = "True" +" "+ str(message_details.get_source_MAC_address())+ " " + str(router_database[x][1])
-                                    test_open.write(message)
-                                    test_open.write('\n')
-                                    test_open.close()
+                                    #test_open = open("../TestFiles/realtime_test_success",'a')
+                                    #message = "True" +" "+ str(message_details.get_source_MAC_address())+ " " + str(router_database[x][1])
+                                    #test_open.write(message)
+                                    #test_open.write('\n')
+                                    #test_open.close()
                                     #return "true"
                                     parseIpSourceAdd =  str(message_details.get_ip_source_address()).lower()
                                     mitigateMessage = SendPackets.SendPacket(parseIpSourceAdd,"ff02::1", str(message_details.get_interface()))
@@ -113,12 +107,18 @@ class Detection:
                                         mitigateMessage.mitigate_last_hop_router(parseIpSourceAdd,IpSourceMac,message_details.get_vlan_id())
                                     #print parseIpSourceAdd
 
-                                    test_open = open("../TestFiles/mitigate_attack", 'a')
+                                    test_open = open("../Database/Notification.txt", 'a')
                                     test_start = datetime.now()
-                                    sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
+                                    sum = str(current_datetime) + " SA001 Attacker:" + str(message_details.get_source_link_layer_address())
                                     test_open.write(str(sum))
                                     test_open.write('\n')
                                     test_open.close()
+                                    #test_open = open("../TestFiles/mitigate_attack", 'a')
+                                    #test_start = datetime.now()
+                                    #sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
+                                    #test_open.write(str(sum))
+                                    #test_open.write('\n')
+                                    #test_open.close()
                                 else:
                                     print "Legitimate Router Advertisement Detected"
                                     test_open = open("../TestFiles/realtime_test_success",'a')
@@ -134,17 +134,23 @@ class Detection:
                                     log = str(current_datetime) + " SA001 Attacker:" + str(message_details.get_source_link_layer_address())
                                     log =log + ";Victim:" + str(router_database[x][1]) + "\n"
                                     logger.write(log)
-                                test_open = open("../TestFiles/realtime_test_success",'a')
-                                message = "True" +" "+ str(message_details.get_source_MAC_address())+ " " + str(router_database[x][1])
-                                test_open.write(message)
+
+
+                                test_open = open("../Database/Notification", 'a')
+                                test_start = datetime.now()
+                                sum = str(test_start) + " SA001 Attacker:" + str(message_details.get_source_link_layer_address())
+                                test_open.write(str(sum))
                                 test_open.write('\n')
                                 test_open.close()
+                                #test_open = open("../TestFiles/realtime_test_success",'a')
+                                #message = "True" +" "+ str(message_details.get_source_MAC_address())+ " " + str(router_database[x][1])
+                                #test_open.write(message)
+                                #test_open.write('\n')
+                                #test_open.close()
                         else:
                             lol = 1
-                            #print "Incorrect Vlan, Checking other VLANs ..."
             else:
                 print "Legitimate Router Advertisement Detected - RL"
-
 
             return "false"
         else:
