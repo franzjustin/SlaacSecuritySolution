@@ -107,9 +107,10 @@ class Detection:
                                         mitigateMessage.mitigate_last_hop_router(parseIpSourceAdd,IpSourceMac,message_details.get_vlan_id())
                                     #print parseIpSourceAdd
 
-                                    test_open = open("../Database/Notification.txt", 'a')
+
+                                    test_open = open("../Database/Notification", 'a')
                                     test_start = datetime.now()
-                                    sum = str(current_datetime) + " SA001 Attacker:" + str(message_details.get_source_link_layer_address())
+                                    sum = str(test_start) + " SA001 Attacker:" + str(message_details.get_source_link_layer_address())
                                     test_open.write(str(sum))
                                     test_open.write('\n')
                                     test_open.close()
@@ -220,9 +221,16 @@ class Detection:
                                 else:
                                     mitigateMessage.mitigate_neighbor_advertisement_spoofing(parseTargetLinkLayer,parseIpSourceAdd,message_details.get_vlan_id())
 
-                                test_open = open("../TestFiles/mitigate_attack", 'a')
+                                #test_open = open("../TestFiles/mitigate_attack", 'a')
+                                #test_start = datetime.now()
+                                #sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
+                                #test_open.write(str(sum))
+                                #test_open.write('\n')
+                                #test_open.close()
+
+                                test_open = open("../Database/Notification", 'a')
                                 test_start = datetime.now()
-                                sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
+                                sum = str(test_start) + " SA002 Attacker:" + str(message_details.get_source_MAC_address())
                                 test_open.write(str(sum))
                                 test_open.write('\n')
                                 test_open.close()
@@ -256,18 +264,25 @@ class Detection:
                             #print "Legitimate NA detected (No router and Override) "
                             #print x
 
-                            test_open = open("../TestFiles/mitigate_attack", 'a')
+                            test_open = open("../Database/Notification", 'a')
                             test_start = datetime.now()
-                            sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
+                            sum = str(test_start) + " SA002 Attacker:" + str(message_details.get_source_MAC_address())
                             test_open.write(str(sum))
                             test_open.write('\n')
                             test_open.close()
-                            test_open = open("../TestFiles/realtime_test_success",'a')
-                            message = "True" +" " +  str(message_details.get_source_MAC_address())+ " " + str(router_database[x][1])
+
+                            #test_open = open("../TestFiles/mitigate_attack", 'a')
+                            #test_start = datetime.now()
+                            #sum = Decimal(test_start.strftime(("%s"))) + Decimal(test_start.strftime(("%f"))) / 1000000
+                            #test_open.write(str(sum))
+                            #test_open.write('\n')
+                            #test_open.close()
+                            #test_open = open("../TestFiles/realtime_test_success",'a')
+                            #message = "True" +" " +  str(message_details.get_source_MAC_address())+ " " + str(router_database[x][1])
                             #print message
-                            test_open.write(message)
-                            test_open.write('\n')
-                            test_open.close()
+                            #test_open.write(message)
+                            #test_open.write('\n')
+                           # test_open.close()
                     else:
                         print "Legitimate NA detected (No router and Override) "
                         test_open = open("../TestFiles/realtime_test_success",'a')
@@ -418,6 +433,14 @@ class Detection:
                             log = str(entry_date) + " SA003 Victim:" + str(dad_entry[0])
                             log =log+"\n"
                             logger.write(log)
+
+                        test_open = open("../Database/Notification", 'a')
+                        test_start = datetime.now()
+                        sum = str(entry_date) + " SA003 Victim:" + str(dad_entry[0])
+                        test_open.write(str(sum))
+                        test_open.write('\n')
+                        test_open.close()
+
                     else:
                         print "DAD Legitimate"
                         test_open = open("../TestFiles/realtime_test1_success",'a')
