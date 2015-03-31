@@ -36,11 +36,30 @@ def background_thread():
     """Example of how to send server generated events to clients."""
     count = 0
     while True:
-        time.sleep(1)
-        count += 1
-        socketio.emit('my response',
-                      {'data': 'Server generated event', 'count': count},
-                      namespace='/test')
+        time.sleep(3)
+        if File_Existence('../Database/Notification') is True:
+            try:
+                notifcation_database = open('../Database/Notification','r')
+                print "ASsas"
+                templine = notifcation_database.readline().split(' ',3 )
+                print templine
+                alert_line = templine[3].split(' ')
+                if str(alert_line[0]) == "SA001":
+                    alert_line[0] = "Last Hop Router Attack"
+                elif str(alert_line[0]) == "SA002":
+                    alert_line[0] = "NA Spoofing"
+                elif str(alert_line[0]) == "SA003":
+                    alert_line[0] = "DoS in DAD"
+                count += 1
+                socketio.emit('my response',
+                              {'data': alert_line[0] + " " + alert_line[1] , 'count': count},
+                              namespace='/test')
+                notifcation_database.close()
+                something = open("../Database/Notification", "w")
+                something.write(" ")
+                something.close()
+            except:
+                pass
 
 
 @socketio.on('my event', namespace='/test')

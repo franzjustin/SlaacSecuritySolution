@@ -88,7 +88,8 @@
                 //alert("complete");
 
             },2000)});
-                $('#log').append('<br>Received #' + msg.count + ': ' + msg.data);
+                $('#alertarea').text(msg.data);
+                //$('#log').append('<br>Received #' + msg.count + ': ' + msg.data);
 
             });
 
@@ -125,9 +126,9 @@
         });
     </script>
         <div id="note">
-        You smell good. <a id="close">[close]</a>
+         <label id="alertarea"></label>
         </div>
-        <div id="log"></div>
+        <!--<div id="log"></div>-->
 
 
      <!-------------------------------------------------------------------------------->
