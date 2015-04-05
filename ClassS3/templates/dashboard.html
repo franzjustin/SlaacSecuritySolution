@@ -12,4 +12,136 @@
   </div>
 </div>
 
+<div id="intro-wrapper" class="wrapper style1">
+    <h2>Latest Attacks:</h2>
+    <section id="intro" class="container">
+        <ul class="actions">
+        </ul>
+    </section>
+</div>
+
+      <div class="row-fluid">
+            <div class="span8">
+              <div class="widget no-margin">
+                <div class="widget-body">
+                  <div class="timeline clearfix">
+                    <div class="mid-line"></div>
+                    <div class="time-header info">
+                      Today
+                    </div>
+
+            {% with messages = get_flashed_messages() %}
+                {% for message in messages %}
+
+                    <div class="left">
+                      <div class="l-arrow"></div>
+                      <div class="about-task">
+                         <p class="no-margin">
+                            {{message}}
+                         </p>
+                      </div>
+                    </div>
+
+                {% endfor %}
+            {% endwith %}
+
+                    <div class="right">
+                      <div class="l-arrow"></div>
+                      <div class="about-task">
+                         <p class="no-margin">
+                          <a href="{{url_for('dashboard')}}" style="width: 100px;" class="btn">Refresh</a>
+                         </p>
+                      </div>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+      <div class="row-fluid">
+            <div class="span8">
+              <div class="widget no-margin">
+                <div class="widget-header">
+                  <div class="title">
+                    <span class="fs1" aria-hidden="true" data-icon="&#xe047;"></span> Latest Attacks
+                  </div>
+                </div>
+
+
+                <div class="widget-body">
+                  <div class="timeline clearfix">
+                    <div class="mid-line"></div>
+
+
+                {% for message in listLastHop %}
+
+                    <div class="left">
+                      <div class="l-arrow"></div>
+                      <div class="about-task">
+                         <p class="no-margin">
+                            {{message}}
+                         </p>
+                      </div>
+                    </div>
+
+                    <div class="right">
+                      <div class="l-arrow"></div>
+                      <div class="about-task">
+                         <p class="no-margin">
+                            Last Hop Router Attack
+                         </p>
+                      </div>
+                    </div>
+                {% endfor %}
+
+                {% for message in listNeigAdver %}
+
+                    <div class="left">
+                      <div class="l-arrow"></div>
+                      <div class="about-task">
+                         <p class="no-margin">
+                            {{message}}
+                         </p>
+                      </div>
+                    </div>
+
+                    <div class="right">
+                      <div class="l-arrow"></div>
+                      <div class="about-task">
+                         <p class="no-margin">
+                            Neighbor Advertisement Spoofing
+                         </p>
+                      </div>
+                    </div>
+                {% endfor %}
+
+
+
+                {% for message in listDoSonDaD %}
+
+                    <div class="left">
+                      <div class="l-arrow"></div>
+                      <div class="about-task">
+                         <p class="no-margin">
+                            {{message}}
+                         </p>
+                      </div>
+                    </div>
+
+                     <div class="right">
+                      <div class="l-arrow"></div>
+                      <div class="about-task">
+                         <p class="no-margin">
+                            Denial of Service on Duplicate Address Detection
+                         </p>
+                      </div>
+                    </div>
+                {% endfor %}
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 {% endblock %}
