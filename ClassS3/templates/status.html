@@ -8,11 +8,11 @@
 			<h1>Logs</h1>
 				{% with messages = get_flashed_messages() %}
 					{% for message in messages %}
-						<p class="style1">{{message}}</p>
+						<p class="no-margin">{{message}} </p><br>
 					{% endfor %}
 				{% endwith %}
 			<ul class="actions">
-				<li><a href="{{url_for('notif')}}" class="button style3 big">Refresh</a></li>
+				<li><a href="{{url_for('notif')}}" class="btn">Refresh</a></li>
 			</ul>
 		</section>
 	</div>

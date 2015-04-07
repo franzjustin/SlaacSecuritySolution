@@ -112,11 +112,13 @@ def printlogs(running, attack_list, filename_list, logfile):
             stat = str(f.read())
             lol = stat.split('\n')
             #number is the start of index for last 5 files
-            number = len(lol) - 6
-            stat = lol[number:]
-            y = 4
-            for x in range(5):
-                flask.flash(stat[y])
+            y = len(lol) - 1
+            count = 5
+            if y < 5:
+                count = y+1
+            count = range(int(count))
+            for x in count:
+                flask.flash(lol[y])
                 y=y-1
             return  flask.render_template('status.html', running=running , filename_list = filename_list, attack_list = attack_list)
     else:
@@ -175,7 +177,11 @@ def printIndex(running, logfile):
             stat = str(f.read())
             lol = parseLogs(stat.split('\n'))
             y = len(lol) - 1
-            for x in range(5):
+            count = 5
+            if y < 5:
+                count = y+1
+            count = range(int(count))
+            for x in count:
                 flask.flash(lol[y])
                 y=y-1
         return flask.render_template('dashboard.html', running=running, listLastHop=listLastHop, listNeigAdver=listNeigAdver,listDoSonDaD=listDoSonDaD)
