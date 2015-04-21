@@ -1,0 +1,26 @@
+﻿{% extends "base.html" %}
+{% block body %}
+<body class="homepage">
+<div class="row-fluid">
+  <div class="span12">
+    <ul class="breadcrumb-beauty">
+      <li>
+        <a href="index.html"><span class="fs1" aria-hidden="true" data-icon="&#xe000;"></span> Test</a>
+      </li>
+    </ul>
+  </div>
+</div>
+    <!-- Intro -->
+    <div id="intro-wrapper" class="wrapper style1"> 
+        <section id="intro" class="container">
+            <h1>Currently sniffing for packets</h1>
+            <ul class="actions">
+               <a href="{{url_for('stop')}}" class="btn">Stop Sniffing!</a>
+            </ul>
+        </section>
+    </div>
+     
+
+
+</body>
+{% endblock %}

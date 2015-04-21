@@ -1,25 +1,22 @@
-import flask, flask.views
 import os
 import functools
-import threading
-import Sniff
-import time
-from flask import Markup
-import pcapy
 from pcapy import findalldevs
+import flask
+import flask.views
+from flask import Markup
 from gevent import monkey
+import Sniff
 monkey.patch_all(thread=False)
 import time
 from threading import Thread
-from flask import Flask, render_template, session, request
+from flask import session, request
 from flask.ext.socketio import SocketIO, emit, join_room, leave_room, \
     close_room, disconnect
-
 
 APP_ROOT = os.path.dirname(os.getcwd())
 APP_STATIC = os.path.join(APP_ROOT, 'Logs')
 APP_ACC = os.path.join(APP_ROOT, 'Database')
-l = Sniff.Forever_Loop()  #the python file class with the function of forever loop / to use as a thread
+l = Sniff.Forever_Loop()
 global running
 global learning
 global manual
@@ -30,32 +27,36 @@ app = flask.Flask(__name__)
 socketThread = None
 app.secret_key = "bacon"
 socketio = SocketIO(app)
-#users = {'admin': 'admin'}
 
 
+# Background thread for checking notification every three seconds
 def background_thread():
-    """Example of how to send server generated events to clients."""
     count = 0
+    timeSleep = 3
     while True:
-        print "REPORTING FOR DUTY"
-        time.sleep(3)
+        time.sleep(timeSleep)
         if File_Existence('../Database/Notification') is True:
-                notifcation_database = open('../Database/Notification','r')
+            try:
+                notifcation_database = open('../Database/Notification', 'r')
                 templine = notifcation_database.readline().split(' ',3 )
-                if str(templine[2]) == "SA001":
-                    templine[2] = "Last Hop Router Attack"
-                elif str(templine[2]) == "SA002":
-                    templine[2] = "NA Spoofing"
-                elif str(templine[2]) == "SA003":
-                    templine[2] = "DoS in DAD"
+                tempString = templine[3].split(' ',2)
+                if str(tempString[0]) == "SA001":
+                    tempString[0] = "Last Hop Router Attack"
+                elif str(tempString[0]) == "SA002":
+                    tempString[0] = "NA Spoofing"
+                elif str(tempString[0]) == "SA003":
+                    tempString[0] = "DoS in DAD"
                 count += 1
                 socketio.emit('my response',
-                              {'data': templine[2] + " " + templine[3] , 'count': count},
+                              {'data': tempString[0] + " " + tempString[1] , 'count': count},
                               namespace='/test')
                 notifcation_database.close()
                 something = open("../Database/Notification", "w")
                 something.write(" ")
                 something.close()
+            except:
+                pass
+
 
 def getfilenames():
     filename_list = []
@@ -64,22 +65,23 @@ def getfilenames():
         if file.endswith(".s3"):
             file_temp = file.split('-')
             filename = file_temp[1].split('.')
-            filename = filename[0][:4] + " / " + filename[0][4:6] + " / "+ filename[0][-2:]
+            filename = filename[0][:4] + " / " + filename[0][4:6] + " / " + filename[0][-2:]
             filename_list.append(filename)
     return filename_list
 
 
-def filter( running, attack_list, filename_list, logfile, attack, date):
+def filter(running, attack_list, filename_list, logfile, attack, date):
     if attack == "Defau":
-        #print "Pumasok"
         if File_Existence(os.path.join(APP_STATIC, logfile)) is True:
             with open(os.path.join(APP_STATIC, logfile)) as f:
                 stat = str(f.read())
                 flask.flash(stat)
-                return  flask.render_template('status.html', running=running , filename_list = filename_list, attack_list = attack_list)
+                return flask.render_template('status.html', running=running, filename_list=filename_list,
+                                             attack_list=attack_list)
         else:
             flask.flash("everything is fine :)")
-            return  flask.render_template('status.html', running=running, filename_list = filename_list, attack_list = attack_list)
+            return flask.render_template('status.html', running=running, filename_list=filename_list,
+                                         attack_list=attack_list)
 
     elif File_Existence(os.path.join(APP_STATIC, logfile)) is True:
         with open(os.path.join(APP_STATIC, logfile)) as f:
@@ -94,40 +96,41 @@ def filter( running, attack_list, filename_list, logfile, attack, date):
                         flask.flash(log_entry)
                         attack_message.append(log_entry)
                 x = x + 1
-            return  flask.render_template('status.html', running=running , filename_list = filename_list, attack_list = attack_list)
+            return flask.render_template('status.html', running=running, filename_list=filename_list,
+                                         attack_list=attack_list)
     else:
         flask.flash("everything is fine :)")
-        return  flask.render_template('status.html', running=running, filename_list = filename_list, attack_list = attack_list)
+        return flask.render_template('status.html', running=running, filename_list=filename_list,
+                                     attack_list=attack_list)
 
 
 def printlogs(running, attack_list, filename_list, logfile):
-
     if File_Existence(os.path.join(APP_STATIC, logfile)) is True:
         with open(os.path.join(APP_STATIC, logfile)) as f:
             stat = str(f.read())
             lol = stat.split('\n')
-            #number is the start of index for last 5 files
             y = len(lol) - 1
             count = 5
             if y < 5:
-                count = y+1
+                count = y + 1
             count = range(int(count))
             for x in count:
                 flask.flash(lol[y])
-                y=y-1
-            return  flask.render_template('status.html', running=running , filename_list = filename_list, attack_list = attack_list)
+                y = y - 1
+            return flask.render_template('status.html', running=running, filename_list=filename_list,
+                                         attack_list=attack_list)
     else:
         flask.flash("No Attack Detected as of Today")
-        return  flask.render_template('status.html', running=running, filename_list = filename_list, attack_list = attack_list)
+        return flask.render_template('status.html', running=running, filename_list=filename_list,
+                                     attack_list=attack_list)
+
 
 def parseLogs(rawLogs):
     parse = []
-    #2015-02-04 21:59:38.787691 SA002 Attacker:;Victim:88:f0:77:a1:d8:8d
     for x in rawLogs:
-           try:
-            temp = ''
+        try:
             split = x.split(' ')
-            temp = "Date: " +split[0] + " " + "Time: "+ split[1] +" "
+            temp = "Date: " + split[0] + " " + "Time: " + split[1] + " "
             if split[2] == "SA001":
                 temp = temp + "Attack: Last Hop Router Advertisement Attack " + split[3]
             elif split[2] == "SA002":
@@ -135,32 +138,32 @@ def parseLogs(rawLogs):
             elif split[2] == "SA003":
                 temp = temp + "Attack: Denial of Service on Duplicate Address Detection " + split[3]
             parse.append(temp)
-           except:
+        except:
             pass
     return parse
 
 
 def printIndex(running, logfile):
-    allLogs = [f for f in os.listdir("../Logs") if os.path.isfile(os.path.join("../Logs",f))]
+    allLogs = [f for f in os.listdir("../Logs") if os.path.isfile(os.path.join("../Logs", f))]
     listLastHop = []
     listNeigAdver = []
     listDoSonDaD = []
     thisLen = len(allLogs) - 1
     for xx in allLogs:
         with open(os.path.join(APP_STATIC, allLogs[thisLen])) as f:
-                temp = str(f.read())
-                arrayTemp = temp.split('\n')
-                for x in arrayTemp:
-                    splitF = x.split(' ')
-                    try:
-                        if splitF[2] == "SA001" and len(listLastHop) != 5:
-                            listLastHop.append(x)
-                        if splitF[2] == "SA002" and len(listNeigAdver) != 5:
-                            listNeigAdver.append(x)
-                        if splitF[2] == "SA003" and len(listDoSonDaD) != 5:
-                            listDoSonDaD.append(x)
-                    except:
-                        pass
+            temp = str(f.read())
+            arrayTemp = temp.split('\n')
+            for x in arrayTemp:
+                splitF = x.split(' ')
+                try:
+                    if splitF[2] == "SA001" and len(listLastHop) != 5:
+                        listLastHop.append(x)
+                    if splitF[2] == "SA002" and len(listNeigAdver) != 5:
+                        listNeigAdver.append(x)
+                    if splitF[2] == "SA003" and len(listDoSonDaD) != 5:
+                        listDoSonDaD.append(x)
+                except:
+                    pass
         thisLen = thisLen - 1
 
     listLastHop = parseLogs(listLastHop)
@@ -174,16 +177,17 @@ def printIndex(running, logfile):
             y = len(lol) - 1
             count = 5
             if y < 5:
-                count = y+1
+                count = y + 1
             count = range(int(count))
             for x in count:
                 flask.flash(lol[y])
-                y=y-1
-        return flask.render_template('dashboard.html', running=running, listLastHop=listLastHop, listNeigAdver=listNeigAdver,listDoSonDaD=listDoSonDaD)
+                y = y - 1
+        return flask.render_template('dashboard.html', running=running, listLastHop=listLastHop,
+                                     listNeigAdver=listNeigAdver, listDoSonDaD=listDoSonDaD)
     else:
         flask.flash("No Attack Detected as of Today")
-        return flask.render_template('dashboard.html', running=running, listLastHop=listLastHop, listNeigAdver=listNeigAdver,listDoSonDaD=listDoSonDaD)
-
+        return flask.render_template('dashboard.html', running=running, listLastHop=listLastHop,
+                                     listNeigAdver=listNeigAdver, listDoSonDaD=listDoSonDaD)
 
 
 @socketio.on('my event', namespace='/test')
@@ -246,30 +250,32 @@ def disconnect_request():
 
 @socketio.on('connect', namespace='/test')
 def test_connect():
-    #emit('my response', {'data': 'Connected', 'count': 0})
     pass
+
 
 @socketio.on('disconnect', namespace='/test')
 def test_disconnect():
-    #print('Client disconnected')
     pass
+
 
 def File_Existence(filepath):
     try:
         f = open(filepath)
-    except IOError, OSError:  # Note OSError is for later versions of python
+    except IOError, OSError:
         return False
 
     return True
 
-class Main(flask.views.MethodView):  # the main page
-    def get(self):  # when open, this is the first page it gets
+
+#Login Page
+class Main(flask.views.MethodView):
+    def get(self):
         if File_Existence(os.path.join(APP_ACC, 'Accounts.txt')) is False:
             print "There is No Account Database found"
-            return  flask.render_template('signUp.html',running=running)+flask.render_template('popup.html')
+            return flask.render_template('signUp.html', running=running) + flask.render_template('popup.html')
         else:
             print "There is an Account Database"
-            return  flask.render_template('index.html',running=running)
+            return flask.render_template('index.html', running=running)
 
     def post(self):
         if 'logout' in flask.request.form:
@@ -286,12 +292,10 @@ class Main(flask.views.MethodView):  # the main page
             username = flask.request.form['username']
             password = flask.request.form['password']
 
-            usersDictionary = {}
             f = open('../Database/Accounts.txt', 'r')
             users = f.read()
             f.close()
             users = users.split()
-            #users = users.split('\n')
 
             usersUsername = []
             usersPassword = []
@@ -337,7 +341,7 @@ class Stop(flask.views.MethodView):
         global running
         running = False
         l.stop()
-        return  flask.render_template('index.html', running=running)
+        return flask.render_template('index.html', running=running)
 
 
 class Sniffer(flask.views.MethodView):
@@ -345,17 +349,17 @@ class Sniffer(flask.views.MethodView):
     def get(self):
         print "went to sniffer, running is"
         print str(running)
-        return  flask.render_template('sniffer.html', running=running)
+        return flask.render_template('sniffer.html', running=running)
 
     @login_required
     def post(self):
         global running
 
         try:
-            if l.isRunning == False:  # if the thread has been shut down
-                l.isRunning = True  # change it to true, so it could loop again
+            if l.isRunning == False:
+                l.isRunning = True
                 running = True
-                l.start()  # starts the forever loop / declared from the top to be a global variable
+                l.start()
                 print str(running)
             else:
                 running = True
@@ -363,16 +367,15 @@ class Sniffer(flask.views.MethodView):
                 l.start()
         except Exception, e:
             raise e
-        return  flask.render_template('test.html', running=running)  #goes to the test.html page
+        return flask.render_template('test.html', running=running)
 
 
 class Notif(flask.views.MethodView):
-
-
     @login_required
     def get(self):
         global running
-        attack_list = ['Default','SA001 - Last Hop Router Advertisement Attack','SA002 - Neighbor Advertisement Spoofing Attack','SA003 - DoS on Duplicate Address Detection']
+        attack_list = ['Default', 'SA001 - Last Hop Router Advertisement Attack',
+                       'SA002 - Neighbor Advertisement Spoofing Attack', 'SA003 - DoS on Duplicate Address Detection']
         filename_list = getfilenames()
         logfile = "log_report-" + time.strftime('%Y%m%d') + ".s3"
         return printlogs(running, attack_list, filename_list, logfile)
@@ -383,16 +386,18 @@ class Notif(flask.views.MethodView):
         date = str(flask.request.form['filename'])
         logfile = "log_report-" + time.strftime('%Y%m%d') + ".s3"
         attack_spec = attack[0:5]
-        if  str(date) != "Default":
+        if str(date) != "Default":
             logfile = "log_report-" + date[0:4] + date[7:9] + date[12:14] + ".s3"
         print date
         filename_list = getfilenames()
-        attack_list = ['Default','SA001 - Last Hop Router Advertisement Attack','SA002 - Neighbor Advertisement Spoofing Attack','SA003 - DoS on Duplicate Address Detection']
+        attack_list = ['Default', 'SA001 - Last Hop Router Advertisement Attack',
+                       'SA002 - Neighbor Advertisement Spoofing Attack', 'SA003 - DoS on Duplicate Address Detection']
 
         if attack == 'Default' and date == 'Default':
             return flask.redirect(flask.url_for('notif'))
         else:
             return filter(running, attack_list, filename_list, logfile, attack_spec, date)
+
 
 class Config(flask.views.MethodView):
     @login_required
@@ -447,7 +452,7 @@ class Config(flask.views.MethodView):
         flask.flash(message)
         print "learning is"
         print learning
-        return  flask.render_template('config.html', running=running, learning=learning)
+        return flask.render_template('config.html', running=running, learning=learning)
 
     @login_required
     def post(self):
@@ -468,8 +473,8 @@ class Config(flask.views.MethodView):
         elif flask.request.form['submit'] == 'Delete Logs':
             filenames = next(os.walk("../Logs"))[2]
             for x in filenames:
-             if File_Existence(os.path.join(APP_STATIC, x)) is True:
-                os.remove(os.path.join(APP_STATIC, x))
+                if File_Existence(os.path.join(APP_STATIC, x)) is True:
+                    os.remove(os.path.join(APP_STATIC, x))
 
             return flask.redirect(flask.url_for('config'))
 
@@ -484,10 +489,11 @@ class Config(flask.views.MethodView):
         elif flask.request.form['submit'] == 'Disable manual vlan mitigation**':
             return flask.redirect(flask.url_for('enableVlan'))
 
+
 class interfaces(flask.views.MethodView):
     def get(self):
         interface_list = self.getInterface()
-        return  flask.render_template('interfaces.html', running=running, interface_list=interface_list)
+        return flask.render_template('interfaces.html', running=running, interface_list=interface_list)
 
     def getInterface(self):
         return findalldevs()
@@ -498,19 +504,18 @@ class interfaces(flask.views.MethodView):
         l.setExpression(expression)
         return flask.redirect(flask.url_for('config'))
 
+
 class deleteAcc(flask.views.MethodView):
     def getAccounts(self):
-        names = []
         f = open('../Database/Accounts.txt', 'r')
         users = f.read()
         f.close()
         names = users.split()
         namectr = len(names) - 2
-        print namectr#counter for account names and passwords
-        passctr = 1                  #counter for passwords to be deleted in the array // to not be shown in the array
-        del names[0]                #deletes the first and second index in the array
-        del names[0]                   # as it represents the admin account name and password
-        while namectr > passctr:             # while there is still account name and password
+        passctr = 1
+        del names[0]
+        del names[0]
+        while namectr > passctr:
             del names[passctr]
             passctr += 1
             print names
@@ -520,11 +525,10 @@ class deleteAcc(flask.views.MethodView):
 
     def get(self):
         accounts = self.getAccounts()
-        return  flask.render_template('deleteAcc.html', running=running, accounts=accounts)
+        return flask.render_template('deleteAcc.html', running=running, accounts=accounts)
 
     def post(self):
         acc_no = flask.request.form['acc_no']
-        names = []
         f = open('../Database/Accounts.txt', 'r')
         users = f.read()
         f.close()
@@ -534,14 +538,12 @@ class deleteAcc(flask.views.MethodView):
         for user in names:
             f.write(user + "\n")
         f.close()
-
-
-        #delete account here
         return flask.redirect(flask.url_for('delete'))
+
 
 class signUpUser(flask.views.MethodView):
     def get(self):
-        return  flask.render_template('signUp.html', running=running)
+        return flask.render_template('signUp.html', running=running)
 
     def post(self):
         user = flask.request.form['username'];
@@ -550,7 +552,6 @@ class signUpUser(flask.views.MethodView):
         f.write(user + " " + password + "\n")
         f.close()
         return flask.redirect(flask.url_for('index'))
-        #return flask.render_template('index.html', running=running)
 
 
 class EditRDB(flask.views.MethodView):
@@ -558,7 +559,7 @@ class EditRDB(flask.views.MethodView):
         f = open('../Database/Router_Database', 'r')
         message = f.read()
         f.close()
-        return  flask.render_template('editRDB.html', running=running, message=message)
+        return flask.render_template('editRDB.html', running=running, message=message)
 
     def post(self):
         message = flask.request.form['message']
@@ -567,6 +568,7 @@ class EditRDB(flask.views.MethodView):
         f.close()
         return flask.redirect(flask.url_for('config'))
 
+
 class dashboard(flask.views.MethodView):
     def get(self):
         global socketThread
@@ -574,10 +576,11 @@ class dashboard(flask.views.MethodView):
             socketThread = Thread(target=background_thread)
             socketThread.start()
         logfile = "log_report-" + time.strftime('%Y%m%d') + ".s3"
-        return printIndex(running,logfile)
+        return printIndex(running, logfile)
 
     def post(self):
         return flask.redirect(flask.url_for('dashboard'))
+
 
 class EnableVlan(flask.views.MethodView):
     def get(self):

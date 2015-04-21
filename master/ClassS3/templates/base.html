@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <meta charset="utf-8">
+      <title>S3 - SLAAC Security Solution</title>
+      <meta name="author" content="Buenaventura - Gonzales - Lu">
+      <meta content="width=device-width,    initial-scale=1.0, user-scalable=no" name="viewport">
+      <meta name="description" content="SLAAC Security Solution">
+      <meta name="keywords" content="SLAAC Security Solution">
+      <script src="static/js/html5-trunk.js"></script>
+      <link href="static/icomoon/style.css" rel="stylesheet">
+
+      <link href="static/css/main.css" rel="stylesheet">
+      <link href="static/css/fullcalendar.css" rel="stylesheet">
+
+     <!-------------------------------------------------------------------------------->
+    <script src="static/js/jquery.min.js"></script>
+	<link rel='stylesheet' href='static/css/main.css'>
+
+	<style>
+    #note {
+        position: absolute;
+        z-index: 6001;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #D13736;
+        display: none;
+        color: white;
+        text-align: center;
+        line-height: 2.5;
+        overflow: hidden;
+        -webkit-box-shadow: 0 0 5px black;
+        -moz-box-shadow:    0 0 5px black;
+        box-shadow:         0 0 5px black;
+    }
+    .cssanimations.csstransforms #note {
+        -webkit-transform: translateY(-50px);
+        -webkit-animation: slideDown 2.5s 1.0s 1 ease forwards;
+        -moz-transform:    translateY(-50px);
+        -moz-animation:    slideDown 2.5s 1.0s 1 ease forwards;
+    }
+
+    #close {
+      position: absolute;
+      right: 10px;
+      top: 9px;
+      text-indent: -9999px;
+      #background: url(../static/img/close.png);
+      height: 16px;
+      width: 16px;
+      cursor: pointer;
+    }
+    .cssanimations.csstransforms #close {
+      display: none;
+    }
+
+    @-webkit-keyframes slideDown {
+        0%, 100% { -webkit-transform: translateY(-50px); }
+        10%, 90% { -webkit-transform: translateY(0px); }
+    }
+    @-moz-keyframes slideDown {
+        0%, 100% { -moz-transform: translateY(-50px); }
+        10%, 90% { -moz-transform: translateY(0px); }
+    }
+	</style>
+
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
+ <script type="text/javascript" charset="utf-8">
+        $(document).ready(function(){
+            namespace = '/test'; // change to an empty string to use the global namespace
+
+            // the socket.io documentation recommends sending an explicit package upon connection
+            // this is specially important when using the global namespace
+            var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+            socket.on('connect', function() {
+             //   socket.emit('my event', {data: 'I\'m connected!'});
+            });
+
+            // event handler for server sent data
+            // the data is displayed in the "Received" section of the page
+            socket.on('my response', function(msg) {
+
+                $('#note').show(100,function(){
+            setTimeout(function(){
+                $('#note').hide(100);
+                //alert("complete");
+
+            },2000)});
+                $('#alertarea').text(msg.data);
+                //$('#log').append('<br>Received #' + msg.count + ': ' + msg.data);
+
+            });
+
+            // handlers for the different forms in the page
+            // these send data to the server in a variety of ways
+            $('form#emit').submit(function(event) {
+                socket.emit('my event', {data: $('#emit_data').val()});
+                return false;
+            });
+            $('form#broadcast').submit(function(event) {
+                socket.emit('my broadcast event', {data: $('#broadcast_data').val()});
+                return false;
+            });
+            $('form#join').submit(function(event) {
+                socket.emit('join', {room: $('#join_room').val()});
+                return false;
+            });
+            $('form#leave').submit(function(event) {
+                socket.emit('leave', {room: $('#leave_room').val()});
+                return false;
+            });
+            $('form#send_room').submit(function(event) {
+                socket.emit('my room event', {room: $('#room_name').val(), data: $('#room_data').val()});
+                return false;
+            });
+            $('form#close').submit(function(event) {
+                socket.emit('close room', {room: $('#close_room').val()});
+                return false;
+            });
+            $('form#disconnect').submit(function(event) {
+                socket.emit('disconnect request');
+                return false;
+            });
+        });
+    </script>
+        <div id="note">
+         <label id="alertarea"></label>
+        </div>
+        <!--<div id="log"></div>-->
+
+
+     <!-------------------------------------------------------------------------------->
+
+
+
+
+
+    </head>
+
+
+	<body class="homepage">
+      <header>
+        <a href="{{url_for('index')}}" class="logo">S3 - SLAAC Security Solution</a>
+        <div id="mini-nav">
+          <ul class="hidden-phone">
+            <li class="dropdown">
+              <ul class="dropdown-menu pull-right">
+                <li class="quick-messages">
+                  <img src="img/avatar-1.png" class="avatar" alt="Avatar">
+                  <div class="message-date text-info">
+                    <i>02 <span class="month">mins</span></i>
+                  </div>
+                  <div class="message-wrapper">
+                    <h4 class="message-heading">Ubiquitous customized</h4>
+                    <p class="message">
+                      Enable impactful niches engage impactful
+                    </p>
+                  </div>
+                </li>
+                <li class="quick-messages">
+                  <img src="img/avatar-2.png" class="avatar" alt="Avatar">
+                  <div class="message-date text-info">
+                    <i>02 <span class="month">mins</span></i>
+                  </div>
+                  <div class="message-wrapper">
+                    <h4 class="message-heading">Ubiquitous customized</h4>
+                    <p class="message">
+                      Enable impactful niches engage impactful
+                    </p>
+                  </div>
+                </li>
+                <li class="quick-messages">
+                  <img src="img/avatar-5.png" class="avatar" alt="Avatar">
+                  <div class="message-date text-info">
+                    <i>38 <span class="month">mins</span></i>
+                  </div>
+                  <div class="message-wrapper">
+                    <h4 class="message-heading">Ubiquitous customized</h4>
+                    <p class="message">
+                      Enable impactful niches engage impactful
+                    </p>
+                  </div>
+                </li>
+                <li class="quick-messages">
+                  <img src="img/avatar-4.png" class="avatar" alt="Avatar">
+                  <div class="message-date text-info">
+                    <i>27 <span class="month">Apr</span></i>
+                  </div>
+                  <div class="message-wrapper">
+                    <h4 class="message-heading">Ubiquitous customized</h4>
+                    <p class="message">
+                      Enable impactful niches engage impactful
+                    </p>
+                  </div>
+                </li>
+                <li class="quick-messages">
+                  <img src="img/avatar-6.png" class="avatar" alt="Avatar">
+                  <div class="message-date text-info">
+                    <i>18 <span class="month">Apr</span></i>
+                  </div>
+                  <div class="message-wrapper">
+                    <h4 class="message-heading">Ubiquitous customized</h4>
+                    <p class="message">
+                      Enable impactful niches engage impactful
+                    </p>
+                  </div>
+                </li>
+              </ul>
+            </li>
+            <li><a href="{{url_for('index')}}">Logout</a></li>
+          </ul>
+        </div>
+      </header>
+
+      <div class="container-fluid">
+        <div id="mainnav" class="hidden-phone hidden-tablet">
+          <ul>
+            <li>
+              <a href="{{url_for('dashboard')}}">
+                <div class="icon">
+                  <span class="fs1" aria-hidden="true" data-icon="&#xe000;"></span>
+                </div>
+                Dashboard
+              </a>
+            </li>
+               {% if running == True %}
+                        <li>
+                          <a href="{{url_for('test')}}">
+                            <div class="icon">
+                              <span class="fs1" aria-hidden="true" data-icon="&#xe0ac;"></span>
+                            </div>
+                              Stop Sniffer
+
+                          </a>
+                        </li>
+	                    {% else %}
+                        <li>
+                          <a href="{{url_for('sniffer')}}">
+                            <div class="icon">
+                              <span class="fs1" aria-hidden="true" data-icon="&#xe0ac;"></span>
+                            </div>
+                                  Run Sniffer
+                          </a>
+                        </li>
+	                    {% endif %}
+
+            <li>
+              <a href="{{url_for('notif')}}">
+                <div class="icon">
+                  <span class="fs1" aria-hidden="true" data-icon="&#xe1cf;"></span>
+                </div>
+                Logs
+              </a>
+            </li>
+            <li>
+              <a href="{{url_for('config')}}">
+                <div class="icon">
+                  <span class="fs1" aria-hidden="true" data-icon="&#xe090;"></span>
+                </div>
+                Configuration
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="dashboard-wrapper">
+          <div class="main-container">
+            <div class="navbar hidden-desktop">
+              <div class="navbar-inner">
+                <div class="container">
+                  <a data-target=".navbar-responsive-collapse" data-toggle="collapse" class="btn btn-navbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+		{% block body %}{% endblock %}
+          </div>
+        </div><!-- dashboard-container -->
+      </div><!-- container-fluid -->
+
+      <script src="static/js/jquery.min.js"></script>
+      <script src="static/js/bootstrap.js"></script>
+      <script src="static/js/jquery-ui-1.8.23.custom.min.js"></script>
+
+      <!-- morris charts -->
+      <script src="static/js/morris/morris.js"></script>
+      <script src="static/js/morris/raphael-min.js"></script>
+
+      <!-- Flow charts -->
+      <script src="static/js/flot/jquery.flot.js"></script>
+      <script src="static/js/flot/jquery.flot.resize.min.js"></script>
+
+      <!-- Calendar Js -->
+      <script src="static/js/fullcalendar.js"></script>
+
+      <!-- Tiny Scrollbar JS -->
+      <script src="static/js/tiny-scrollbar.js"></script>
+
+      <!-- custom Js -->
+      <script src="static/js/custom-index.js"></script>
+      <script src="static/js/custom.js"></script>
+
+	</body>
+</html>

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block body %}
+<body class="homepage">
+    <!-- Header -->
+
+<div class="row-fluid">
+  <div class="span12">
+    <ul class="breadcrumb-beauty">
+      <li>
+        <a href="index.html"><span class="fs1" aria-hidden="true" data-icon="&#xe000;"></span> Learning Mode</a>
+      </li>
+    </ul>
+  </div>
+</div>
+    <!-- Intro -->
+    <div id="intro-wrapper" class="wrapper style1"> 
+        <section id="intro" class="container">
+            <h1> Please select an interface:</h1>
+            <form action="{{url_for('sniffer')}}" method="POST">
+	            <input type="submit" value="Learn" />
+            </form>
+        </section>
+    </div>
+     
+
+</body>
+{% endblock %}
+

@@ -1,0 +1,46 @@
+
+
+{% extends "base.html" %}
+{% block body %}
+<body class="homepage">
+    <!-- Header -->
+
+<div class="row-fluid">
+  <div class="span12">
+    <ul class="breadcrumb-beauty">
+      <li>
+        <a href="index.html"><span class="fs1" aria-hidden="true" data-icon="&#xe000;"></span> Interfaces</a>
+      </li>
+    </ul>
+  </div>
+</div>
+    <!-- Intro -->
+    <div id="intro-wrapper" class="wrapper style1">
+        <section id="intro" class="container">
+            <h1> Select an account to be deleted</h1>
+
+            {%for interface in interface_list%}
+            <h1> {{loop.index - 1}} - {{interface}}</h1>
+
+            {%endfor %}
+
+            <form action="{{url_for('interfaces')}}" method="POST">
+	            <input type="text" name="expression" />
+	            <input type="submit" value="Set" />
+            </form>
+        </section>
+    </div>
+
+
+    <!-- Footer -->
+    <div id="footer-wrapper" class="wrapper">
+
+        <div id="copyright">
+            <ul>
+                <li>&copy; S3</li>
+                <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block body %}
+<body class="homepage">
+
+	<!-- Intro -->
+	<div id="intro-wrapper" class="wrapper style1">
+		<section id="intro" class="container">
+			<h1>Logs</h1>
+				{% with messages = get_flashed_messages() %}
+					{% for message in messages %}
+						<p class="no-margin">{{message}} </p><br>
+					{% endfor %}
+				{% endwith %}
+			<ul class="actions">
+				<li><a href="{{url_for('notif')}}" class="btn">Refresh</a></li>
+			</ul>
+		</section>
+	</div>
+	<div id="intro-wrapper" class="wrapper style1">
+		<section id="intro" class="container">
+			<h1>Options</h1>
+			<form action="{{url_for('notif')}}" method="POST">
+				<h3>Date</h3>
+					<label>Select :</label>
+						<select name="filename" width="300px">
+							{% for entry in filename_list%}
+								<option name = "file" >{{entry}}</option>
+							{% endfor %}
+						</select>
+				<h3>Attack</h3>
+					<label>Select :</label>
+						<select name="attack" width="300px">
+							{% for entry in attack_list%}
+								<option name = "attack" >{{entry}}</option>
+							{% endfor %}
+						</select>
+				<br>
+				<input class="button style3 big" type="submit" value="Filter" />
+			</form>
+		</section>
+	</div>
+    <ul id="output">
+
+        </ul>
+
+
+
+</body>
+{% endblock %}
