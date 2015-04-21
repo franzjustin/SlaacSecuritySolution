@@ -41,16 +41,20 @@ def background_thread():
         time.sleep(3)
         if File_Existence('../Database/Notification') is True:
                 notifcation_database = open('../Database/Notification','r')
+                #print "ASsas"
                 templine = notifcation_database.readline().split(' ',3 )
-                if str(templine[2]) == "SA001":
-                    templine[2] = "Last Hop Router Attack"
-                elif str(templine[2]) == "SA002":
-                    templine[2] = "NA Spoofing"
-                elif str(templine[2]) == "SA003":
-                    templine[2] = "DoS in DAD"
+                #print templine
+                alert_line = templine[3].split(' ')
+                print alert
+                if str(alert_line[0]) == "SA001":
+                    alert_line[0] = "Last Hop Router Attack"
+                elif str(alert_line[0]) == "SA002":
+                    alert_line[0] = "NA Spoofing"
+                elif str(alert_line[0]) == "SA003":
+                    alert_line[0] = "DoS in DAD"
                 count += 1
                 socketio.emit('my response',
-                              {'data': templine[2] + " " + templine[3] , 'count': count},
+                              {'data': alert_line[0] + " " + alert_line[1] , 'count': count},
                               namespace='/test')
                 notifcation_database.close()
                 something = open("../Database/Notification", "w")

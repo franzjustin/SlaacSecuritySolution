@@ -39,20 +39,20 @@ def background_thread():
             try:
                 notifcation_database = open('../Database/Notification', 'r')
                 templine = notifcation_database.readline().split(' ',3 )
-                tempString = templine[3].split(' ',2)
-                if str(tempString[0]) == "SA001":
-                    tempString[0] = "Last Hop Router Attack"
-                elif str(tempString[0]) == "SA002":
-                    tempString[0] = "NA Spoofing"
-                elif str(tempString[0]) == "SA003":
-                    tempString[0] = "DoS in DAD"
+                alert_line = ""
+                if str(templine[2]) == "SA001":
+                    alert_line  = "Last Hop Router Attack"
+                elif str(templine[2]) == "SA002":
+                    alert_line  = "NA Spoofing"
+                elif str(templine[2]) == "SA003":
+                    alert_line = "DoS in DAD"
                 count += 1
                 socketio.emit('my response',
-                              {'data': tempString[0] + " " + tempString[1] , 'count': count},
+                              {'data': alert_line + " " + templine[3] , 'count': count},
                               namespace='/test')
                 notifcation_database.close()
                 something = open("../Database/Notification", "w")
-                something.write(" ")
+                something.write("")
                 something.close()
             except:
                 pass
@@ -123,7 +123,6 @@ def printlogs(running, attack_list, filename_list, logfile):
         flask.flash("No Attack Detected as of Today")
         return flask.render_template('status.html', running=running, filename_list=filename_list,
                                      attack_list=attack_list)
-
 
 def parseLogs(rawLogs):
     parse = []

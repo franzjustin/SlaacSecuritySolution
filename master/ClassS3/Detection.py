@@ -82,11 +82,6 @@ class Detection:
                                     test_open.close()
                                 else:
                                     print "Legitimate Router Advertisement Detected"
-                                    test_open = open("../TestFiles/realtime_test_success",'a')
-                                    message = "False" +" "+ str(message_details.get_source_MAC_address())+ " " + str(router_database[x][1])
-                                    test_open.write(message)
-                                    test_open.write('\n')
-                                    test_open.close()
                            else:
                                 print "Rogue Router Advertisement Detected"
                                 with RotatingFileOpener.RotatingFileOpener('../Logs/', prepend='log_report-', append='.s3') as logger:
